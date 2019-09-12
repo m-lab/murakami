@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "murakami"
+version = "0.1.0"
+description = "A webthings-compliant network measurement tool from M-Lab."
+authors = ["Josh King <josh@throneless.tech>", "Rae Gaines <rae@throneless.tech"]
+license = "Apache-2.0"
+
+[tool.poetry.scripts]
+murakami = "murakami"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+webthing = "^0.12.0"
+configargparse = "^0.14.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
