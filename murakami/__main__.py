@@ -1,6 +1,6 @@
 import configargparse
 import logging
-from .server import MurakamiServer
+from murakami.server import MurakamiServer
 
 
 def main():
