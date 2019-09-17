@@ -6,7 +6,7 @@ authors = ["Josh King <josh@throneless.tech>", "Rae Gaines <rae@throneless.tech"
 license = "Apache-2.0"
 
 [tool.poetry.scripts]
-murakami = "murakami"
+murakami = 'murakami.__main__:main'
 
 [tool.poetry.dependencies]
 python = "^3.7"
