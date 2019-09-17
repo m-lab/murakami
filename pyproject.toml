@@ -2,8 +2,10 @@
 name = "murakami"
 version = "0.1.0"
 description = "A webthings-compliant network measurement tool from M-Lab."
-authors = ["Josh King <josh@throneless.tech>", "Rae Gaines <rae@throneless.tech"]
+authors = ["Josh King <josh@throneless.tech>", "Rae Gaines <rae@throneless.tech>"]
 license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/throneless-tech/murakami"
 
 [tool.poetry.scripts]
 murakami = 'murakami.__main__:main'
