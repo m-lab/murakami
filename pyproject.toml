@@ -21,3 +21,7 @@ pytest = "^3.0"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+# Runners
+[tool.poetry.plugins."webthing.runners"]
+".py" = "ndt7:Ndt7Client"

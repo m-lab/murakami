@@ -6,7 +6,7 @@ import time
 import tornado.ioloop
 import uuid
 
-class RunAction(Action):
+class RunNdt7(Action):
 
   def __init__(self, thing, input_):
     Action.__init__(self, uuid.uuid4().hex, thing, 'run', input_=input_)
@@ -17,17 +17,16 @@ class RunAction(Action):
     # self.thing.set_property('brightness', self.input['brightness'])
     # self.thing.add_event(OverheatedEvent(self.thing, 102))
 
-class NDT7Runner(Thing):
-  """Run tests using chosen build."""
+class Ndt7Client(Thing):
+  """Run NDT7 tests."""
 
   def __init__(self):
     Thing.__init__(
       self,
-      # set context; ex:
-      # 'urn:dev:ops:my-lamp-1234',
-      # 'My Lamp',
-      # ['OnOffSwitch', 'Light'],
-      # 'A web connected lamp'
+      'urn:dev:ops:ndt7-client',
+      'NDT7 Client',
+      ['OnOffSwitch', 'Client'],
+      'A client running NDT7 tests'
     )
 
     self.add_property(
@@ -38,7 +37,7 @@ class NDT7Runner(Thing):
           '@type': 'OnOffProperty',
           'title': 'On/Off',
           'type': 'boolean',
-          'description': 'Whether the runner is turned on',
+          'description': 'Whether the client is running',
         }))
 
     self.add_available_action(
@@ -49,48 +48,30 @@ class NDT7Runner(Thing):
         'input': {
           'type': 'object',
           'required': [
-            # set these, ex:
-            # 'brightness',
-            # 'duration',
+            'download',
+            'upload'
           ],
           'properties': {
-            # set these, ex:
-            # 'brightness': {
-            #   'type': 'integer',
-            #   'minimum': 0,
-            #   'maximum': 100,
-            #   'unit': 'percent',
-            # },
-            # 'duration': {
-            #   'type': 'integer',
-            #   'minimum': 1,
-            #   'unit': 'milliseconds',
-            # },
+            'download': {
+              'type': 'integer',
+              'minimum': 0,
+              'unit': 'Mbit/s',
+            },
+            'upload': {
+              'type': 'integer',
+              'minimum': 0,
+              'unit': 'Mbit/s',
+            },
           },
         },
       },
-      RunAction)
+      RunNdt7)
 
-def run_server():
-  # Create a thing that represents a device running ndt7
-  ndt7runner = NDT7Runner()
-
-  # If adding more than one thing, use MultipleThings() with a name.
-  # In the single thing case, the thing's name will be broadcast.
-  server = WebThingServer(MultipleThings([ndt7runner],'NDT7Device'), port=8888)
-  try:
-    logging.info('starting the server')
-    server.start()
-  except KeyboardInterrupt:
-    logging.debug('canceling the sensor update looping task')
-    sensor.cancel_update_level_task()
-    logging.info('stopping the server')
-    server.stop()
-    logging.info('done')
-
-if __name__ == '__main__':
-  logging.basicConfig(
-    level=10,
-    format="%(asctime)s %(filename)s:%(lineno)s %(levelname)s %(message)s"
-  )
-  run_server()
+    self.add_available_event(
+      'error',
+      {
+        'description':
+        'There was an error running the tests',
+        'type': 'string',
+        'unit': 'error',
+      })
