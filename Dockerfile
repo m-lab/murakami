@@ -17,11 +17,18 @@ RUN ctest -a --output-on-failure .
 # Murakami image
 FROM python:3-alpine3.9
 RUN apk add git
-RUN pip install poetry
-
-COPY . /murakami
-COPY --from=build /libndt/libndt-client /murakami/bin/
+RUN pip install 'poetry==0.12.17'
 
 WORKDIR /murakami
-RUN poetry install
-ENTRYPOINT [ "/bin/sh" ]
+COPY poetry.lock pyproject.toml /murakami/
+
+# Set up poetry to not create a virtualenv, since the docker container is
+# isolated already, and install the required dependencies.
+RUN poetry config settings.virtualenvs.create false \
+    && poetry install --no-dev --no-interaction
+
+# Copy Murakami and previously built test clients into the container.
+COPY . /murakami/
+COPY --from=build /libndt/libndt-client /murakami/bin/
+
+CMD python -m murakami
