@@ -23,5 +23,8 @@ requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
 # Runners
-[tool.poetry.plugins."webthing.runners"]
+[tool.poetry.plugins."ndt7.runner"]
 ".py" = "ndt7:Ndt7Client"
+
+[tool.poetry.plugins."speedtest.runner"]
+".py" = "speedtest:SpeedtestClient"
