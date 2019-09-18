@@ -16,7 +16,7 @@ RUN ctest -a --output-on-failure .
 
 # Murakami image
 FROM python:3-alpine3.9
-RUN apk add git
+RUN apk add git gcc
 RUN pip install 'poetry==0.12.17'
 
 WORKDIR /murakami
