@@ -63,11 +63,11 @@ def main():
     )
 
     server = MurakamiServer(
-        port=settings.port,
+        port=settings.port or 8080,
         hostname=settings.hostname,
         ssl_options=settings.ssl_options,
         additional_routes=settings.additional_routes,
-        base_path=settings.base_path,
+        base_path=settings.base_path or '',
     )
 
     try:

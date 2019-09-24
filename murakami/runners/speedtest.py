@@ -1,5 +1,5 @@
 from __future__ import division, print_function
-from webthing import (Action, Event, MultipleThings, Property, Thing, Value, WebThingServer)
+from webthing import (Action, Event, Property, Thing, Value)
 
 import logging
 import time
@@ -11,7 +11,7 @@ class RunSpeedtest(Action):
   def __init__(self, thing, input_):
     Action.__init__(self, uuid.uuid4().hex, thing, 'run', input_=input_)
 
-  def perform_action(self):
+  # def perform_action(self):
     # set properties; ex:
     # time.sleep(self.input['duration'] / 1000)
     # self.thing.set_property('brightness', self.input['brightness'])
@@ -21,6 +21,8 @@ class SpeedtestClient(Thing):
   """Run Speedtest.net tests."""
 
   def __init__(self):
+    print('init speed test client')
+
     Thing.__init__(
       self,
       'urn:dev:ops:ndt7-client',
