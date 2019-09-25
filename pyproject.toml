@@ -25,5 +25,5 @@ build-backend = "poetry.masonry.api"
 # Runners
 [tool.poetry.plugins."murakami.runners"]
 "ndt7" = "murakami.runners.ndt7:Ndt7Client"
-
 "speedtest" = "murakami.runners.speedtest:SpeedtestClient"
+"wehe" = "murakami.runners.wehe:WeheClient"

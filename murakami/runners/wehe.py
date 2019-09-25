@@ -4,32 +4,28 @@ from webthing import (Action, Event, Property, Thing, Value)
 import logging
 import os
 import time
-# import tornado.ioloop
 import uuid
 
-class RunNdt7(Action):
-  def __init__(self, thing, input_):
+class RunWehe(Action):
 
+  def __init__(self, thing, input_):
     Action.__init__(self, uuid.uuid4().hex, thing, 'run', input_=input_)
+    print(('input: '),input_)
 
   def perform_action(self):
-    print('perform speedtest action')
-    # set properties; ex:
-    # time.sleep(self.input['duration'] / 1000)
-    # self.thing.set_property('brightness', self.input['brightness'])
-    # self.thing.add_event(OverheatedEvent(self.thing, 102))
+    print('perform ')
 
-class Ndt7Client(Thing):
-  """Run NDT7 tests."""
+class WeheClient(Thing):
+  """Run Wehe tests."""
 
   def __init__(self):
-
+    print('init wehe client')
     Thing.__init__(
       self,
       'urn:dev:ops:ndt7-client',
-      'NDT7 Client',
+      'Wehe Client',
       ['OnOffSwitch', 'Client'],
-      'A client running NDT7 tests'
+      'A client running Wehe tests'
     )
 
     self.run_test()
@@ -70,7 +66,7 @@ class Ndt7Client(Thing):
           },
         },
       },
-      RunNdt7)
+      RunWehe)
 
     self.add_available_event(
       'error',
@@ -82,4 +78,5 @@ class Ndt7Client(Thing):
       })
 
   def run_test(self):
-    os.system('go get -v github.com/m-lab/ndt7-client-go/cmd/ndt7-client')
+    os.system('sudo docker build . -t wehe')
+    os.system('sudo docker run -v data:/data/RecordReplay --env SUDO_UID=$UID --net=host -it wehe')
