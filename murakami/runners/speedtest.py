@@ -2,6 +2,7 @@ from __future__ import division, print_function
 from webthing import (Action, Event, Property, Thing, Value)
 
 import logging
+import os
 import time
 import uuid
 
@@ -12,13 +13,12 @@ class RunSpeedtest(Action):
     print(('input: '),input_)
 
   def perform_action(self):
-    print('in run fx')
+    print('perform speedtest action')
 
 class SpeedtestClient(Thing):
   """Run Speedtest.net tests."""
 
   def __init__(self):
-    print('init speed test client')
 
     Thing.__init__(
       self,
@@ -27,6 +27,8 @@ class SpeedtestClient(Thing):
       ['OnOffSwitch', 'Client'],
       'A client running Speedtest tests'
     )
+
+    self.run_test()
 
     self.add_property(
       Property(self,
@@ -74,3 +76,6 @@ class SpeedtestClient(Thing):
         'type': 'string',
         'unit': 'error',
       })
+
+  def run_test(self):
+    os.system('speedtest-cli')

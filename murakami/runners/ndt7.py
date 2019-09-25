@@ -2,8 +2,9 @@ from __future__ import division, print_function
 from webthing import (Action, Event, Property, Thing, Value)
 
 import logging
+import os
 import time
-import tornado.ioloop
+# import tornado.ioloop
 import uuid
 
 class RunNdt7(Action):
@@ -12,7 +13,8 @@ class RunNdt7(Action):
 
     Action.__init__(self, uuid.uuid4().hex, thing, 'run', input_=input_)
 
-  # def perform_action(self):
+  def perform_action(self):
+    print('perform speedtest action')
     # set properties; ex:
     # time.sleep(self.input['duration'] / 1000)
     # self.thing.set_property('brightness', self.input['brightness'])
@@ -76,3 +78,6 @@ class Ndt7Client(Thing):
         'type': 'string',
         'unit': 'error',
       })
+
+  def run_test(self):
+    os.system('go get -v github.com/m-lab/ndt7-client-go/cmd/ndt7-client')
