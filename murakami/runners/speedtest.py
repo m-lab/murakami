@@ -3,19 +3,16 @@ from webthing import (Action, Event, Property, Thing, Value)
 
 import logging
 import time
-import tornado.ioloop
 import uuid
 
 class RunSpeedtest(Action):
 
   def __init__(self, thing, input_):
     Action.__init__(self, uuid.uuid4().hex, thing, 'run', input_=input_)
+    print(('input: '),input_)
 
-  # def perform_action(self):
-    # set properties; ex:
-    # time.sleep(self.input['duration'] / 1000)
-    # self.thing.set_property('brightness', self.input['brightness'])
-    # self.thing.add_event(OverheatedEvent(self.thing, 102))
+  def perform_action(self):
+    print('in run fx')
 
 class SpeedtestClient(Thing):
   """Run Speedtest.net tests."""
@@ -67,7 +64,7 @@ class SpeedtestClient(Thing):
           },
         },
       },
-      RunNdt7)
+      RunSpeedtest)
 
     self.add_available_event(
       'error',

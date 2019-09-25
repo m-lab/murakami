@@ -14,9 +14,7 @@ class MurakamiServer:
     self.runners = {}
 
     for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
-      self.runners[entry_point.name] = entry_point.load()
-
-    print('self: ', self.runners.values())
+      self.runners[entry_point.name] = entry_point.load()()
 
     self.server = WebThingServer(
       MultipleThings(self.runners.values(), "Murakami"),
