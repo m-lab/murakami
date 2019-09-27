@@ -16,7 +16,7 @@ class RunWehe(Action):
         print('perform ')
 
 class WeheClient(Thing):
-  """Run Wehe tests."""
+    """Run Wehe tests."""
 
     def __init__(self):
         print('init wehe client')

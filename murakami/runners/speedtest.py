@@ -6,14 +6,6 @@ import os
 import time
 import uuid
 
-class RunSpeedtest(Action):
-
-    def __init__(self, thing, input_):
-        Action.__init__(self, uuid.uuid4().hex, thing, 'run', input_=input_)
-        print(('input: '),input_)
-
-    def perform_action(self):
-          print('perform speedtest action')
 
 class SpeedtestClient(Thing):
     """Run Speedtest.net tests."""
