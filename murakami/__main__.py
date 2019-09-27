@@ -22,7 +22,6 @@ class TomlConfigFileParser(configargparse.ConfigFileParser):
 
         return settings
 
-
 def main():
     parser = configargparse.ArgParser(
         auto_env_var_prefix="murakami_",
