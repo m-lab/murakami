@@ -2,6 +2,8 @@ import logging
 import pkg_resources
 from webthing import WebThingServer, MultipleThings
 
+logger = logging.getLogger(__name__)
+
 
 class MurakamiServer:
     def __init__(
@@ -11,12 +13,14 @@ class MurakamiServer:
             ssl_options=None,
             additional_routes=None,
             base_path="",
+            config=None,
     ):
-        self.runners = {
-            entry_point.name: entry_point.load()()
-            for entry_point in pkg_resources.iter_entry_points(
-                "murakami.runner")
-        }
+        self.runners = {}
+
+        for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
+            logging.debug("Loading plugin %s", entry_point.name)
+            self.runners[entry_point.name] = entry_point.load()()
+
         self.server = WebThingServer(
             MultipleThings(self.runners.values(), "Murakami"),
             port=port,
@@ -27,9 +31,9 @@ class MurakamiServer:
         )
 
     def start(self):
-        logging.info("Starting the WebThing server.")
+        logger.info("Starting the WebThing server.")
         self.server.start()
 
     def stop(self):
-        logging.info("Stopping the WebThing server.")
+        logger.info("Stopping the WebThing server.")
         self.server.stop()
