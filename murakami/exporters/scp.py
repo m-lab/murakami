@@ -5,6 +5,8 @@ from paramiko import SSHClient
 from paramiko.client import AutoAddPolicy
 from scp import SCPClient
 
+DEFAULT_SSH_PORT = 22
+
 
 class SCPExporter:
     """This exporter allows to copy Murakami's data path to a remote host and
@@ -15,12 +17,10 @@ class SCPExporter:
 
         scp_config = self.config["push"]["scp"]
         self.target = scp_config.get("target", None)
-        self.port = scp_config.get("port", 22)
+        self.port = scp_config.get("port", DEFAULT_SSH_PORT)
         self.username = scp_config.get("username", None)
         self.password = scp_config.get("password", None)
         self.private_key = scp_config.get("private_key", None)
-
-        self.run()
 
     def run(self):
         """Copy the files over SCP using the provided configuration."""
@@ -39,14 +39,18 @@ class SCPExporter:
 
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy)
-        ssh.connect(dst_host, self.port, username=self.username,
-                    password=self.password, timeout=5)
 
-        with SCPClient(ssh.get_transport()) as scp:
-            # TODO: use actual data folder here
-            dst_path = os.path.join("data", self.test_name)
-            logging.info("Copying %s" % dst_path)
-            scp.put(dst_path, recursive=True,
-                    remote_path=self.dst_path)
+        try:
+            ssh.connect(dst_host, self.port, username=self.username,
+                        password=self.password, timeout=5)
 
-        ssh.close()
+            with SCPClient(ssh.get_transport()) as scp:
+                # TODO: use actual data folder here
+                dst_path = os.path.join("data", self.test_name)
+                logging.info("Copying %s" % dst_path)
+                scp.put(dst_path, recursive=True,
+                        remote_path=self.dst_path)
+        except Exception as err:
+            logging.error("scp connection failed: %s" % err)
+        else:
+            ssh.close()
