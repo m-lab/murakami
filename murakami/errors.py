@@ -1,0 +1,18 @@
+"""The error types for Murakami."""
+
+
+class Error(Exception):
+    """Base class for Murakami exceptions"""
+
+
+class RunnerError(Error):
+    """Exception raised for an error caused by a runner.
+
+    Attributes:
+        name -- The name of the runner
+        message -- The error message
+    """
+    def __init__(self, name, message):
+        super().__init__()
+        self.name = name
+        self.message = message
