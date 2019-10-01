@@ -5,7 +5,6 @@ MAINTAINER Measurement Lab Support <support@measurementlab.net>
 RUN apk add --update build-base gcc cmake libressl-dev curl-dev git linux-headers
 RUN git clone https://github.com/measurement-kit/libndt.git
 WORKDIR /libndt
-#RUN git checkout 41e93c6a64684603e76ef686197877c749ae9c98
 
 RUN cmake .
 RUN cmake --build . -j $(nproc)
@@ -13,7 +12,7 @@ RUN ctest -a --output-on-failure .
 
 # Murakami image
 FROM python:3-alpine3.10
-RUN apk add git curl libstdc++ libgcc
+RUN apk add git curl libstdc++ libgcc speedtest-cli
 RUN pip install 'poetry==0.12.17'
 
 WORKDIR /murakami
