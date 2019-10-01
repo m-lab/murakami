@@ -84,4 +84,5 @@ class Ndt7Client(Thing):
         )
 
     def run_test(self):
-        os.system("go get -v github.com/m-lab/ndt7-client-go/cmd/ndt7-client")
+        # TODO: make the path configurable.
+        os.system("/murakami/bin/libndt-client -ndt7 -download -upload -batch")
