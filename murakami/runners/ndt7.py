@@ -19,7 +19,6 @@ class RunNdt7(Action):
         logger.info("Performing NDT7 test")
         self.thing.start_test()
 
-
 class Ndt7Client(MurakamiRunner):
     """Run NDT7 tests."""
     def __init__(self, config=None, data_cb=None):
