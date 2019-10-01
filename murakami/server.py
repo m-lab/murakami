@@ -16,10 +16,18 @@ class MurakamiServer:
             config=None,
     ):
         self.runners = {}
+        self.exporters = {}
 
         for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
             logging.debug("Loading plugin %s", entry_point.name)
             self.runners[entry_point.name] = entry_point.load()()
+
+        # Check if exporters are enabled and load them.
+        if "push" in config:
+            for entry_point in pkg_resources.iter_entry_points("murakami.exporters"):
+                if entry_point.name in config["push"]:
+                    logging.debug("Loading exporter %s", entry_point.name)
+                    self.exporters[entry_point.name] = entry_point.load()(config)
 
         self.server = WebThingServer(
             MultipleThings(self.runners.values(), "Murakami"),
