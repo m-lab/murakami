@@ -1,38 +1,29 @@
-import logging
-import os
-import shutil
-import uuid
+from __future__ import division, print_function
 from webthing import Action, Event, Property, Thing, Value
 
-from murakami.errors import RunnerError
-from murakami.runner import MurakamiRunner
+import logging
+import os
+import time
 
-logger = logging.getLogger(__name__)
-
-
-class RunNdt7(Action):
-    def __init__(self, thing, input_):
-
-        Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
-
-    def perform_action(self):
-        logger.info("Performing NDT7 test")
-        self.thing.start_test()
+# import tornado.ioloop
+import uuid
 
 
-class Ndt7Client(MurakamiRunner):
-    """Run NDT7 tests."""
-    def __init__(self, config=None, data_cb=None):
-        super().__init__(name="ndt7", config=config, data_cb=data_cb)
+class LibndtClient(Thing):
+    """Run LibNDT tests."""
+    def __init__(self):
 
-        self._thing = Thing(
-            "urn:dev:ops:ndt7-client",
-            "NDT7 Client",
+        Thing.__init__(
+            self,
+            "urn:dev:ops:libndt-client",
+            "LibNDT Client",
             ["OnOffSwitch", "Client"],
-            "A client running NDT7 tests",
+            "A client running LibNDT tests",
         )
 
-        self._thing.add_property(
+        self.run_test()
+
+        self.add_property(
             Property(
                 self,
                 "on",
@@ -43,10 +34,9 @@ class Ndt7Client(MurakamiRunner):
                     "type": "boolean",
                     "description": "Whether the client is running",
                 },
-            )
-        )
+            ))
 
-        self._thing.add_available_action(
+        self.add_available_action(
             "run",
             {
                 "title": "Run",
@@ -68,10 +58,10 @@ class Ndt7Client(MurakamiRunner):
                     },
                 },
             },
-            RunNdt7,
+            RunLibndt,
         )
 
-        self._thing.add_available_event(
+        self.add_available_event(
             "error",
             {
                 "description": "There was an error running the tests",
@@ -80,10 +70,5 @@ class Ndt7Client(MurakamiRunner):
             },
         )
 
-    def _start_test(self):
-        if shutil.which("ndt7-client") is not None:
-            os.system("ndt7-client")
-        else:
-            raise RunnerError(
-                "ndt7",
-                "Executable does not exist, please install ndt7-client.")
+    def run_test(self):
+        os.system("ctest -a --output-on-failure .")
