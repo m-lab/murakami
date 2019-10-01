@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 import uuid
+
 from webthing import Action, Event, Property, Thing, Value
 
 from murakami.errors import RunnerError
@@ -11,13 +12,14 @@ logger = logging.getLogger(__name__)
 
 
 class RunDash(Action):
+    def __init__(self, thing, input_):
+        Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
+        print(("input: "), input_)
 
-  def __init__(self, thing, input_):
-    Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
-    print(("input: "),input_)
+    def perform_action(self):
+        print("perform dash action")
+        self.thing.start_test()
 
-  def perform_action(self):
-    print("perform dash action")
 
 class DashClient(MurakamiRunner):
     """Run Dash tests."""
@@ -28,9 +30,8 @@ class DashClient(MurakamiRunner):
             "urn:dev:ops:dash-client",
             "Dash Client",
             ["OnOffSwitch", "Client"],
-            "A client running Dash tests"
+            "A client running Dash tests",
         )
-
 
         self._thing.add_property(
             Property(
@@ -42,9 +43,8 @@ class DashClient(MurakamiRunner):
                     "title": "On/Off",
                     "type": "boolean",
                     "description": "Whether the client is running",
-                }
-            )
-        )
+                },
+            ))
 
         self._thing.add_available_action(
             "run",
@@ -58,32 +58,31 @@ class DashClient(MurakamiRunner):
                         "download": {
                             "type": "integer",
                             "minimum": 0,
-                            "unit": "Mbit/s",
+                            "unit": "Mbit/s"
                         },
                         "upload": {
                             "type": "integer",
                             "minimum": 0,
-                            "unit": "Mbit/s",
+                            "unit": "Mbit/s"
                         },
                     },
                 },
             },
-            RunDash
+            RunDash,
         )
 
-    self._thing.add_available_event(
-      "error",
-      {
-        "description":
-        "There was an error running the tests",
-        "type": "string",
-        "unit": "error",
-      })
+        self._thing.add_available_event(
+            "error",
+            {
+                "description": "There was an error running the tests",
+                "type": "string",
+                "unit": "error",
+            },
+        )
 
-  def run_test(self):
-    if shutil.which("dash") is not None:
-        os.system("dash")
-    else:
-        raise RunnerError(
-            "dash",
-            "Executable does not exist, please install dash.")
+    def run_test(self):
+        if shutil.which("dash") is not None:
+            os.system("dash")
+        else:
+            raise RunnerError(
+                "dash", "Executable does not exist, please install dash.")

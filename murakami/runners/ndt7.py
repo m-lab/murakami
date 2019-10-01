@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 import uuid
+
 from webthing import Action, Event, Property, Thing, Value
 
 from murakami.errors import RunnerError
@@ -18,6 +19,7 @@ class RunNdt7(Action):
     def perform_action(self):
         logger.info("Performing NDT7 test")
         self.thing.start_test()
+
 
 class Ndt7Client(MurakamiRunner):
     """Run NDT7 tests."""
@@ -42,8 +44,7 @@ class Ndt7Client(MurakamiRunner):
                     "type": "boolean",
                     "description": "Whether the client is running",
                 },
-            )
-        )
+            ))
 
         self._thing.add_available_action(
             "run",
