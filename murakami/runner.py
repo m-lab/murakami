@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 
 class MurakamiRunner:
-    def __init__(self, name="", config=None, data_cb=None):
+    def __init__(self, name="", config={}, data_cb=None):
         self.name = name
         self.config = config
         self.data_cb = data_cb

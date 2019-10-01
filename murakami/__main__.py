@@ -1,10 +1,30 @@
 from collections import OrderedDict
 import logging
+import os
 import configargparse
 import tomlkit
 from murakami.server import MurakamiServer
 
 config = None
+
+
+def load_env():
+    acc = {}
+    env = {k: v for k, v in os.environ.items() if k.startswith("MURAKAMI_")}
+
+    def recurse(key, value, acc):
+        key, *re = key.split("_", 1)
+        if re:
+            recurse(re[0], value, acc.setdefault(key.lower(), {}))
+        else:
+            acc[key.lower()] = value
+
+    for k, v in env.items():
+        recurse(k, v, acc)
+    if "murakami" in acc:
+        return acc["murakami"]
+    else:
+        return {}
 
 
 class TomlConfigFileParser(configargparse.ConfigFileParser):
@@ -15,16 +35,20 @@ class TomlConfigFileParser(configargparse.ConfigFileParser):
 
     def parse(self, stream):
         global config
-        config = tomlkit.parse(stream.read())
+        config_file = tomlkit.parse(stream.read())
+        config_env = load_env()
+        config = {**config_file, **config_env}
         settings = OrderedDict()
-        for key, value in config["settings"].items():
-            settings[key] = str(value)
+        if "settings" in config:
+            for key, value in config["settings"].items():
+                settings[key] = str(value)
 
         return settings
 
+
 def main():
     parser = configargparse.ArgParser(
-        auto_env_var_prefix="murakami_",
+        auto_env_var_prefix="murakami_settings_",
         config_file_parser_class=TomlConfigFileParser,
         default_config_files=[
             "/etc/murakami/murakami.toml",
@@ -79,6 +103,22 @@ def main():
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         help="Set the logging level",
     )
+    parser.add(
+        "-t",
+        "--tests-per-day",
+        dest="tests_per_day",
+        type=int,
+        default=2,
+        help="Set the number of tests per day.",
+    )
+    parser.add(
+        "-e",
+        "--expected-sleep-seconds",
+        dest="expected_sleep_seconds",
+        type=int,
+        default=12 * 60 * 60,
+        help="Set the minimum number of seconds between random tests.",
+    )
     settings = parser.parse_args()
 
     logging.basicConfig(
@@ -86,12 +126,18 @@ def main():
         format="%(asctime)s %(filename)s:%(lineno)s %(levelname)s %(message)s",
     )
 
+    global config
+    if not config:
+        config = load_env()
+
     server = MurakamiServer(
         port=settings.port or 8080,
         hostname=settings.hostname,
         ssl_options=settings.ssl_options,
         additional_routes=settings.additional_routes,
         base_path=settings.base_path or "",
+        tests_per_day=2,
+        expected_sleep_seconds=12 * 60 * 60,
         config=config,
     )
 
