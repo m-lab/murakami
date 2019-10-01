@@ -1,29 +1,39 @@
-from __future__ import division, print_function
-from webthing import Action, Event, Property, Thing, Value
-
 import logging
 import os
-import time
-
-# import tornado.ioloop
+import shutil
 import uuid
 
+from webthing import Action, Event, Property, Thing, Value
 
-class LibndtClient(Thing):
+from murakami.errors import RunnerError
+from murakami.runner import MurakamiRunner
+
+logger = logging.getLogger(__name__)
+
+
+class RunLibndt(Action):
+    def __init__(self, thing, input_):
+
+        Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
+
+    def perform_action(self):
+        logger.info("Performing libndt test")
+        self.thing.start_test()
+
+
+class LibndtClient(MurakamiRunner):
     """Run LibNDT tests."""
-    def __init__(self):
+    def __init__(self, config=None, data_cb=None):
+        super().__init__(name="libndt", config=config, data_cb=data_cb)
 
-        Thing.__init__(
-            self,
+        self._thing = Thing(
             "urn:dev:ops:libndt-client",
             "LibNDT Client",
             ["OnOffSwitch", "Client"],
             "A client running LibNDT tests",
         )
 
-        self.run_test()
-
-        self.add_property(
+        self._thing.add_property(
             Property(
                 self,
                 "on",
@@ -36,7 +46,7 @@ class LibndtClient(Thing):
                 },
             ))
 
-        self.add_available_action(
+        self._thing.add_available_action(
             "run",
             {
                 "title": "Run",
@@ -61,7 +71,7 @@ class LibndtClient(Thing):
             RunLibndt,
         )
 
-        self.add_available_event(
+        self._thing.add_available_event(
             "error",
             {
                 "description": "There was an error running the tests",
@@ -71,4 +81,8 @@ class LibndtClient(Thing):
         )
 
     def run_test(self):
-        os.system("ctest -a --output-on-failure .")
+        if shutil.which("ctest") is not None:
+            os.system("ctest -a --output-on-failure .")
+        else:
+            raise RunnerError(
+                "libndt", "Executable does not exist, please install libndt.")
