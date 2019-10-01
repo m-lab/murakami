@@ -1,0 +1,9 @@
+[settings]
+port = 80
+loglevel = "DEBUG"
+tests_per_day = 2
+
+[tests]
+
+  [tests.ndt7]
+  enabled = 1

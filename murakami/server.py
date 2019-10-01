@@ -35,6 +35,7 @@ class MurakamiServer:
             config=None,
     ):
         self.runners = {}
+        self.exporters = {}
 
         self.scheduler = TornadoScheduler()
         trigger = RandomTrigger(expected_sleep_seconds=expected_sleep_seconds)
@@ -66,6 +67,13 @@ class MurakamiServer:
             else:
                 logging.debug("Plugin %s disabled, skipping.",
                               entry_point.name)
+
+        # Check if exporters are enabled and load them.
+        if "push" in config:
+            for entry_point in pkg_resources.iter_entry_points("murakami.exporters"):
+                if entry_point.name in config["push"]:
+                    logging.debug("Loading exporter %s", entry_point.name)
+                    self.exporters[entry_point.name] = entry_point.load()(config)
 
         self.server = WebThingServer(
             MultipleThings([r.thing for r in self.runners.values()],
