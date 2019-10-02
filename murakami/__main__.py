@@ -9,6 +9,7 @@ config = None
 
 
 def load_env():
+    """This function loads the local environment into a dict and returns it."""
     acc = {}
     env = {k: v for k, v in os.environ.items() if k.startswith("MURAKAMI_")}
 
@@ -28,12 +29,22 @@ def load_env():
 
 
 class TomlConfigFileParser(configargparse.ConfigFileParser):
+    """
+    This custom parser uses Tomlkit to parse a .toml configuration file,
+    and then merges matching environment variables, and then puts then saves
+    the result while passing back just the settings portion to configargparse.
+    """
     def get_syntax_description(self):
+        """Returns a description of the file format parsed by the class."""
         msg = ("Parses a TOML-format configuration file "
                "(see https://github.com/toml-lang/toml for the spec).")
         return msg
 
     def parse(self, stream):
+        """
+        Takes a TOML file stream and parses it, merging it with the
+        environment, and then passes back just the settings portion.
+        """
         global config
         config_file = tomlkit.parse(stream.read())
         config_env = load_env()
@@ -47,6 +58,7 @@ class TomlConfigFileParser(configargparse.ConfigFileParser):
 
 
 def main():
+    """ The main function for Murakami."""
     parser = configargparse.ArgParser(
         auto_env_var_prefix="murakami_settings_",
         config_file_parser_class=TomlConfigFileParser,

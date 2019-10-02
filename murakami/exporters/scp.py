@@ -1,3 +1,4 @@
+import io
 import logging
 import os
 
@@ -5,27 +6,28 @@ from paramiko import SSHClient
 from paramiko.client import AutoAddPolicy
 from scp import SCPClient
 
-DEFAULT_SSH_PORT = 22
+import murakami.defaults as defaults
+from murakami.exporter import MurakamiExporter
+
+logger = logging.getLogger(__name__)
 
 
-class SCPExporter:
+class SCPExporter(MurakamiExporter):
     """This exporter allows to copy Murakami's data path to a remote host and
     folder via SCP."""
-    def __init__(self, config):
+    def __init__(self, name="", config=None):
         # Check if a configuration for the SCP exporter has been provided.
-        self.config = config
+        self._name = name
+        self.target = config.get("target", None)
+        self.port = config.get("port", defaults.SSH_PORT)
+        self.username = config.get("username", None)
+        self.password = config.get("password", None)
+        self.private_key = config.get("private_key", None)
 
-        scp_config = self.config["push"]["scp"]
-        self.target = scp_config.get("target", None)
-        self.port = scp_config.get("port", DEFAULT_SSH_PORT)
-        self.username = scp_config.get("username", None)
-        self.password = scp_config.get("password", None)
-        self.private_key = scp_config.get("private_key", None)
-
-    def run(self):
+    def push(self, test_name="", data="", timestamp=None):
         """Copy the files over SCP using the provided configuration."""
         if self.target is None:
-            logging.error("scp.target must be specified")
+            logger.error("scp.target must be specified")
             return
 
         if self.username is None and self.private_key is None:
@@ -34,23 +36,28 @@ class SCPExporter:
         try:
             (dst_host, dst_path) = self.target.split(":")
         except ValueError:
-            logging.error("scp.target must be 'host:/path/to/destination'")
+            logger.error("scp.target must be 'host:/path/to/destination'")
             return
 
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy)
 
         try:
-            ssh.connect(dst_host, self.port, username=self.username,
-                        password=self.password, timeout=5)
+            ssh.connect(
+                dst_host,
+                self.port,
+                username=self.username,
+                password=self.password,
+                timeout=defaults.SSH_TIMEOUT,
+            )
 
             with SCPClient(ssh.get_transport()) as scp:
-                # TODO: use actual data folder here
-                dst_path = os.path.join("data", self.test_name)
-                logging.info("Copying %s" % dst_path)
-                scp.put(dst_path, recursive=True,
-                        remote_path=self.dst_path)
+                dst_path = os.path.join(dst_path,
+                                        test_name + "-" + timestamp + ".txt")
+                logger.info("Copying data to %s", dst_path)
+                buf = io.StringIO(data)
+                scp.putfo(buf, dst_path)
         except Exception as err:
-            logging.error("scp connection failed: %s" % err)
+            logger.error("SCP exporter failed: %s", err)
         else:
             ssh.close()
