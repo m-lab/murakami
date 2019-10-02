@@ -11,25 +11,26 @@ from murakami.runner import MurakamiRunner
 logger = logging.getLogger(__name__)
 
 
-class RunSpeedtest(Action):
+class RunLibndt(Action):
     def __init__(self, thing, input_):
+
         Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
 
     def perform_action(self):
-        logger.info("Performing Speeedtest.net test")
+        logger.info("Performing libndt test")
         self.thing.start_test()
 
 
-class SpeedtestClient(MurakamiRunner):
-    """Run Speedtest.net tests."""
+class LibndtClient(MurakamiRunner):
+    """Run LibNDT tests."""
     def __init__(self, config=None, data_cb=None):
-        super().__init__(name="speedtest", config=config, data_cb=data_cb)
+        super().__init__(name="ndt5", config=config, data_cb=data_cb)
 
         self._thing = Thing(
-            "urn:dev:ops:speedtest-client",
-            "Speedtest Client",
+            "urn:dev:ops:libndt-client",
+            "LibNDT Client",
             ["OnOffSwitch", "Client"],
-            "A client running Speedtest.net tests",
+            "A client running LibNDT tests",
         )
 
         self._thing.add_property(
@@ -67,7 +68,7 @@ class SpeedtestClient(MurakamiRunner):
                     },
                 },
             },
-            RunSpeedtest,
+            RunLibndt,
         )
 
         self._thing.add_available_event(
@@ -80,13 +81,25 @@ class SpeedtestClient(MurakamiRunner):
         )
 
     def _start_test(self):
-        if shutil.which("speedtest-cli") is not None:
-            output = subprocess.run(["speedtest-cli", "--json"],
-                                    check=True,
-                                    text=True,
-                                    capture_output=True)
+        if shutil.which("libndt-client") is not None:
+            output = subprocess.run(
+                [
+                    "libndt-client",
+                    "--download",
+                    "--upload",
+                    "--lookup-policy=closest",
+                    "--json",
+                    "--websocket",
+                    "--tls",
+                    "--batch",
+                ],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
         else:
             raise RunnerError(
-                "speedtest",
-                "Executable does not exist, please install speedtest-cli.")
+                "libndt",
+                "Executable libndt-client does not exist, please install libndt.",
+            )
         return output.stdout

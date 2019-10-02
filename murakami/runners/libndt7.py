@@ -1,6 +1,6 @@
 import logging
-import os
 import shutil
+import subprocess
 import uuid
 
 from webthing import Action, Event, Property, Thing, Value
@@ -24,7 +24,7 @@ class RunLibndt(Action):
 class LibndtClient(MurakamiRunner):
     """Run LibNDT tests."""
     def __init__(self, config=None, data_cb=None):
-        super().__init__(name="libndt", config=config, data_cb=data_cb)
+        super().__init__(name="ndt7", config=config, data_cb=data_cb)
 
         self._thing = Thing(
             "urn:dev:ops:libndt-client",
@@ -80,9 +80,27 @@ class LibndtClient(MurakamiRunner):
             },
         )
 
-    def run_test(self):
-        if shutil.which("ctest") is not None:
-            os.system("ctest -a --output-on-failure .")
+    def _start_test(self):
+        if shutil.which("libndt-client") is not None:
+            output = subprocess.run(
+                [
+                    "libndt-client",
+                    "--download",
+                    "--upload",
+                    "--lookup-policy=closest",
+                    "--json",
+                    "--websocket",
+                    "--tls",
+                    "--ndt7",
+                    "--batch",
+                ],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
         else:
             raise RunnerError(
-                "libndt", "Executable does not exist, please install libndt.")
+                "libndt",
+                "Executable libndt-client does not exist, please install libndt.",
+            )
+        return output.stdout

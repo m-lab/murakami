@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 from webthing import Thing
 from murakami.errors import RunnerError
@@ -6,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class MurakamiRunner:
-    def __init__(self, name="", config={}, data_cb=None):
+    def __init__(self, name="", config=None, data_cb=None):
         self.name = name
         self.config = config
         self.data_cb = data_cb
@@ -16,9 +17,10 @@ class MurakamiRunner:
         raise RunnerError(self.name, "No _start_test() function implemented.")
 
     def start_test(self):
+        timestamp = datetime.timestamp(datetime.now())
         data = self._start_test()
         if self.data_cb is not None:
-            self.data_cb(data)
+            self.data_cb(test_name=self.name, data=data, timestamp=timestamp)
         return data
 
     def _stop_test(self):
@@ -35,7 +37,6 @@ class MurakamiRunner:
 
     def teardown(self):
         self._teardown()
-        self.is_ready = False
         return
 
     @property
