@@ -81,10 +81,29 @@ class DashClient(MurakamiRunner):
 
     def _start_test(self):
         if shutil.which("dash-client") is not None:
-            output = subprocess.run(["dash-client"],
-                                    check=True,
-                                    text=True,
-                                    capture_output=True)
+            output = subprocess.run([
+                "rm -f ./certs/*.pem &&                      \
+                ./mkcerts.bash &&                            \
+                sudo chown root:root ./certs/*.pem &&        \
+                docker run --network=bridge                  \
+                           --publish=80:8888                 \
+                           --publish=443:4444                \
+                           --publish=9990:9999               \
+                           --volume `pwd`/certs:/certs:ro    \
+                           --volume `pwd`/datadir:/datadir   \
+                           --read-only                       \
+                           --cap-drop=all                    \
+                           neubot/dash                       \
+                           -datadir /datadir                 \
+                           -http-listen-address :8888        \
+                           -https-listen-address :4444       \
+                           -prometheusx.listen-address :9999 \
+                           -tls-cert /certs/cert.pem         \
+                           -tls-key /certs/key.pem"
+                           ],
+                            check=True,
+                            text=True,
+                            capture_output=True)
         else:
             raise RunnerError(
                 "dash",
