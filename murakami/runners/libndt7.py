@@ -13,11 +13,10 @@ logger = logging.getLogger(__name__)
 
 class RunLibndt(Action):
     def __init__(self, thing, input_):
-
         Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
 
     def perform_action(self):
-        logger.info("Performing libndt test")
+        logger.info("Performing ndt7 test")
         self.thing.start_test()
 
 
