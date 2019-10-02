@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import uuid
 
+import jsonlines
 from webthing import Action, Event, Property, Thing, Value
 
 from murakami.errors import RunnerError
@@ -85,8 +86,9 @@ class SpeedtestClient(MurakamiRunner):
                                     check=True,
                                     text=True,
                                     capture_output=True)
+            reader = jsonlines.Reader(output.stdout.splitlines())
         else:
             raise RunnerError(
                 "speedtest",
                 "Executable does not exist, please install speedtest-cli.")
-        return output.stdout
+        return [*reader.iter()]

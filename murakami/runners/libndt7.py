@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import uuid
 
+import jsonlines
 from webthing import Action, Event, Property, Thing, Value
 
 from murakami.errors import RunnerError
@@ -97,9 +98,10 @@ class LibndtClient(MurakamiRunner):
                 text=True,
                 capture_output=True,
             )
+            reader = jsonlines.Reader(output.stdout.splitlines())
         else:
             raise RunnerError(
                 "libndt",
                 "Executable libndt-client does not exist, please install libndt.",
             )
-        return output.stdout
+        return [*reader.iter(skip_empty=True)]

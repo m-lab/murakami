@@ -18,6 +18,7 @@ tomlkit = "^0.5.5"
 apscheduler = "^3.6"
 paramiko = "^2.6"
 scp = "^0.13.2"
+jsonlines = "^1.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
