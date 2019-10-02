@@ -1,0 +1,6 @@
+SLEEP_SECONDS = 12 * 60 * 60
+SSH_PORT = 22
+SSH_TIMEOUT = 5
+HTTP_PORT = 80
+TESTS_PER_DAY = 2
+EXPORT_PATH = "/var/cache/murakami"

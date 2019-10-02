@@ -1,12 +1,14 @@
-from __future__ import division, print_function
-from webthing import Action, Event, Property, Thing, Value
-
 import logging
 import os
-import time
-
-# import tornado.ioloop
+import shutil
 import uuid
+
+from webthing import Action, Event, Property, Thing, Value
+
+from murakami.errors import RunnerError
+from murakami.runner import MurakamiRunner
+
+logger = logging.getLogger(__name__)
 
 
 class RunNdt7(Action):
@@ -15,28 +17,23 @@ class RunNdt7(Action):
         Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
 
     def perform_action(self):
-        print("perform speedtest action")
-        # set properties; ex:
-        # time.sleep(self.input['duration'] / 1000)
-        # self.thing.set_property('brightness', self.input['brightness'])
-        # self.thing.add_event(OverheatedEvent(self.thing, 102))
+        logger.info("Performing NDT7 test")
+        self.thing.start_test()
 
 
-class Ndt7Client(Thing):
+class Ndt7Client(MurakamiRunner):
     """Run NDT7 tests."""
-    def __init__(self):
+    def __init__(self, config=None, data_cb=None):
+        super().__init__(name="ndt7", config=config, data_cb=data_cb)
 
-        Thing.__init__(
-            self,
+        self._thing = Thing(
             "urn:dev:ops:ndt7-client",
             "NDT7 Client",
             ["OnOffSwitch", "Client"],
             "A client running NDT7 tests",
         )
 
-        self.run_test()
-
-        self.add_property(
+        self._thing.add_property(
             Property(
                 self,
                 "on",
@@ -49,7 +46,7 @@ class Ndt7Client(Thing):
                 },
             ))
 
-        self.add_available_action(
+        self._thing.add_available_action(
             "run",
             {
                 "title": "Run",
@@ -74,7 +71,7 @@ class Ndt7Client(Thing):
             RunNdt7,
         )
 
-        self.add_available_event(
+        self._thing.add_available_event(
             "error",
             {
                 "description": "There was an error running the tests",
@@ -83,6 +80,10 @@ class Ndt7Client(Thing):
             },
         )
 
-    def run_test(self):
-        # TODO: make the path configurable.
-        os.system("/murakami/bin/libndt-client -ndt7 -download -upload -batch")
+    def _start_test(self):
+        if shutil.which("ndt7-client") is not None:
+            os.system("ndt7-client")
+        else:
+            raise RunnerError(
+                "ndt7",
+                "Executable does not exist, please install ndt7-client.")

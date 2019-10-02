@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 from webthing import Thing
 from murakami.errors import RunnerError
@@ -10,45 +11,34 @@ class MurakamiRunner:
         self.name = name
         self.config = config
         self.data_cb = data_cb
-        self.thing = None
-        self.is_ready = False
+        self._thing = None
 
-    async def _setup(self):
-        raise RunnerError(self.name, "No _setup() function implemented.")
-
-    async def setup(self):
-        await self._setup()
-        self.is_ready = True
-        return
-
-    async def _start_test(self):
+    def _start_test(self):
         raise RunnerError(self.name, "No _start_test() function implemented.")
 
-    async def start_test(self):
-        if self.is_ready is False:
-            await self.setup()
-        data = await self._start_test()
+    def start_test(self):
+        timestamp = datetime.timestamp(datetime.now())
+        data = self._start_test()
         if self.data_cb is not None:
-            self.data_cb(data)
+            self.data_cb(test_name=self.name, data=data, timestamp=timestamp)
         return data
 
-    async def _stop_test(self):
+    def _stop_test(self):
         logger.debug("No special handling needed for stopping runner %s",
                      self.name)
         return
 
-    async def stop_test(self):
+    def stop_test(self):
         return self._stop_test()
 
-    async def _teardown(self):
+    def _teardown(self):
         logger.debug("No special teardown needed for runner %s", self.name)
         return
 
-    async def teardown(self):
-        await self._teardown()
-        self.is_ready = False
+    def teardown(self):
+        self._teardown()
         return
 
     @property
     def thing(self):
-        return self.thing
+        return self._thing
