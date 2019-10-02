@@ -2,6 +2,7 @@ import io
 import logging
 import os
 
+import jsonlines
 from paramiko import SSHClient
 from paramiko.client import AutoAddPolicy
 from scp import SCPClient
@@ -24,7 +25,7 @@ class SCPExporter(MurakamiExporter):
         self.password = config.get("password", None)
         self.private_key = config.get("private_key", None)
 
-    def push(self, test_name="", data="", timestamp=None):
+    def push(self, test_name="", data=None, timestamp=None):
         """Copy the files over SCP using the provided configuration."""
         if self.target is None:
             logger.error("scp.target must be specified")
@@ -53,9 +54,11 @@ class SCPExporter(MurakamiExporter):
 
             with SCPClient(ssh.get_transport()) as scp:
                 dst_path = os.path.join(dst_path,
-                                        test_name + "-" + timestamp + ".txt")
+                                        test_name + "-" + timestamp + ".jsonl")
                 logger.info("Copying data to %s", dst_path)
-                buf = io.StringIO(data)
+                buf = io.StringIO()
+                with jsonlines.open(buf, mode="w") as writer:
+                    writer.write_all(data)
                 scp.putfo(buf, dst_path)
         except Exception as err:
             logger.error("SCP exporter failed: %s", err)

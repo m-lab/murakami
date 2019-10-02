@@ -1,6 +1,8 @@
 import logging
 import os
 
+import jsonlines
+
 import murakami.defaults as defaults
 from murakami.exporter import MurakamiExporter
 
@@ -13,14 +15,15 @@ class LocalExporter(MurakamiExporter):
         self._name = name
         self._path = config.get("path", defaults.EXPORT_PATH)
 
-    def push(self, test_name="", data="", timestamp=None):
+    def push(self, test_name="", data=None, timestamp=None):
         try:
             dst_path = os.path.join(
                 self._path,
-                str(test_name) + "-" + str(timestamp) + ".txt")
+                str(test_name) + "-" + str(timestamp) + ".jsonl")
             output = open(dst_path, "w")
             logger.info("Copying data to %s", dst_path)
-            output.write(data)
+            with jsonlines.Writer(output) as writer:
+                writer.write_all(data)
         except Exception as err:
             logger.error("Exporting to local file failed: %s", err)
         else:
