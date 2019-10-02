@@ -12,7 +12,7 @@ RUN ctest -a --output-on-failure .
 
 # Murakami image
 FROM python:3-alpine3.10
-RUN apk add git curl libstdc++ libgcc speedtest-cli
+RUN apk add git curl libstdc++ libgcc speedtest-cli gcc
 RUN pip install 'poetry==0.12.17'
 
 WORKDIR /murakami
