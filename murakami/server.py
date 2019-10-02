@@ -93,7 +93,7 @@ class MurakamiServer:
                         self.runners[entry_point.name].start_test,
                         id=entry_point.name,
                         name=entry_point.name,
-                        trigger=trigger,
+                        # trigger=trigger,
                     )
             else:
                 logging.debug("Test runner %s disabled, skipping.",
