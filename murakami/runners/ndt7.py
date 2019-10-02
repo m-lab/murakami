@@ -81,8 +81,8 @@ class Ndt7Client(MurakamiRunner):
         )
 
     def _start_test(self):
-        if shutil.which("ndt7-client") is not None:
-            os.system("ndt7-client")
+        if shutil.which("ctest -a --output-on-failure .") is not None:
+            os.system("ctest -a --output-on-failure .")
         else:
             raise RunnerError(
                 "ndt7",

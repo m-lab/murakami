@@ -1,11 +1,8 @@
 # Builder image
-FROM python:3-alpine3.10
+FROM python:3-alpine3.10 AS build
 MAINTAINER Measurement Lab Support <support@measurementlab.net>
 
 RUN apk add --update build-base gcc cmake libressl-dev curl-dev git linux-headers
-
-#Install speedtest-cli
-RUN pip install speedtest-cli
 
 # Install libndt
 # TODO: Use an actual release tag. This commit is currently the latest one
@@ -16,11 +13,27 @@ WORKDIR /libndt
 
 RUN cmake .
 RUN cmake --build . -j $(nproc)
-# RUN ctest -a --output-on-failure .
 
-# Murakami image
+# Install Dash
+WORKDIR /
+RUN git clone https://github.com/neubot/dash.git
+
+FROM golang:1.13.0-alpine3.10 AS dashbuild
+RUN apk add --no-cache git
+COPY --from=build /dash /go/src/github.com/neubot/dash
+WORKDIR /go/src/github.com/neubot/dash
+RUN ./build.sh
+
+FROM gcr.io/distroless/static@sha256:9b60270ec0991bc4f14bda475e8cae75594d8197d0ae58576ace84694aa75d7a
+COPY --from=dashbuild /go/bin/dash-server /
+EXPOSE 80/tcp 443/tcp
+WORKDIR /
+ENTRYPOINT ["/dash-server"]
+
+# Murakami image and install speedtest-cli
 FROM python:3-alpine3.10
-RUN apk add git curl libstdc++ libgcc speedtest-cli
+RUN apk update && apk upgrade
+RUN apk add git curl libstdc++ libgcc gcc libc-dev libffi-dev libressl-dev speedtest-cli make
 RUN pip install 'poetry==0.12.17'
 
 WORKDIR /murakami
