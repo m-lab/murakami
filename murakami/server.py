@@ -83,7 +83,7 @@ class MurakamiServer:
         for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
             logging.debug("Loading test runner %s", entry_point.name)
             rconfig = {}
-            enabled = True
+            enabled = False
             if "tests" in config:
                 if entry_point.name in config["tests"]:
                     rconfig = config["tests"][entry_point.name]
