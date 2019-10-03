@@ -56,7 +56,7 @@ class MurakamiServer:
                                                     group="murakami.exporters")
             for name, entry in config["exporters"].items():
                 logging.debug("Loading exporter %s", name)
-                enabled = True
+                enabled = False
                 if "enabled" in entry:
                     enabled = is_enabled(entry["enabled"])
                 if enabled:
@@ -83,7 +83,7 @@ class MurakamiServer:
         for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
             logging.debug("Loading test runner %s", entry_point.name)
             rconfig = {}
-            enabled = False
+            enabled = True
             if "tests" in config:
                 if entry_point.name in config["tests"]:
                     rconfig = config["tests"][entry_point.name]

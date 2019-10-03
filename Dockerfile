@@ -4,35 +4,22 @@ MAINTAINER Measurement Lab Support <support@measurementlab.net>
 
 RUN apk add --update build-base gcc cmake libressl-dev curl-dev git linux-headers
 
-# Install libndt
-# TODO: Use an actual release tag. This commit is currently the latest one
-# on the release/v0.27.0 branch, including the fix to make libndt build with
-# musl-libc. It needs to be updated when v0.27.0 is released.
+# Download and build libndt.
 RUN git clone https://github.com/measurement-kit/libndt.git
 WORKDIR /libndt
 
 RUN cmake .
 RUN cmake --build . -j $(nproc)
 
-# Install Dash
-WORKDIR /
-RUN git clone https://github.com/neubot/dash.git
-
+# Build dash-client
 FROM golang:1.13.0-alpine3.10 AS dashbuild
 RUN apk add --no-cache git
-COPY --from=build /dash /go/src/github.com/neubot/dash
-WORKDIR /go/src/github.com/neubot/dash
-RUN ./build.sh
+RUN go get github.com/neubot/dash/cmd/dash-client
 
-FROM gcr.io/distroless/static@sha256:9b60270ec0991bc4f14bda475e8cae75594d8197d0ae58576ace84694aa75d7a
-COPY --from=dashbuild /go/bin/dash-server /
-EXPOSE 80/tcp 443/tcp
-WORKDIR /
-ENTRYPOINT ["/dash-server"]
-
-# Murakami image and install speedtest-cli
+# Murakami image
 FROM python:3-alpine3.10
 RUN apk update && apk upgrade
+# Install dependencies and speedtest-cli
 RUN apk add git curl libstdc++ libgcc gcc libc-dev libffi-dev libressl-dev speedtest-cli make
 RUN pip install 'poetry==0.12.17'
 
@@ -58,8 +45,9 @@ ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
 # Copy Murakami and previously built test clients into the container.
 COPY . /murakami/
 COPY --from=build /libndt/libndt-client /murakami/bin/
+COPY --from=dashbuild /go/bin/dash-client /murakami/bin/
 
 # Add binaries' path to PATH.
 ENV PATH="/murakami/bin:${PATH}"
 
-CMD python -m murakami -c /murakami/murakami.toml
+ENTRYPOINT [ "/usr/local/bin/poetry", "run", "murakami" ]

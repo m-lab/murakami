@@ -28,9 +28,6 @@ class GCSExporter(MurakamiExporter):
             logger.error("GCS: a service account and key must be provided.")
             return
 
-        if timestamp is None:
-            timestamp = time.time()
-
         # Configure the SDK to use the provided service account key.
         output = subprocess.run(["gcloud",
                                  "auth",
@@ -41,13 +38,13 @@ class GCSExporter(MurakamiExporter):
                                 text=True,
                                 capture_output=True)
 
-        date = datetime.fromtimestamp(timestamp).isoformat()
-        test_file = test_name + "-" + date + ".json"
+        #date = datetime.fromtimestamp(timestamp).isoformat()
+        test_file = test_name + "-" + timestamp + ".json"
         tmp_path = "/tmp/" + test_file
         try:
             # Write content to a temporary file.
             with open(tmp_path, "w") as tmp_file:
-                tmp_file.write(data)
+                tmp_file.write(str(data))
 
             # Run gsutil to copy test data to the GCS bucket.
             output = subprocess.run([
