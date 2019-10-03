@@ -47,6 +47,31 @@ If using a WiFi connection and the Ubuntu minimal images, the utility `nmtui` is
 # map data/ on the host to /data in the container
 * `docker run murakami:latest --volume `pwd`/data:/data --settings.path=/data`  
 
+### setup for building for different arch targets locally
+
+- apt install qemu-user
+docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+docker run --rm -t arm64v8/ubuntu uname -m
+###which should display aarch64 (meaning you're running an arm64 container)
+- edit .docker/config.json
+	{    
+        "experimental": "enabled"    
+	}    
+- docker buildx create --name arm --platform "linux/arm/v7,linux/arm64"
+- docker buildx inspect arm --bootstrap
+- docker buildx use arm
+
+### Build an image for armv7
+
+docker buildx build --platform "linux/arm/7" -t murakami:latest --load .
+
+### Push image to dockerhub
+
+$ docker buildx build --platform "linux/arm/7" -t murakami:latest --push  .
+
+### Run standalone container on localhost
+$ docker run -e "MURAKAMI_EXPORTERS_LOCALHOST_TYPE=local" -e "MURAKAMI_EXPORTERS_LOCALHOST_ENABLED=true" --volume /root/data:/var/cache/murakami/ critzo/murakami:armv7-latest  --immediate
+
 
 ### Configuring the Murakami Test Runners & Storage Options
 
@@ -54,3 +79,4 @@ If using a WiFi connection and the Ubuntu minimal images, the utility `nmtui` is
 ### Running a Murakami Test Manually
 
 * 
+poetry run murakami --help
