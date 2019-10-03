@@ -62,4 +62,4 @@ COPY --from=build /libndt/libndt-client /murakami/bin/
 # Add binaries' path to PATH.
 ENV PATH="/murakami/bin:${PATH}"
 
-CMD python -m murakami
+CMD python -m murakami -c /murakami/murakami.toml
