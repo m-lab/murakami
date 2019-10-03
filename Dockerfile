@@ -59,4 +59,7 @@ ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
 COPY . /murakami/
 COPY --from=build /libndt/libndt-client /murakami/bin/
 
+# Add binaries' path to PATH.
+ENV PATH="/murakami/bin:${PATH}"
+
 CMD python -m murakami
