@@ -17,7 +17,7 @@ class MurakamiRunner:
         raise RunnerError(self.name, "No _start_test() function implemented.")
 
     def start_test(self):
-        timestamp = datetime.timestamp(datetime.now())
+        timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")
         data = self._start_test()
         if self.data_cb is not None:
             self.data_cb(test_name=self.name, data=data, timestamp=timestamp)

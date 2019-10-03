@@ -20,10 +20,13 @@ class RandomTrigger(BaseTrigger):
         super().__init__()
         self._expected_sleep_seconds = kwargs.pop("expected_sleep_seconds",
                                                   defaults.SLEEP_SECONDS)
+        self._immediate = kwargs.pop("immediate", False)
 
     def get_next_fire_time(self, previous_fire_time, now):
         sleeptime = random.expovariate(1.0 / self._expected_sleep_seconds)
         if not previous_fire_time:
+            if self._immediate:
+                return now
             previous_fire_time = now
         return previous_fire_time + datetime.timedelta(seconds=sleeptime)
 
@@ -38,13 +41,14 @@ class MurakamiServer:
             base_path="",
             tests_per_day=defaults.TESTS_PER_DAY,
             expected_sleep_seconds=defaults.SLEEP_SECONDS,
+            immediate=False,
             config=None,
     ):
         self.runners = {}
         self.exporters = {}
 
         self.scheduler = TornadoScheduler()
-        trigger = RandomTrigger(expected_sleep_seconds=expected_sleep_seconds)
+        trigger = RandomTrigger(expected_sleep_seconds=expected_sleep_seconds, immediate=immediate)
 
         # Check if exporters are enabled and load them.
         if "exporters" in config:
@@ -52,7 +56,7 @@ class MurakamiServer:
                                                     group="murakami.exporters")
             for name, entry in config["exporters"].items():
                 logging.debug("Loading exporter %s", name)
-                enabled = True
+                enabled = False
                 if "enabled" in entry:
                     enabled = is_enabled(entry["enabled"])
                 if enabled:

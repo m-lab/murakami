@@ -9,5 +9,5 @@ class MurakamiExporter:
         self._name = name
         self._config = config
 
-    def push(self, data):
+    def push(self, test_name="", data=None, timestamp=None):
         raise ExporterError(self._name, "No push() function implemented.")

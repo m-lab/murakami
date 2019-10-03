@@ -63,7 +63,7 @@ def main():
         auto_env_var_prefix="murakami_settings_",
         config_file_parser_class=TomlConfigFileParser,
         default_config_files=[
-            "/murakami/murakami.toml",
+            "/etc/murakami/murakami.toml",
             "~/.config/murakami/murakami.toml",
         ],
         description="The Murakami network test runner.",
@@ -131,6 +131,14 @@ def main():
         default=12 * 60 * 60,
         help="Set the minimum number of seconds between random tests.",
     )
+    parser.add(
+        "-i",
+        "--immediate",
+        action="store_true",
+        dest="immediate",
+        default=False,
+        help="Immediately run available tests on startup.",
+    )
     settings = parser.parse_args()
 
     logging.basicConfig(
@@ -148,8 +156,9 @@ def main():
         ssl_options=settings.ssl_options,
         additional_routes=settings.additional_routes,
         base_path=settings.base_path or "",
-        tests_per_day=2,
-        expected_sleep_seconds=12 * 60 * 60,
+        tests_per_day=settings.tests_per_day,
+        expected_sleep_seconds=settings.expected_sleep_seconds,
+        immediate=settings.immediate,
         config=config,
     )
 

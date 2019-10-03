@@ -1,18 +1,26 @@
 # Builder image
-FROM alpine:3.10.2 as build
+FROM python:3-alpine3.10 AS build
 MAINTAINER Measurement Lab Support <support@measurementlab.net>
 
 RUN apk add --update build-base gcc cmake libressl-dev curl-dev git linux-headers
+
+# Download and build libndt.
 RUN git clone https://github.com/measurement-kit/libndt.git
 WORKDIR /libndt
 
 RUN cmake .
 RUN cmake --build . -j $(nproc)
-RUN ctest -a --output-on-failure .
+
+# Build dash-client
+FROM golang:1.13.0-alpine3.10 AS dashbuild
+RUN apk add --no-cache git
+RUN go get github.com/neubot/dash/cmd/dash-client
 
 # Murakami image
 FROM python:3-alpine3.10
-RUN apk add git curl libstdc++ libgcc speedtest-cli gcc musl-dev libffi-dev openssl-dev python3-dev make
+RUN apk update && apk upgrade
+# Install dependencies and speedtest-cli
+RUN apk add git curl libstdc++ libgcc gcc libc-dev libffi-dev libressl-dev speedtest-cli make
 RUN pip install 'poetry==0.12.17'
 
 WORKDIR /murakami
@@ -37,5 +45,9 @@ ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
 # Copy Murakami and previously built test clients into the container.
 COPY . /murakami/
 COPY --from=build /libndt/libndt-client /murakami/bin/
+COPY --from=dashbuild /go/bin/dash-client /murakami/bin/
 
-CMD python -m murakami
+# Add binaries' path to PATH.
+ENV PATH="/murakami/bin:${PATH}"
+
+ENTRYPOINT [ "/usr/local/bin/poetry", "run", "murakami" ]

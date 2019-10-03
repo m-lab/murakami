@@ -1,8 +1,9 @@
 import logging
-import os
 import shutil
+import subprocess
 import uuid
 
+import jsonlines
 from webthing import Action, Event, Property, Thing, Value
 
 from murakami.errors import RunnerError
@@ -14,7 +15,6 @@ logger = logging.getLogger(__name__)
 class RunDash(Action):
     def __init__(self, thing, input_):
         Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
-        print(("input: "), input_)
 
     def perform_action(self):
         print("perform dash action")
@@ -80,9 +80,15 @@ class DashClient(MurakamiRunner):
             },
         )
 
-    def run_test(self):
-        if shutil.which("dash") is not None:
-            os.system("dash")
+    def _start_test(self):
+        if shutil.which("dash-client") is not None:
+            output = subprocess.run(["dash-client"],
+                                    check=True,
+                                    text=True,
+                                    capture_output=True)
+            reader = jsonlines.Reader(output.stdout.splitlines())
         else:
             raise RunnerError(
-                "dash", "Executable does not exist, please install dash.")
+                "dash",
+                "Executable dash-client does not exist, please install DASH.")
+        return [*reader.iter()]

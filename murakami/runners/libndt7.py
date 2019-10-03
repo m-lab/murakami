@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import uuid
 
+import jsonlines
 from webthing import Action, Event, Property, Thing, Value
 
 from murakami.errors import RunnerError
@@ -13,11 +14,10 @@ logger = logging.getLogger(__name__)
 
 class RunLibndt(Action):
     def __init__(self, thing, input_):
-
         Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
 
     def perform_action(self):
-        logger.info("Performing libndt test")
+        logger.info("Performing ndt7 test")
         self.thing.start_test()
 
 
@@ -81,6 +81,7 @@ class LibndtClient(MurakamiRunner):
         )
 
     def _start_test(self):
+        logger.info("Starting ndt7 test...")
         if shutil.which("libndt-client") is not None:
             output = subprocess.run(
                 [
@@ -98,9 +99,10 @@ class LibndtClient(MurakamiRunner):
                 text=True,
                 capture_output=True,
             )
+            reader = jsonlines.Reader(output.stdout.splitlines())
         else:
             raise RunnerError(
                 "libndt",
                 "Executable libndt-client does not exist, please install libndt.",
             )
-        return output.stdout
+        return [*reader.iter(skip_empty=True)]

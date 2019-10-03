@@ -18,6 +18,7 @@ tomlkit = "^0.5.5"
 apscheduler = "^3.6"
 paramiko = "^2.6"
 scp = "^0.13.2"
+jsonlines = "^1.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
@@ -32,6 +33,7 @@ pylint = "^2.4"
 [tool.poetry.plugins."murakami.exporters"]
 "local" = "murakami.exporters.local:LocalExporter"
 "scp" = "murakami.exporters.scp:SCPExporter"
+"gcs" = "murakami.exporters.gcs:GCSExporter"
 
 [build-system]
 requires = ["poetry>=0.12"]

@@ -10,14 +10,111 @@ from murakami.runner import MurakamiRunner
 
 logger = logging.getLogger(__name__)
 
+NDT5_SCHEMA = [
+    "CurMSS",
+    "X_Rcvbuf",
+    "X_Sndbuf",
+    "AckPktsIn",
+    "AckPktsOut",
+    "BytesRetrans",
+    "CongAvoid",
+    "CongestionOverCount",
+    "CongestionSignals",
+    "CountRTT",
+    "CurCwnd",
+    "CurRTO",
+    "CurRwinRcvd",
+    "CurRwinSent",
+    "CurSsthresh",
+    "DSACKDups",
+    "DataBytesIn",
+    "DataBytesOut",
+    "DataPktsIn",
+    "DataPktsOut",
+    "DupAcksIn",
+    "ECNEnabled",
+    "FastRetran",
+    "MaxCwnd",
+    "MaxMSS",
+    "MaxRTO",
+    "MaxRTT",
+    "MaxRwinRcvd",
+    "MaxRwinSent",
+    "MaxSsthresh",
+    "MinMSS",
+    "MinRTO",
+    "MinRTT",
+    "MinRwinRcvd",
+    "MinRwinSent",
+    "NagleEnabled",
+    "OtherReductions",
+    "PktsIn",
+    "PktsOut",
+    "PktsRetrans",
+    "RcvWinScale",
+    "SACKEnabled",
+    "SACKsRcvd",
+    "SendStall",
+    "SlowStart",
+    "SampleRTT",
+    "SmoothedRTT",
+    "SndWinScale",
+    "SndLimTimeRwin",
+    "SndLimTimeCwnd",
+    "SndLimTimeSender",
+    "SndLimTransRwin",
+    "SndLimTransCwnd",
+    "SndLimTransSender",
+    "SndLimBytesRwin",
+    "SndLimBytesCwnd",
+    "SndLimBytesSender",
+    "SubsequentTimeouts",
+    "SumRTT",
+    "Timeouts",
+    "TimestampsEnabled",
+    "WinScaleRcvd",
+    "WinScaleSent",
+    "DupAcksOut",
+    "StartTimeUsec",
+    "Duration",
+    "c2sData",
+    "c2sAck",
+    "s2cData",
+    "s2cAck",
+    "half_duplex",
+    "link",
+    "congestion",
+    "bad_cable",
+    "mismatch",
+    "spd",
+    "bw",
+    "loss",
+    "avgrtt",
+    "waitsec",
+    "timesec",
+    "order",
+    "rwintime",
+    "sendtime",
+    "cwndtime",
+    "rwin",
+    "swin",
+    "cwin",
+    "rttsec",
+    "Sndbuf",
+    "aspd",
+    "CWND-Limited",
+    "minCWNDpeak",
+    "maxCWNDpeak",
+    "CWNDpeaks",
+]
+
 
 class RunLibndt(Action):
     def __init__(self, thing, input_):
-
         Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
 
     def perform_action(self):
-        logger.info("Performing libndt test")
+        logger.info("Performing ndt5 test")
         self.thing.start_test()
 
 
@@ -81,6 +178,7 @@ class LibndtClient(MurakamiRunner):
         )
 
     def _start_test(self):
+        logger.info("Starting NDT test...")
         if shutil.which("libndt-client") is not None:
             output = subprocess.run(
                 [
@@ -97,9 +195,18 @@ class LibndtClient(MurakamiRunner):
                 text=True,
                 capture_output=True,
             )
+            json = dict(
+                zip(
+                    NDT5_SCHEMA,
+                    [
+                        float(n) if "." in n else int(n)
+                        for n in output.stdout.splitlines()
+                    ],
+                ))
+
         else:
             raise RunnerError(
                 "libndt",
                 "Executable libndt-client does not exist, please install libndt.",
             )
-        return output.stdout
+        return [json]
