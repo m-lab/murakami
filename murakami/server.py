@@ -18,16 +18,20 @@ def is_enabled(toggle):
 class RandomTrigger(BaseTrigger):
     def __init__(self, *args, **kwargs):
         super().__init__()
-        self._expected_sleep_seconds = kwargs.pop("expected_sleep_seconds",
-                                                  defaults.SLEEP_SECONDS)
+        self._tests_per_day = kwargs.pop("tests_per_day",
+                                         defaults.TESTS_PER_DAY)
         self._immediate = kwargs.pop("immediate", False)
 
     def get_next_fire_time(self, previous_fire_time, now):
-        sleeptime = random.expovariate(1.0 / self._expected_sleep_seconds)
+        sleeptime = random.expovariate(
+            1.0 /
+            (datetime.timedelta(days=1).total_seconds() / self._tests_per_day))
         if not previous_fire_time:
+            logger.debug("Not previously fired before")
             if self._immediate:
                 return now
             previous_fire_time = now
+
         return previous_fire_time + datetime.timedelta(seconds=sleeptime)
 
 
@@ -40,7 +44,6 @@ class MurakamiServer:
             additional_routes=None,
             base_path="",
             tests_per_day=defaults.TESTS_PER_DAY,
-            expected_sleep_seconds=defaults.SLEEP_SECONDS,
             immediate=False,
             config=None,
     ):
@@ -48,7 +51,8 @@ class MurakamiServer:
         self.exporters = {}
 
         self.scheduler = TornadoScheduler()
-        trigger = RandomTrigger(expected_sleep_seconds=expected_sleep_seconds, immediate=immediate)
+        trigger = RandomTrigger(tests_per_day=tests_per_day,
+                                immediate=immediate)
 
         # Check if exporters are enabled and load them.
         if "exporters" in config:
@@ -76,8 +80,13 @@ class MurakamiServer:
                     logging.debug("Exporter %s disabled, skipping.", name)
 
         def call_exporters(test_name="", data="", timestamp=None):
-            for exp in self.exporters.values():
-                exp.push(test_name, data, timestamp)
+            for e in self.exporters.values():
+                e.push(test_name, data, timestamp)
+
+        def call_runners():
+            for r in self.runners.values():
+                logger.info("Running test: %s", r.name)
+                r.start_test()
 
         # Check if test runners are enabled and load them.
         for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
@@ -92,16 +101,14 @@ class MurakamiServer:
             if enabled:
                 self.runners[entry_point.name] = entry_point.load()(
                     config=rconfig, data_cb=call_exporters)
-                if tests_per_day > 0:
-                    self.scheduler.add_job(
-                        self.runners[entry_point.name].start_test,
-                        id=entry_point.name,
-                        name=entry_point.name,
-                        trigger=trigger,
-                    )
             else:
                 logging.debug("Test runner %s disabled, skipping.",
                               entry_point.name)
+        if tests_per_day > 0:
+            self.scheduler.add_job(call_runners,
+                                   id="runners",
+                                   name="runners",
+                                   trigger=trigger)
 
         self.server = WebThingServer(
             MultipleThings([r.thing for r in self.runners.values()],

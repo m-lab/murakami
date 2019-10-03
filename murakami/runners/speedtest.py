@@ -26,14 +26,14 @@ class SpeedtestClient(MurakamiRunner):
     def __init__(self, config=None, data_cb=None):
         super().__init__(name="speedtest", config=config, data_cb=data_cb)
 
-        self._thing = Thing(
+        self.thing = Thing(
             "urn:dev:ops:speedtest-client",
             "Speedtest Client",
             ["OnOffSwitch", "Client"],
             "A client running Speedtest.net tests",
         )
 
-        self._thing.add_property(
+        self.thing.add_property(
             Property(
                 self,
                 "on",
@@ -46,7 +46,7 @@ class SpeedtestClient(MurakamiRunner):
                 },
             ))
 
-        self._thing.add_available_action(
+        self.thing.add_available_action(
             "run",
             {
                 "title": "Run",
@@ -71,7 +71,7 @@ class SpeedtestClient(MurakamiRunner):
             RunSpeedtest,
         )
 
-        self._thing.add_available_event(
+        self.thing.add_available_event(
             "error",
             {
                 "description": "There was an error running the tests",
