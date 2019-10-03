@@ -123,14 +123,14 @@ class LibndtClient(MurakamiRunner):
     def __init__(self, config=None, data_cb=None):
         super().__init__(name="ndt5", config=config, data_cb=data_cb)
 
-        self._thing = Thing(
+        self.thing = Thing(
             "urn:dev:ops:libndt-client",
             "LibNDT Client",
             ["OnOffSwitch", "Client"],
             "A client running LibNDT tests",
         )
 
-        self._thing.add_property(
+        self.thing.add_property(
             Property(
                 self,
                 "on",
@@ -143,7 +143,7 @@ class LibndtClient(MurakamiRunner):
                 },
             ))
 
-        self._thing.add_available_action(
+        self.thing.add_available_action(
             "run",
             {
                 "title": "Run",
@@ -168,7 +168,7 @@ class LibndtClient(MurakamiRunner):
             RunLibndt,
         )
 
-        self._thing.add_available_event(
+        self.thing.add_available_event(
             "error",
             {
                 "description": "There was an error running the tests",
@@ -199,6 +199,7 @@ class LibndtClient(MurakamiRunner):
                 zip(
                     NDT5_SCHEMA,
                     [
+                        str(n) if not n.replace(".", "", 1).isdigit() else
                         float(n) if "." in n else int(n)
                         for n in output.stdout.splitlines()
                     ],

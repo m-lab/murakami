@@ -1,8 +1,11 @@
 from collections import OrderedDict
 import logging
 import os
+
 import configargparse
 import tomlkit
+
+import murakami.defaults as defaults
 from murakami.server import MurakamiServer
 
 config = None
@@ -62,10 +65,7 @@ def main():
     parser = configargparse.ArgParser(
         auto_env_var_prefix="murakami_settings_",
         config_file_parser_class=TomlConfigFileParser,
-        default_config_files=[
-            "/etc/murakami/murakami.toml",
-            "~/.config/murakami/murakami.toml",
-        ],
+        default_config_files=defaults.CONFIG_FILES,
         description="The Murakami network test runner.",
         ignore_unknown_config_file_keys=True,
     )
@@ -80,7 +80,7 @@ def main():
         "-p",
         "--port",
         type=int,
-        default=80,
+        default=defaults.HTTP_PORT,
         help="The port to listen on for incoming connections (default: 80).",
     )
     parser.add("-n",
@@ -120,16 +120,8 @@ def main():
         "--tests-per-day",
         dest="tests_per_day",
         type=int,
-        default=2,
+        default=defaults.TESTS_PER_DAY,
         help="Set the number of tests per day.",
-    )
-    parser.add(
-        "-e",
-        "--expected-sleep-seconds",
-        dest="expected_sleep_seconds",
-        type=int,
-        default=12 * 60 * 60,
-        help="Set the minimum number of seconds between random tests.",
     )
     parser.add(
         "-i",
@@ -151,13 +143,12 @@ def main():
         config = load_env()
 
     server = MurakamiServer(
-        port=settings.port or 8080,
+        port=settings.port,
         hostname=settings.hostname,
         ssl_options=settings.ssl_options,
         additional_routes=settings.additional_routes,
-        base_path=settings.base_path or "",
+        base_path=settings.base_path,
         tests_per_day=settings.tests_per_day,
-        expected_sleep_seconds=settings.expected_sleep_seconds,
         immediate=settings.immediate,
         config=config,
     )
