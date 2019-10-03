@@ -63,7 +63,7 @@ def main():
         auto_env_var_prefix="murakami_settings_",
         config_file_parser_class=TomlConfigFileParser,
         default_config_files=[
-            "/murakami/murakami.toml",
+            "/etc/murakami/murakami.toml",
             "~/.config/murakami/murakami.toml",
         ],
         description="The Murakami network test runner.",
