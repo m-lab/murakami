@@ -28,8 +28,8 @@ COPY poetry.lock pyproject.toml /murakami/
 
 # Set up poetry to not create a virtualenv, since the docker container is
 # isolated already, and install the required dependencies.
-RUN poetry config settings.virtualenvs.create true \
-    && poetry install --no-dev --no-interaction
+RUN poetry config settings.virtualenvs.create false \
+    && poetry install --no-dev --no-interaction --develop=murakami
 
 # Install gcloud SDK so we can use gsutil.
 RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
