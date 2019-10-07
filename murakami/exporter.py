@@ -23,7 +23,7 @@ class MurakamiExporter:
         conn_loc = os.environ.get(defaults.ENV_CONN_LOC, None)
 
         if (site is not None and device_loc is not None and
-           connection_loc is not None):
+           conn_loc is not None):
             return "%s-%s-%s-%s-%s.jsonl" % (site, test_name, device_loc,
                                              conn_loc, timestamp)
         return "%s-%s.jsonl" % (test_name, timestamp)

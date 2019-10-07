@@ -46,10 +46,11 @@ class SCPExporter(MurakamiExporter):
         try:
             ssh.connect(
                 dst_host,
-                self.port,
+                int(self.port),
                 username=self.username,
                 password=self.password,
                 timeout=defaults.SSH_TIMEOUT,
+                key_filename=self.private_key
             )
 
             with SCPClient(ssh.get_transport()) as scp:
@@ -57,10 +58,10 @@ class SCPExporter(MurakamiExporter):
                 dst_path = os.path.join(dst_path, filename)
                 logger.info("Copying data to %s", dst_path)
                 buf = io.StringIO()
-                with jsonlines.open(buf, mode="w") as writer:
-                    writer.write_all(data)
+                buf.write(str(data))
+                buf.seek(0)
                 scp.putfo(buf, dst_path)
         except Exception as err:
             logger.error("SCP exporter failed: %s", err)
-        else:
+        finally:
             ssh.close()
