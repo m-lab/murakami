@@ -53,8 +53,8 @@ class SCPExporter(MurakamiExporter):
             )
 
             with SCPClient(ssh.get_transport()) as scp:
-                dst_path = os.path.join(dst_path,
-                                        test_name + "-" + timestamp + ".jsonl")
+                filename = self._generate_filename(test_name, timestamp)
+                dst_path = os.path.join(dst_path, filename)
                 logger.info("Copying data to %s", dst_path)
                 buf = io.StringIO()
                 with jsonlines.open(buf, mode="w") as writer:

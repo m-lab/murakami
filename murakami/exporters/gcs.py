@@ -20,7 +20,7 @@ class GCSExporter(MurakamiExporter):
         self.key = config.get("key", None)
 
     def push(self, test_name="", data="", timestamp=None):
-        """Upload the file to GCS using the provided configuration."""
+        """Upload the test data to GCS using the provided configuration."""
         if self.target is None:
             logger.error("GCS: target must be provided.")
             return
@@ -38,8 +38,7 @@ class GCSExporter(MurakamiExporter):
                                 text=True,
                                 capture_output=True)
 
-        #date = datetime.fromtimestamp(timestamp).isoformat()
-        test_file = test_name + "-" + timestamp + ".json"
+        test_file = self._generate_filename(test_name, timestamp)
         tmp_path = "/tmp/" + test_file
         try:
             # Write content to a temporary file.
