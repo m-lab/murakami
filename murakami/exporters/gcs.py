@@ -1,10 +1,8 @@
 import os
 import subprocess
 import logging
-import time
-import pytz
+import jsonlines
 
-from datetime import datetime
 from murakami.exporter import MurakamiExporter
 
 logger = logging.getLogger(__name__)
@@ -19,7 +17,7 @@ class GCSExporter(MurakamiExporter):
         self.service_account = config.get("service_account", None)
         self.key = config.get("key", None)
 
-    def push(self, test_name="", data="", timestamp=None):
+    def push(self, test_name="", data=None, timestamp=None):
         """Upload the test data to GCS using the provided configuration."""
         if self.target is None:
             logger.error("GCS: target must be provided.")
@@ -42,8 +40,8 @@ class GCSExporter(MurakamiExporter):
         tmp_path = "/tmp/" + test_file
         try:
             # Write content to a temporary file.
-            with open(tmp_path, "w") as tmp_file:
-                tmp_file.write(str(data))
+            with jsonlines.open(tmp_path, "w") as tmp_file:
+                tmp_file.write_all(data)
 
             # Run gsutil to copy test data to the GCS bucket.
             output = subprocess.run([
@@ -52,9 +50,9 @@ class GCSExporter(MurakamiExporter):
                 tmp_path,
                 self.target + test_file
             ],
-            check=True,
-            text=True,
-            capture_output=True)
+                check=True,
+                text=True,
+                capture_output=True)
         finally:
             # Make sure we remove the temporary file.
             os.remove(tmp_path)
