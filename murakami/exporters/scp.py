@@ -18,7 +18,7 @@ class SCPExporter(MurakamiExporter):
     folder via SCP."""
     def __init__(self, name="", config=None):
         # Check if a configuration for the SCP exporter has been provided.
-        self._name = name
+        super().__init__(name=name, config=config)
         self.target = config.get("target", None)
         self.port = config.get("port", defaults.SSH_PORT)
         self.username = config.get("username", None)

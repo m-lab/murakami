@@ -14,7 +14,7 @@ class GCSExporter(MurakamiExporter):
     """This exporter allows to upload data to a Google Cloud Storage
     bucket."""
     def __init__(self, name="", config=None):
-        self._name = name
+        super().__init__(name=name, config=config)
         self.target = config.get("target", None)
         self.service_account = config.get("service_account", None)
         self.key = config.get("key", None)

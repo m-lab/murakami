@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 class MurakamiExporter:
     def __init__(self, name="", config=None):
-        self._name = name
+        self.name = name
         self._config = config
 
     def push(self, test_name="", data=None, timestamp=None):

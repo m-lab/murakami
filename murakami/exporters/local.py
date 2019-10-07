@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class LocalExporter(MurakamiExporter):
     """This exporter saves data to a local directory."""
     def __init__(self, name="", config=None):
-        self._name = name
+        super().__init__(name=name, config=config)
         self._path = config.get("path", defaults.EXPORT_PATH)
 
     def push(self, test_name="", data=None, timestamp=None):
