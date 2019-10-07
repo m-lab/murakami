@@ -19,7 +19,7 @@ class LocalExporter(MurakamiExporter):
         try:
             dst_path = os.path.join(
                 self._path,
-                str(test_name) + "-" + str(timestamp) + ".jsonl")
+                self._generate_filename(test_name, timestamp))
             output = open(dst_path, "w")
             logger.info("Copying data to %s", dst_path)
             with jsonlines.Writer(output) as writer:
