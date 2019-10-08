@@ -17,7 +17,7 @@ RUN apk add --no-cache git
 RUN go get github.com/neubot/dash/cmd/dash-client
 
 # Murakami image
-FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-python:3-3.10
+FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-python:3-edge
 
 RUN apk update && apk upgrade
 # Install dependencies and speedtest-cli
