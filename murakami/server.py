@@ -81,7 +81,13 @@ class MurakamiServer:
 
         def call_exporters(test_name="", data="", timestamp=None):
             for e in self.exporters.values():
-                e.push(test_name, data, timestamp)
+                logger.info("Running exporter %s for test %s", e.name,
+                            test_name)
+                try:
+                    e.push(test_name, data, timestamp)
+                except Exception as exc:
+                    logger.error("Failed to run exporter %s: %s", e.name,
+                                 str(exc))
 
         def call_runners():
             for r in self.runners.values():

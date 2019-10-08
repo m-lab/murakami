@@ -18,7 +18,7 @@ class SCPExporter(MurakamiExporter):
     folder via SCP."""
     def __init__(self, name="", config=None):
         # Check if a configuration for the SCP exporter has been provided.
-        self._name = name
+        super().__init__(name=name, config=config)
         self.target = config.get("target", None)
         self.port = config.get("port", defaults.SSH_PORT)
         self.username = config.get("username", None)
@@ -46,21 +46,23 @@ class SCPExporter(MurakamiExporter):
         try:
             ssh.connect(
                 dst_host,
-                self.port,
+                int(self.port),
                 username=self.username,
                 password=self.password,
                 timeout=defaults.SSH_TIMEOUT,
+                key_filename=self.private_key
             )
 
             with SCPClient(ssh.get_transport()) as scp:
-                dst_path = os.path.join(dst_path,
-                                        test_name + "-" + timestamp + ".jsonl")
+                filename = self._generate_filename(test_name, timestamp)
+                dst_path = os.path.join(dst_path, filename)
                 logger.info("Copying data to %s", dst_path)
                 buf = io.StringIO()
-                with jsonlines.open(buf, mode="w") as writer:
+                with jsonlines.Writer(buf) as writer:
                     writer.write_all(data)
+                buf.seek(0)
                 scp.putfo(buf, dst_path)
         except Exception as err:
             logger.error("SCP exporter failed: %s", err)
-        else:
+        finally:
             ssh.close()
