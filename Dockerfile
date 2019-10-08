@@ -24,12 +24,6 @@ RUN apk add git curl libstdc++ libgcc gcc libc-dev libffi-dev libressl-dev speed
 RUN pip install 'poetry==0.12.17'
 
 WORKDIR /murakami
-COPY poetry.lock pyproject.toml /murakami/
-
-# Set up poetry to not create a virtualenv, since the docker container is
-# isolated already, and install the required dependencies.
-RUN poetry config settings.virtualenvs.create false \
-    && poetry install --no-dev --no-interaction --develop=murakami
 
 # Install gcloud SDK so we can use gsutil.
 RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
@@ -46,6 +40,11 @@ ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
 COPY . /murakami/
 COPY --from=build /libndt/libndt-client /murakami/bin/
 COPY --from=dashbuild /go/bin/dash-client /murakami/bin/
+
+# Set up poetry to not create a virtualenv, since the docker container is
+# isolated already, and install the required dependencies.
+RUN poetry config settings.virtualenvs.create false \
+    && poetry install --no-dev --no-interaction --develop=murakami
 
 # Add binaries' path to PATH.
 ENV PATH="/murakami/bin:${PATH}"
