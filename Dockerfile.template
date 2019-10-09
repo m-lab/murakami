@@ -17,7 +17,7 @@ RUN apk add --no-cache git
 RUN go get github.com/neubot/dash/cmd/dash-client
 
 # Murakami image
-FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-python:3-3.10
+FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-python:3.7-edge
 
 RUN apk update && apk upgrade
 # Install dependencies and speedtest-cli
@@ -27,7 +27,8 @@ RUN pip install 'poetry==0.12.17'
 WORKDIR /murakami
 COPY poetry.lock pyproject.toml /murakami/
 
-RUN poetry install --no-dev --no-interaction --develop=murakami
+RUN poetry config settings.virtualenvs.create false && \
+  poetry install --no-dev --no-interaction
 
 # Install gcloud SDK so we can use gsutil.
 RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
@@ -42,6 +43,9 @@ ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
 
 # Copy Murakami and previously built test clients into the container.
 COPY . /murakami/
+
+RUN poetry install
+
 COPY --from=build /libndt/libndt-client /murakami/bin/
 COPY --from=dashbuild /go/bin/dash-client /murakami/bin/
 
