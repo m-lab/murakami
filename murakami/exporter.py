@@ -16,7 +16,7 @@ class MurakamiExporter:
 
     def _generate_filename(self, test_name="", timestamp=None):
         if timestamp is None:
-            timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")
+            timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
 
         site = os.environ.get(defaults.ENV_SITE, None)
         device_loc = os.environ.get(defaults.ENV_DEVICE_LOC, None)
