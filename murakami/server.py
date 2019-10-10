@@ -67,7 +67,7 @@ class MurakamiServer:
                     if "type" in entry:
                         if entry["type"] in exporters:
                             self.exporters[name] = exporters[
-                                entry["type"]].load()(name=name, config=entry)
+                                entry["type"]].load()(name=name, config=entry, global_config=config)
                         else:
                             logging.error(
                                 "No available exporter type %s, skipping.",
