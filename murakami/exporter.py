@@ -20,12 +20,12 @@ class MurakamiExporter:
             timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
 
         if self._global_config.get("settings") is not None:
-            site = self._global_config["settings"].get("site")
-            device = self._global_config["settings"].get("device_location")
+            location = self._global_config["settings"].get("location")
+            network = self._global_config["settings"].get("network_type")
             connection = (self._global_config["settings"].
-                          get("connection_location"))
+                          get("connection_type"))
             if (site is not None and device is not None and
                connection is not None):
-                return "%s-%s-%s-%s-%s.jsonl" % (site, test_name, device,
+                return "%s-%s-%s-%s-%s.jsonl" % (location, test_name, network,
                                                  connection, timestamp)
         return "%s-%s.jsonl" % (test_name, timestamp)
