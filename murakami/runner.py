@@ -1,6 +1,5 @@
 from datetime import datetime
 import logging
-from webthing import Thing
 from murakami.errors import RunnerError
 
 logger = logging.getLogger(__name__)

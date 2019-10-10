@@ -11,8 +11,8 @@ logger = logging.getLogger(__name__)
 class GCSExporter(MurakamiExporter):
     """This exporter allows to upload data to a Google Cloud Storage
     bucket."""
-    def __init__(self, name="", config=None):
-        super().__init__(name=name, config=config)
+    def __init__(self, name="", config=None, global_config=None):
+        super().__init__(name=name, config=config, global_config=global_config)
         self.target = config.get("target", None)
         self.service_account = config.get("service_account", None)
         self.key = config.get("key", None)
