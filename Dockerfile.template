@@ -8,8 +8,6 @@ WORKDIR /libndt
 
 RUN cmake .
 RUN cmake --build . -j $(nproc)
-RUN ctest -a --output-on-failure .
-
 
 # Build dash-client
 FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-golang:1.12-3.10-build AS dashbuild
