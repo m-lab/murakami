@@ -24,7 +24,7 @@ class MurakamiExporter:
             network = self._global_config["settings"].get("network_type")
             connection = (self._global_config["settings"].
                           get("connection_type"))
-            if (site is not None and device is not None and
+            if (location is not None and network is not None and
                connection is not None):
                 return "%s-%s-%s-%s-%s.jsonl" % (location, test_name, network,
                                                  connection, timestamp)
