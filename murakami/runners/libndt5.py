@@ -3,110 +3,13 @@ import shutil
 import subprocess
 import uuid
 
+import jsonlines
 from webthing import Action, Event, Property, Thing, Value
 
 from murakami.errors import RunnerError
 from murakami.runner import MurakamiRunner
 
 logger = logging.getLogger(__name__)
-
-NDT5_SCHEMA = [
-    "CurMSS",
-    "X_Rcvbuf",
-    "X_Sndbuf",
-    "AckPktsIn",
-    "AckPktsOut",
-    "BytesRetrans",
-    "CongAvoid",
-    "CongestionOverCount",
-    "CongestionSignals",
-    "CountRTT",
-    "CurCwnd",
-    "CurRTO",
-    "CurRwinRcvd",
-    "CurRwinSent",
-    "CurSsthresh",
-    "DSACKDups",
-    "DataBytesIn",
-    "DataBytesOut",
-    "DataPktsIn",
-    "DataPktsOut",
-    "DupAcksIn",
-    "ECNEnabled",
-    "FastRetran",
-    "MaxCwnd",
-    "MaxMSS",
-    "MaxRTO",
-    "MaxRTT",
-    "MaxRwinRcvd",
-    "MaxRwinSent",
-    "MaxSsthresh",
-    "MinMSS",
-    "MinRTO",
-    "MinRTT",
-    "MinRwinRcvd",
-    "MinRwinSent",
-    "NagleEnabled",
-    "OtherReductions",
-    "PktsIn",
-    "PktsOut",
-    "PktsRetrans",
-    "RcvWinScale",
-    "SACKEnabled",
-    "SACKsRcvd",
-    "SendStall",
-    "SlowStart",
-    "SampleRTT",
-    "SmoothedRTT",
-    "SndWinScale",
-    "SndLimTimeRwin",
-    "SndLimTimeCwnd",
-    "SndLimTimeSender",
-    "SndLimTransRwin",
-    "SndLimTransCwnd",
-    "SndLimTransSender",
-    "SndLimBytesRwin",
-    "SndLimBytesCwnd",
-    "SndLimBytesSender",
-    "SubsequentTimeouts",
-    "SumRTT",
-    "Timeouts",
-    "TimestampsEnabled",
-    "WinScaleRcvd",
-    "WinScaleSent",
-    "DupAcksOut",
-    "StartTimeUsec",
-    "Duration",
-    "c2sData",
-    "c2sAck",
-    "s2cData",
-    "s2cAck",
-    "half_duplex",
-    "link",
-    "congestion",
-    "bad_cable",
-    "mismatch",
-    "spd",
-    "bw",
-    "loss",
-    "avgrtt",
-    "waitsec",
-    "timesec",
-    "order",
-    "rwintime",
-    "sendtime",
-    "cwndtime",
-    "rwin",
-    "swin",
-    "cwin",
-    "rttsec",
-    "Sndbuf",
-    "aspd",
-    "CWND-Limited",
-    "minCWNDpeak",
-    "maxCWNDpeak",
-    "CWNDpeaks",
-]
 
 
 class RunLibndt(Action):
@@ -195,19 +98,10 @@ class LibndtClient(MurakamiRunner):
                 text=True,
                 capture_output=True,
             )
-            json = dict(
-                zip(
-                    NDT5_SCHEMA,
-                    [
-                        str(n) if not n.replace(".", "", 1).isdigit() else
-                        float(n) if "." in n else int(n)
-                        for n in output.stdout.splitlines()
-                    ],
-                ))
-
+            reader = jsonlines.Reader(output.stdout.splitlines())
         else:
             raise RunnerError(
                 "libndt",
                 "Executable libndt-client does not exist, please install libndt.",
             )
-        return [json]
+        return [*reader.iter(allow_none=True, skip_empty=True)]
