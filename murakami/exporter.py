@@ -31,8 +31,8 @@ class MurakamiExporter:
         if (self._location is not None and self._network_type is not None
                 and self._connection_type is not None):
             return "%s-%s-%s-%s-%s.jsonl" % (
-                self._location,
                 test_name.lower(),
+                self._location,
                 self._network_type,
                 self._connection_type,
                 timestamp,
