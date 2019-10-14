@@ -162,21 +162,21 @@ def main():
         help="Enable webthings support.",
     )
     parser.add(
-        "--site",
-        default=None,
-        dest="site",
-        help="Site associated with this Murakami node (default: '').",
-    )
-    parser.add(
         "--location",
         default=None,
         dest="location",
         help="Physical place Murakami node is located (default: '').",
     )
     parser.add(
-        "--connection",
+        "--network-type",
         default=None,
-        dest="connection",
+        dest="network_type",
+        help="Site associated with this Murakami node (default: '').",
+    )
+    parser.add(
+        "--connection-type",
+        default=None,
+        dest="connection_type",
         help="Connection this associated with this node (default: '').",
     )
     settings = parser.parse_args()
@@ -191,6 +191,7 @@ def main():
         config = load_env()
     if settings.webthings:
         state = livejson.File(settings.dynamic)
+        config = ChainMap(state, config)
 
     server = MurakamiServer(
         port=settings.port,
@@ -201,10 +202,10 @@ def main():
         tests_per_day=settings.tests_per_day,
         immediate=settings.immediate,
         webthings=settings.webthings,
-        site=settings.site,
         location=settings.location,
-        connection=settings.connection,
-        config=ChainMap(state, config),
+        network_type=settings.network_type,
+        connection_type=settings.connection_type,
+        config=config,
     )
 
     try:

@@ -11,17 +11,19 @@ logger = logging.getLogger(__name__)
 
 class LocalExporter(MurakamiExporter):
     """This exporter saves data to a local directory."""
-    def __init__(self,
-                 name="",
-                 site=None,
-                 location=None,
-                 connection=None,
-                 config=None):
+    def __init__(
+            self,
+            name="",
+            location=None,
+            network_type=None,
+            connection_type=None,
+            config=None,
+    ):
         super().__init__(
             name=name,
-            site=site,
             location=location,
-            connection=connection,
+            network_type=network_type,
+            connection_type=connection_type,
             config=config,
         )
         self._path = config.get("path", defaults.EXPORT_PATH)

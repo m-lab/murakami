@@ -7,16 +7,18 @@ logger = logging.getLogger(__name__)
 
 
 class MurakamiExporter:
-    def __init__(self,
-                 name="",
-                 site=None,
-                 location=None,
-                 connection=None,
-                 config=None):
+    def __init__(
+            self,
+            name="",
+            location=None,
+            network_type=None,
+            connection_type=None,
+            config=None,
+    ):
         self.name = name
-        self._site = site
         self._location = location
-        self._connection = connection
+        self._network_type = network_type
+        self._connection_type = connection_type
         self._config = config
 
     def push(self, test_name="", data=None, timestamp=None):
@@ -26,13 +28,13 @@ class MurakamiExporter:
         if timestamp is None:
             timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
 
-        if (self._site is not None and self._location is not None
-                and self._connection is not None):
+        if (self._location is not None and self._network_type is not None
+                and self._connection_type is not None):
             return "%s-%s-%s-%s-%s.jsonl" % (
-                self._site,
-                test_name.lower(),
                 self._location,
-                self._connection,
+                test_name.lower(),
+                self._network_type,
+                self._connection_type,
                 timestamp,
             )
         return "%s-%s.jsonl" % (test_name, timestamp)

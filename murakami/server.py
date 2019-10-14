@@ -5,6 +5,7 @@ import pkg_resources
 
 from apscheduler.schedulers.tornado import TornadoScheduler
 from apscheduler.triggers.base import BaseTrigger
+from tornado.ioloop import IOLoop
 from webthing import WebThingServer, MultipleThings
 
 import murakami.defaults as defaults
@@ -43,9 +44,9 @@ class MurakamiServer:
             tests_per_day=defaults.TESTS_PER_DAY,
             immediate=False,
             webthings=False,
-            site=None,
             location=None,
-            connection=None,
+            network_type=None,
+            connection_type=None,
             config=None,
     ):
         self._runners = {}
@@ -62,9 +63,9 @@ class MurakamiServer:
         self._tests_per_day = tests_per_day
         self._immediate = immediate
         self._webthings = webthings
-        self._site = site
         self._location = location
-        self._connection = connection
+        self._network_type = network_type
+        self._connection_type = connection_type
         self._config = config
 
     def _call_runners(self):
@@ -73,7 +74,7 @@ class MurakamiServer:
             try:
                 r.start_test()
             except Exception as exc:
-                logger.error("Failed to run test %s: %s", r.name, str(exc))
+                logger.error("Failed to run test %s: %s", r.title, str(exc))
 
     def _call_exporters(self, test_name="", data="", timestamp=None):
         for e in self._exporters.values():
@@ -141,9 +142,9 @@ class MurakamiServer:
                             self._exporters[name] = exporters[
                                 entry["type"]].load()(
                                     name=name,
-                                    site=self._site,
                                     location=self._location,
-                                    connection=self._connection,
+                                    network_type=self._network_type,
+                                    connection_type=self._connection_type,
                                     config=entry,
                                 )
                         else:
@@ -168,6 +169,8 @@ class MurakamiServer:
         if self._server is not None:
             logger.info("Starting the WebThing server.")
             self._server.start()
+        if self._scheduler is not None and self._server is None:
+            IOLoop.current().start()
 
     def stop(self):
         logger.info("Stopping Murakami services.")

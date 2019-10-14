@@ -11,8 +11,21 @@ logger = logging.getLogger(__name__)
 class GCSExporter(MurakamiExporter):
     """This exporter allows to upload data to a Google Cloud Storage
     bucket."""
-    def __init__(self, name="", config=None, global_config=None):
-        super().__init__(name=name, config=config, global_config=global_config)
+    def __init__(
+            self,
+            name="",
+            location=None,
+            network_type=None,
+            connection_type=None,
+            config=None,
+    ):
+        super().__init__(
+            name=name,
+            location=location,
+            network_type=network_type,
+            connection_type=connection_type,
+            config=config,
+        )
         self.target = config.get("target", None)
         self.service_account = config.get("service_account", None)
         self.key = config.get("key", None)
@@ -27,14 +40,18 @@ class GCSExporter(MurakamiExporter):
             return
 
         # Configure the SDK to use the provided service account key.
-        output = subprocess.run(["gcloud",
-                                 "auth",
-                                 "activate-service-account",
-                                 self.service_account,
-                                 "--key-file="+self.key],
-                                check=True,
-                                text=True,
-                                capture_output=True)
+        output = subprocess.run(
+            [
+                "gcloud",
+                "auth",
+                "activate-service-account",
+                self.service_account,
+                "--key-file=" + self.key,
+            ],
+            check=True,
+            text=True,
+            capture_output=True,
+        )
 
         test_file = self._generate_filename(test_name, timestamp)
         tmp_path = "/tmp/" + test_file
@@ -44,15 +61,12 @@ class GCSExporter(MurakamiExporter):
                 tmp_file.write_all(data)
 
             # Run gsutil to copy test data to the GCS bucket.
-            output = subprocess.run([
-                "gsutil",
-                "cp",
-                tmp_path,
-                self.target + test_file
-            ],
+            output = subprocess.run(
+                ["gsutil", "cp", tmp_path, self.target + test_file],
                 check=True,
                 text=True,
-                capture_output=True)
+                capture_output=True,
+            )
         finally:
             # Make sure we remove the temporary file.
             os.remove(tmp_path)
