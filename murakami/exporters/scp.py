@@ -16,9 +16,22 @@ logger = logging.getLogger(__name__)
 class SCPExporter(MurakamiExporter):
     """This exporter allows to copy Murakami's data path to a remote host and
     folder via SCP."""
-    def __init__(self, name="", config=None, global_config=None):
+    def __init__(
+            self,
+            name="",
+            location=None,
+            network_type=None,
+            connection_type=None,
+            config=None,
+    ):
         # Check if a configuration for the SCP exporter has been provided.
-        super().__init__(name=name, config=config, global_config=global_config)
+        super().__init__(
+            name=name,
+            location=location,
+            network_type=network_type,
+            connection_type=connection_type,
+            config=config,
+        )
         self.target = config.get("target", None)
         self.port = config.get("port", defaults.SSH_PORT)
         self.username = config.get("username", None)
@@ -50,7 +63,7 @@ class SCPExporter(MurakamiExporter):
                 username=self.username,
                 password=self.password,
                 timeout=defaults.SSH_TIMEOUT,
-                key_filename=self.private_key
+                key_filename=self.private_key,
             )
 
             with SCPClient(ssh.get_transport()) as scp:

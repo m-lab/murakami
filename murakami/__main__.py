@@ -1,8 +1,10 @@
-from collections import OrderedDict
+from collections import ChainMap, OrderedDict
+from collections.abc import Mapping
 import logging
 import os
 
 import configargparse
+import livejson
 import tomlkit
 
 import murakami.defaults as defaults
@@ -27,8 +29,20 @@ def load_env():
         recurse(k, v, acc)
     if "murakami" in acc:
         return acc["murakami"]
-    else:
-        return {}
+
+    return {}
+
+
+def update_config(old, new, overwrite=False):
+    for key, value in new.items():
+        ov = old.get(key, {})
+        if not isinstance(ov, Mapping):
+            old[key] = value
+        elif isinstance(value, Mapping):
+            old[key] = update_config(ov, value, overwrite)
+        else:
+            old[key] = value
+    return old
 
 
 class TomlConfigFileParser(configargparse.ConfigFileParser):
@@ -75,6 +89,14 @@ def main():
         is_config_file=True,
         required=False,
         help="Configuration file path (default: /etc/murakami/murakami.toml).",
+    )
+    parser.add(
+        "-d",
+        "--dynamic-state",
+        default=defaults.DYNAMIC_FILE,
+        dest="dynamic",
+        help=
+        "Path to dynamic configuration store, used to override settings via Webthings (default: /var/lib/murakami/config.json).",
     )
     parser.add(
         "-p",
@@ -131,6 +153,32 @@ def main():
         default=False,
         help="Immediately run available tests on startup.",
     )
+    parser.add(
+        "-w",
+        "--webthings",
+        action="store_true",
+        dest="webthings",
+        default=False,
+        help="Enable webthings support.",
+    )
+    parser.add(
+        "--location",
+        default=None,
+        dest="location",
+        help="Physical place Murakami node is located (default: '').",
+    )
+    parser.add(
+        "--network-type",
+        default=None,
+        dest="network_type",
+        help="Site associated with this Murakami node (default: '').",
+    )
+    parser.add(
+        "--connection-type",
+        default=None,
+        dest="connection_type",
+        help="Connection this associated with this node (default: '').",
+    )
     settings = parser.parse_args()
 
     logging.basicConfig(
@@ -141,6 +189,9 @@ def main():
     global config
     if not config:
         config = load_env()
+    if settings.webthings:
+        state = livejson.File(settings.dynamic)
+        config = ChainMap(state, config)
 
     server = MurakamiServer(
         port=settings.port,
@@ -150,6 +201,10 @@ def main():
         base_path=settings.base_path,
         tests_per_day=settings.tests_per_day,
         immediate=settings.immediate,
+        webthings=settings.webthings,
+        location=settings.location,
+        network_type=settings.network_type,
+        connection_type=settings.connection_type,
         config=config,
     )
 

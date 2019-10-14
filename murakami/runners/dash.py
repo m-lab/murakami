@@ -17,61 +17,42 @@ class RunDash(Action):
         Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
 
     def perform_action(self):
-        print("perform dash action")
-        self.thing.start_test()
+        logger.debug("Running %s test via Webthings.", self.thing.title)
+        results = self.thing.start_test()
+        self.thing.set_property("results", results)
 
 
 class DashClient(MurakamiRunner):
     """Run Dash tests."""
     def __init__(self, config=None, data_cb=None):
-        super().__init__(name="dash", config=config, data_cb=data_cb)
-
-        self.thing = Thing(
-            "urn:dev:ops:dash-client",
-            "Dash Client",
-            ["OnOffSwitch", "Client"],
-            "A client running Dash tests",
+        super().__init__(
+            id_="https://github.com/neubot/dash",
+            title="DASH",
+            type_=["Test"],
+            description="The Neubot DASH network test.",
+            config=config,
+            data_cb=data_cb,
         )
 
-        self.thing.add_property(
+        self.add_property(
             Property(
                 self,
-                "on",
-                Value(True, lambda v: print("On-State is now", v)),
+                "results",
+                Value([]),
                 metadata={
-                    "@type": "OnOffProperty",
-                    "title": "On/Off",
-                    "type": "boolean",
-                    "description": "Whether the client is running",
+                    "@type": "MurakamiJsonl",
+                    "title": "Results",
+                    "type": "array",
+                    "description": "The results of the last test",
                 },
             ))
 
-        self.thing.add_available_action(
-            "run",
-            {
-                "title": "Run",
-                "description": "Run tests",
-                "input": {
-                    "type": "object",
-                    "required": ["download", "upload"],
-                    "properties": {
-                        "download": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "unit": "Mbit/s"
-                        },
-                        "upload": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "unit": "Mbit/s"
-                        },
-                    },
-                },
-            },
-            RunDash,
-        )
+        self.add_available_action("run", {
+            "title": "Run",
+            "description": "Run tests"
+        }, RunDash)
 
-        self.thing.add_available_event(
+        self.add_available_event(
             "error",
             {
                 "description": "There was an error running the tests",

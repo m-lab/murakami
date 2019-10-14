@@ -17,61 +17,42 @@ class RunLibndt(Action):
         Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
 
     def perform_action(self):
-        logger.info("Performing ndt7 test")
-        self.thing.start_test()
+        logger.debug("Running %s test via Webthings.", self.thing.title)
+        results = self.thing.start_test()
+        self.thing.set_property("results", results)
 
 
 class LibndtClient(MurakamiRunner):
     """Run LibNDT tests."""
     def __init__(self, config=None, data_cb=None):
-        super().__init__(name="ndt7", config=config, data_cb=data_cb)
-
-        self.thing = Thing(
-            "urn:dev:ops:libndt-client",
-            "LibNDT Client",
-            ["OnOffSwitch", "Client"],
-            "A client running LibNDT tests",
+        super().__init__(
+            id_="https://www.measurementlab.net/tests/ndt/ndt7",
+            title="ndt7",
+            type_=["Test"],
+            description="The Network Diagnostic Tool v7 test.",
+            config=config,
+            data_cb=data_cb,
         )
 
-        self.thing.add_property(
+        self.add_property(
             Property(
                 self,
-                "on",
-                Value(True, lambda v: print("On-State is now", v)),
+                "results",
+                Value([]),
                 metadata={
-                    "@type": "OnOffProperty",
-                    "title": "On/Off",
-                    "type": "boolean",
-                    "description": "Whether the client is running",
+                    "@type": "MurakamiJsonl",
+                    "title": "Results",
+                    "type": "array",
+                    "description": "The results of the last test",
                 },
             ))
 
-        self.thing.add_available_action(
-            "run",
-            {
-                "title": "Run",
-                "description": "Run tests",
-                "input": {
-                    "type": "object",
-                    "required": ["download", "upload"],
-                    "properties": {
-                        "download": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "unit": "Mbit/s"
-                        },
-                        "upload": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "unit": "Mbit/s"
-                        },
-                    },
-                },
-            },
-            RunLibndt,
-        )
+        self.add_available_action("run", {
+            "title": "Run",
+            "description": "Run tests"
+        }, RunLibndt)
 
-        self.thing.add_available_event(
+        self.add_available_event(
             "error",
             {
                 "description": "There was an error running the tests",
