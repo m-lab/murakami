@@ -1,0 +1,30 @@
+[settings]
+port = 80
+loglevel = "DEBUG"
+immediate = 1
+location = "Baltimore"
+network_type = "home"
+connection_type = "wired"
+
+[exporters]
+
+  [exporters.local]
+  type = "local"
+  enabled = true
+  path = "/data/"
+
+  [exporters.scp]
+  type = "scp"
+  enabled = true
+  target = "your-scp-server-hostname-or-IP-address:murakami-exported-data/"
+  port = 22
+  username = "your-scp-username"
+  private_key = "/murakami/keys/id_rsa_murakami"
+
+  [exporters.gcs]
+  type = "gcs"
+  enabled = true
+  target = "gs://murakami-gcs-test/"
+  service_account = "murakami-test-gcs@mlab-sandbox.iam.gserviceaccount.com"
+  key = "/murakami/keys/murakami-gcs-serviceaccount.json"
+
