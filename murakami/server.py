@@ -73,9 +73,6 @@ class MurakamiServer:
             # Only run test if enabled
             enabled = True
             if "tests" in self._config:
-                print('*************************')
-                print('is in config')
-                print('*************************')
                 if r in self._config["tests"]:
                     rconfig = self._config["tests"][r]
                     if "enabled" in rconfig:
