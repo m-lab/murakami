@@ -85,4 +85,4 @@ class LibndtClient(MurakamiRunner):
                 "libndt",
                 "Executable libndt-client does not exist, please install libndt.",
             )
-        return [*reader.iter(allow_none=True, skip_empty=True)]
+        return [*reader.iter(allow_none=True, skip_empty=True, skip_invalid=True)]
