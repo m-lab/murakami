@@ -1,3 +1,4 @@
 [settings]
 port = 80
 loglevel = "DEBUG"
+immediate = 1
