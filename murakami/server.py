@@ -69,12 +69,23 @@ class MurakamiServer:
         self._config = config
 
     def _call_runners(self):
-        for r in self._runners.values():
-            logger.info("Running test: %s", r.title)
-            try:
-                r.start_test()
-            except Exception as exc:
-                logger.error("Failed to run test %s: %s", r.title, str(exc))
+        for r in self._runners:
+            # Only run test if enabled
+            enabled = True
+            if "tests" in self._config:
+                if r in self._config["tests"]:
+                    rconfig = self._config["tests"][r]
+                    if "enabled" in rconfig:
+                        enabled = utils.is_enabled(rconfig["enabled"])
+            if enabled:
+                logger.info("Running test: %s", r.title)
+                try:
+                    self._runners[r].start_test()
+                except Exception as exc:
+                    logger.error("Failed to run test %s: %s", self._runners[r].title, str(exc))
+            else:
+                logging.debug("Test runner %s disabled, skipping.",
+                              self._runners[r].title)
 
     def _call_exporters(self, test_name="", data="", timestamp=None):
         for e in self._exporters.values():
@@ -87,23 +98,12 @@ class MurakamiServer:
     def _load_runners(self):
         trigger = RandomTrigger(tests_per_day=self._tests_per_day,
                                 immediate=self._immediate)
-        self._runners = {}
-        # Check if test runners are enabled and load them.
+        # Load test runners
         for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
             logging.debug("Loading test runner %s", entry_point.name)
             rconfig = {}
-            enabled = True
-            if "tests" in self._config:
-                if entry_point.name in self._config["tests"]:
-                    rconfig = self._config["tests"][entry_point.name]
-                    if "enabled" in rconfig:
-                        enabled = utils.is_enabled(rconfig["enabled"])
-            if enabled:
-                self._runners[entry_point.name] = entry_point.load()(
-                    config=rconfig, data_cb=self._call_exporters)
-            else:
-                logging.debug("Test runner %s disabled, skipping.",
-                              entry_point.name)
+            self._runners[entry_point.name] = entry_point.load()(
+                config=rconfig, data_cb=self._call_exporters)
 
         # Start webthings server if enabled
         if self._webthings:
