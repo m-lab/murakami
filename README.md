@@ -34,7 +34,8 @@ The Murakami container can be customized using:
 
 The table below summarizes the options you can configure in `murakami.toml` and how to format the options as command line variables at the command line.
 
-|| murakami.toml || corresponding environment variable || options/examples || function ||
+| murakami.toml | corresponding environment variable | options/examples | function |
+| ------------- | ---------------------------------- | ---------------- | -------- |
 | [settings] | | |
 | port = 80  | MURAKAMI_SETTINGS_PORT | 80, 8080 | Sets the web port used by the Murakami WebThing code |
 | loglevel = "DEBUG" | MURAKAMI_SETTINGS_LOGLEVEL | DEBUG, ?, ? | Sets the log level for the Murakami service |
