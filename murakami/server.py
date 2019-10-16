@@ -73,19 +73,22 @@ class MurakamiServer:
             # Only run test if enabled
             enabled = True
             if "tests" in self._config:
+                print('*************************')
+                print('is in config')
+                print('*************************')
                 if r in self._config["tests"]:
                     rconfig = self._config["tests"][r]
                     if "enabled" in rconfig:
                         enabled = utils.is_enabled(rconfig["enabled"])
             if enabled:
-                logger.info("Running test: %s", r.title)
+                logger.info("Running test: %s", r)
                 try:
                     self._runners[r].start_test()
                 except Exception as exc:
-                    logger.error("Failed to run test %s: %s", self._runners[r].title, str(exc))
+                    logger.error("Failed to run test %s: %s", r, str(exc))
             else:
                 logging.debug("Test runner %s disabled, skipping.",
-                              self._runners[r].title)
+                              r)
 
     def _call_exporters(self, test_name="", data="", timestamp=None):
         for e in self._exporters.values():

@@ -28,3 +28,10 @@ connection_type = "wired"
   service_account = "murakami-test-gcs@mlab-sandbox.iam.gserviceaccount.com"
   key = "/murakami/keys/murakami-gcs-serviceaccount.json"
 
+[tests]
+
+  [tests.dash]
+  enabled = false
+
+  [tests.ndt5]
+  enabled = true
