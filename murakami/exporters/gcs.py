@@ -26,8 +26,9 @@ class GCSExporter(MurakamiExporter):
             connection_type=connection_type,
             config=config,
         )
+        logging.debug(config)
         self.target = config.get("target", None)
-        self.service_account = config.get("service_account", None)
+        self.service_account = config.get("account", None)
         self.key = config.get("key", None)
 
     def push(self, test_name="", data=None, timestamp=None):

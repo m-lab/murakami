@@ -26,6 +26,7 @@ class LocalExporter(MurakamiExporter):
             connection_type=connection_type,
             config=config,
         )
+        logging.debug(config)
         self._path = config.get("path", defaults.EXPORT_PATH)
 
     def push(self, test_name="", data=None, timestamp=None):

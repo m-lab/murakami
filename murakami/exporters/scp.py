@@ -32,11 +32,12 @@ class SCPExporter(MurakamiExporter):
             connection_type=connection_type,
             config=config,
         )
+        logging.debug(config)
         self.target = config.get("target", None)
         self.port = config.get("port", defaults.SSH_PORT)
         self.username = config.get("username", None)
         self.password = config.get("password", None)
-        self.private_key = config.get("private_key", None)
+        self.private_key = config.get("key", None)
 
     def push(self, test_name="", data=None, timestamp=None):
         """Copy the files over SCP using the provided configuration."""
