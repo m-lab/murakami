@@ -2,6 +2,7 @@ from collections import ChainMap, OrderedDict
 from collections.abc import Mapping
 import logging
 import os
+import signal
 
 import configargparse
 import livejson
@@ -207,6 +208,10 @@ def main():
         connection_type=settings.connection_type,
         config=config,
     )
+
+    # reload server on HUP and TERM signal
+    signal.signal(signal.SIGHUP, server.reload)
+    signal.signal(signal.SIGTERM, server.reload)
 
     try:
         server.start()

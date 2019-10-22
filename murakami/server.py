@@ -1,11 +1,13 @@
 import datetime
 import logging
 import random
+import time
 import pkg_resources
 
 from apscheduler.schedulers.tornado import TornadoScheduler
 from apscheduler.triggers.base import BaseTrigger
 from tornado.ioloop import IOLoop
+from tornado import gen
 from webthing import WebThingServer, MultipleThings
 
 import murakami.defaults as defaults
@@ -13,6 +15,7 @@ import murakami.utils as utils
 
 logger = logging.getLogger(__name__)
 
+_SHUTDOWN_TIMEOUT = 30
 
 class RandomTrigger(BaseTrigger):
     def __init__(self, *args, **kwargs):
@@ -174,6 +177,9 @@ class MurakamiServer:
 
     def stop(self):
         logger.info("Stopping Murakami services.")
+
+        IOLoop.current().stop()
+
         if self._scheduler is not None:
             logger.info("Stopping the job scheduler.")
             self._scheduler.shutdown()
@@ -182,15 +188,17 @@ class MurakamiServer:
             self._server.stop()
 
         logger.info("Cleaning up test runners.")
-        for r in self._runners:
-            r.stop_test()
-            r.teardown()
 
-    def reload(self, **kwargs):
-        logger.info("Reloading Murakami services.")
-        for key, _ in locals(self).items():
+        for r in self._runners:
+            self._runners[r].stop_test()
+            self._runners[r].teardown()
+
+    @gen.coroutine
+    def reload(self, signum, frame, **kwargs):
+        local_args = dict(locals())
+        logger.info("Reloading Murakami services...")
+        for key, _ in local_args.items():
             if key in kwargs:
                 setattr(self, key, kwargs[key])
-
-        self.stop()
+        yield IOLoop.current().add_callback_from_signal(self.stop)
         self.start()
