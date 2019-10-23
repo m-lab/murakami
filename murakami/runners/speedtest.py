@@ -31,8 +31,10 @@ class SpeedtestClient():
         self.description="The Speedtest.net tool."
         self.config=config
         self.data_cb=data_cb
+        self.action = RunSpeedtest
 
     def _start_test(self):
+        logger.info("Starting Speedtest test...")
         if shutil.which("speedtest-cli") is not None:
             output = subprocess.run(["speedtest-cli", "--json"],
                                     check=True,

@@ -10,7 +10,6 @@ from murakami.errors import RunnerError
 
 logger = logging.getLogger(__name__)
 
-
 class RunDash(Action):
     def __init__(self, thing, input_):
         Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
@@ -30,9 +29,10 @@ class DashClient():
         self.description="The Neubot DASH network test."
         self.config=config
         self.data_cb=data_cb
-        self.action = RunDash()
+        self.action = RunDash
 
     def _start_test(self):
+        logger.info("Starting DASH test...")
         if shutil.which("dash-client") is not None:
             output = subprocess.run(["dash-client"],
                                     check=True,

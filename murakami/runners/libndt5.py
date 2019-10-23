@@ -31,9 +31,10 @@ class LibndtClient():
         self.description="The Network Diagnostic Tool v5 test."
         self.config=config
         self.data_cb=data_cb
+        self.action = RunLibndt
 
     def _start_test(self):
-        logger.info("Starting NDT test...")
+        logger.info("Starting NDT5 test...")
         if shutil.which("libndt-client") is not None:
             output = subprocess.run(
                 [
