@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 _SHUTDOWN_TIMEOUT = 30
 
+
 class RandomTrigger(BaseTrigger):
     def __init__(self, *args, **kwargs):
         self._tests_per_day = kwargs.pop("tests_per_day",
@@ -89,8 +90,7 @@ class MurakamiServer:
                 except Exception as exc:
                     logger.error("Failed to run test %s: %s", r, str(exc))
             else:
-                logging.debug("Test runner %s disabled, skipping.",
-                              r)
+                logging.debug("Test runner %s disabled, skipping.", r)
 
     def _call_exporters(self, test_name="", data="", timestamp=None):
         for e in self._exporters.values():
@@ -104,12 +104,11 @@ class MurakamiServer:
         thing = Murakami()
         trigger = RandomTrigger(tests_per_day=self._tests_per_day,
                                 immediate=self._immediate)
-        
+
         # Start webthings server if enabled
         if self._webthings:
             self._server = WebThingServer(
-                SingleThing(thing,
-                               "Murakami"),
+                SingleThing(thing),
                 port=self._port,
                 hostname=self._hostname,
                 ssl_options=self._ssl_options,

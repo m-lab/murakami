@@ -9,6 +9,7 @@ from murakami.errors import RunnerError
 
 logger = logging.getLogger(__name__)
 
+
 class Murakami(Thing):
     def __init__(self):
         self._runners = {}
@@ -18,7 +19,7 @@ class Murakami(Thing):
             id_="https://github.com/throneless-tech/murakami",
             title="Murakami",
             type_=[],
-            description="The M-Lab Murakami network measurement tap."
+            description="The M-Lab Murakami network measurement tap.",
         )
 
         # Load test runners
@@ -43,23 +44,25 @@ class Murakami(Thing):
                         "config": self._runners[r].config,
                         "data_cb": self._runners[r].data_cb,
                     },
-                )
+                ))
+
+            self.add_available_action(
+                "run" + self._runners[r].title,
+                {
+                    "title": "Run " + self._runners[r].title,
+                    "description": "Run tests",
+                    "input": {
+                        "type": "object",
+                        "required": [self._runners[r].title],
+                        "properties": {
+                            "test": {
+                                "type": ["Test"]
+                            }
+                        },
+                    },
+                },
+                self._runners[r].action,
             )
-
-            self.add_available_action("run", {
-                "title": "run_" + self._runners[r].title,
-                "description": "Run tests",
-                "input": {
-                    "type": "object",
-                    "required": [self._runners[r].title],
-                    "properties": {
-                        "test": {
-                            "type": ["Test"],
-
-                        }
-                    }
-                }
-            }, self._runners[r].action)
 
         self.add_available_event(
             "error",
