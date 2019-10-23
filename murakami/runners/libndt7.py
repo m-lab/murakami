@@ -4,37 +4,25 @@ import subprocess
 import uuid
 
 import jsonlines
-from webthing import Action, Event, Property, Thing, Value
 
 from murakami.errors import RunnerError
+from murakami.runner import MurakamiRunner
 
 logger = logging.getLogger(__name__)
 
 
-class RunLibndt(Action):
-    def __init__(self, thing, input_):
-        Action.__init__(self, uuid.uuid4().hex, thing, "run", input_=input_)
-
-    def perform_action(self):
-        logger.debug("Running %s test via Webthings.", self.thing.title)
-        results = self.thing.start_test()
-        self.thing.set_property("results", results)
-
-
-class LibndtClient():
+class LibndtClient(MurakamiRunner):
     """Run LibNDT tests."""
     def __init__(self, config=None, data_cb=None):
-        self.attype="LibNDT7Runner"
-        self.id_="https://www.measurementlab.net/tests/ndt/ndt7"
-        self.title="ndt7"
-        self.type=["Test"]
-        self.description="The Network Diagnostic Tool v7 test."
-        self.config=config
-        self.data_cb=data_cb
-        self.action = RunLibndt
+        super().__init__(
+            title="ndt7",
+            description="The Network Diagnostic Tool v7 test.",
+            config=config,
+            data_cb=data_cb,
+        )
 
-    def _start_test(self):
-        logger.info("Starting NDT7 test...")
+    @staticmethod
+    def _start_test():
         if shutil.which("libndt-client") is not None:
             output = subprocess.run(
                 [

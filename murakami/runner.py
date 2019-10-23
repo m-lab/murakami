@@ -1,90 +1,61 @@
 from datetime import datetime
 import logging
-import pkg_resources
-import shutil
 
-from webthing import Action, Property, Thing, Value
+from webthing import Thing
 
 from murakami.errors import RunnerError
+import murakami.utils as utils
 
 logger = logging.getLogger(__name__)
 
 
-class Murakami(Thing):
-    def __init__(self):
-        self._runners = {}
+class MurakamiRunner:
+    def __init__(self, title, description="", config=None, data_cb=None):
+        self.title = title
+        self.description = description
+        self._config = config
+        self._data_cb = data_cb
 
-        Thing.__init__(
-            self,
-            id_="https://github.com/throneless-tech/murakami",
-            title="Murakami",
-            type_=[],
-            description="The M-Lab Murakami network measurement tap.",
-        )
+    def _start_test(self):
+        raise RunnerError(self.title, "No _start_test() function implemented.")
 
-        # Load test runners
-        for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
-            logging.debug("Loading test runner %s", entry_point.name)
-            rconfig = {}
-            self._runners[entry_point.name] = entry_point.load()(
-                config=rconfig)
+    def start_test(self):
+        if self.enabled:
+            timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
+            data = self._start_test()
+            if self._data_cb is not None:
+                self._data_cb(test_name=self.title,
+                              data=data,
+                              timestamp=timestamp)
+            return data
 
-        for runner in self._runners.values():
-            self.add_property(
-                Property(
-                    self,
-                    runner.title + "on",
-                    Value(
-                        runner.config.get("enabled", True),
-                        lambda onoff: runner.config.update(enabled=onoff),
-                    ),
-                    metadata={
-                        "@type": "OnOffProperty",
-                        "id": runner.title + "on",
-                        "title": runner.title,
-                        "type": "boolean",
-                        "description": runner.description,
-                    },
-                ))
+        logging.info("Test runner %s disabled, skipping.", self.title)
 
-            self.add_available_event(
-                "error",
-                {
-                    "description": "There was an error running the tests",
-                    "type": "string",
-                    "unit": "error",
-                },
-            )
+    def _stop_test(self):
+        logger.debug("No special handling needed for stopping runner %s",
+                     self.title)
 
-            def _start_test(self):
-                raise RunnerError(self.name,
-                                  "No _start_test() function implemented.")
+    def stop_test(self):
+        return self._stop_test()
 
-            def start_test(self):
-                timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
-                data = runner._start_test()
-                if runner._data_cb is not None:
-                    runner._data_cb(test_name=runner.title,
-                                    data=data,
-                                    timestamp=timestamp)
-                return data
+    def _teardown(self):
+        logger.debug("No special teardown needed for runner %s", self.title)
 
-            def _stop_test(self):
-                logger.debug(
-                    "No special handling needed for stopping runner %s",
-                    self.title)
+    def teardown(self):
+        return self._teardown()
 
-            def stop_test(self):
-                return runner._stop_test()
+    @property
+    def enabled(self):
+        return utils.is_enabled(self._config.get("enabled", True))
 
-            def _teardown(self):
-                logger.debug("No special teardown needed for runner %s",
-                             runner.title)
+    @enabled.setter
+    def enabled(self, value):
+        if bool(value):
+            logger.debug("Enabling test %s", self.title)
+            self._config["enabled"] = "y"
+        else:
+            logger.debug("Disabling test %s", self.title)
+            self._config["enabled"] = "n"
 
-            def teardown(self):
-                return runner._teardown()
-
-            runner.start_test = start_test(self)
-            runner.stop_test = stop_test(self)
-            runner._teardown = _teardown(self)
-            runner.teardown = teardown(self)
+    def set_enabled(self, value):
+        self.enabled = value
