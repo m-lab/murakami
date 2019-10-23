@@ -29,7 +29,7 @@ class Murakami(Thing):
             self._runners[entry_point.name] = entry_point.load()(
                 config=rconfig)
 
-        for name, runner in self._runners.items():
+        for runner in self._runners.values():
             self.add_property(
                 Property(
                     self,
@@ -57,29 +57,34 @@ class Murakami(Thing):
             )
 
             def _start_test(self):
-                raise RunnerError(self.name, "No _start_test() function implemented.")
+                raise RunnerError(self.name,
+                                  "No _start_test() function implemented.")
 
             def start_test(self):
                 timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
-                data = self._runners[r]._start_test()
-                if self._runners[r]._data_cb is not None:
-                    self._runners[r]._data_cb(test_name=self._runners[r].title, data=data, timestamp=timestamp)
+                data = runner._start_test()
+                if runner._data_cb is not None:
+                    runner._data_cb(test_name=runner.title,
+                                    data=data,
+                                    timestamp=timestamp)
                 return data
 
             def _stop_test(self):
-                logger.debug("No special handling needed for stopping runner %s",
-                             self.title)
+                logger.debug(
+                    "No special handling needed for stopping runner %s",
+                    self.title)
 
             def stop_test(self):
-                return self._runners[r]._stop_test()
+                return runner._stop_test()
 
             def _teardown(self):
-                logger.debug("No special teardown needed for runner %s", self._runners[r].title)
+                logger.debug("No special teardown needed for runner %s",
+                             runner.title)
 
             def teardown(self):
-                return self._runners[r]._teardown()
+                return runner._teardown()
 
-            self._runners[r].start_test = start_test(self)
-            self._runners[r].stop_test = stop_test(self)
-            self._runners[r]._teardown = _teardown(self)
-            self._runners[r].teardown = teardown(self)
+            runner.start_test = start_test(self)
+            runner.stop_test = stop_test(self)
+            runner._teardown = _teardown(self)
+            runner.teardown = teardown(self)
