@@ -11,6 +11,8 @@ import tomlkit
 import murakami.defaults as defaults
 from murakami.server import MurakamiServer
 
+logger = logging.getLogger(__name__)
+
 config = None
 
 
@@ -19,19 +21,17 @@ def load_env():
     acc = {}
     env = {k: v for k, v in os.environ.items() if k.startswith("MURAKAMI_")}
 
-    def recurse(key, value, acc):
-        key, *re = key.split("_", 1)
-        if re:
-            recurse(re[0], value, acc.setdefault(key.lower(), {}))
+    def recurse(sec, value, acc):
+        key = sec.pop(0)
+        if sec:
+            recurse(sec, value, acc.setdefault(key, {}))
         else:
-            acc[key.lower()] = value
+            acc[key] = value
 
     for k, v in env.items():
-        recurse(k, v, acc)
-    if "murakami" in acc:
-        return acc["murakami"]
-
-    return {}
+        _, *sec = k.lower().split("_", 3)
+        recurse(sec, v, acc)
+    return acc
 
 
 class TomlConfigFileParser(configargparse.ConfigFileParser):
