@@ -23,6 +23,7 @@ class LibndtClient(MurakamiRunner):
 
     @staticmethod
     def _start_test():
+        logger.info("Starting NDT5 test...")
         if shutil.which("libndt-client") is not None:
             output = subprocess.run(
                 [

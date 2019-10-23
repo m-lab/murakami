@@ -23,6 +23,7 @@ class DashClient(MurakamiRunner):
 
     @staticmethod
     def _start_test():
+        logger.info("Starting DASH test...")
         if shutil.which("dash-client") is not None:
             output = subprocess.run(["dash-client"],
                                     check=True,

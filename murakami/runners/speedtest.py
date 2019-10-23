@@ -23,6 +23,7 @@ class SpeedtestClient(MurakamiRunner):
 
     @staticmethod
     def _start_test():
+        logger.info("Starting Speedtest test...")
         if shutil.which("speedtest-cli") is not None:
             output = subprocess.run(["speedtest-cli", "--json"],
                                     check=True,
