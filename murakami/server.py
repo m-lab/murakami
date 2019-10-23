@@ -6,12 +6,14 @@ import pkg_resources
 
 from apscheduler.schedulers.tornado import TornadoScheduler
 from apscheduler.triggers.base import BaseTrigger
-from tornado.ioloop import IOLoop
 from tornado import gen
-from webthing import WebThingServer, MultipleThings
+from tornado.ioloop import IOLoop
+from webthing import WebThingServer, SingleThing
 
 import murakami.defaults as defaults
 import murakami.utils as utils
+
+from murakami.runner import Murakami
 
 logger = logging.getLogger(__name__)
 
@@ -99,19 +101,14 @@ class MurakamiServer:
                 logger.error("Failed to run exporter %s: %s", e.name, str(exc))
 
     def _load_runners(self):
+        thing = Murakami()
         trigger = RandomTrigger(tests_per_day=self._tests_per_day,
                                 immediate=self._immediate)
-        # Load test runners
-        for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
-            logging.debug("Loading test runner %s", entry_point.name)
-            rconfig = {}
-            self._runners[entry_point.name] = entry_point.load()(
-                config=rconfig, data_cb=self._call_exporters)
-
+        
         # Start webthings server if enabled
         if self._webthings:
             self._server = WebThingServer(
-                MultipleThings([r for r in self._runners.values()],
+                SingleThing(thing,
                                "Murakami"),
                 port=self._port,
                 hostname=self._hostname,

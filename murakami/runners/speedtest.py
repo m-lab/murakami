@@ -7,7 +7,6 @@ import jsonlines
 from webthing import Action, Event, Property, Thing, Value
 
 from murakami.errors import RunnerError
-from murakami.runner import MurakamiRunner
 
 logger = logging.getLogger(__name__)
 
@@ -22,44 +21,16 @@ class RunSpeedtest(Action):
         self.thing.set_property("results", results)
 
 
-class SpeedtestClient(MurakamiRunner):
+class SpeedtestClient():
     """Run Speedtest.net tests."""
     def __init__(self, config=None, data_cb=None):
-        super().__init__(
-            id_="https://github.com/sivel/speedtest-cli",
-            title="Speedtest.net",
-            type_=["Test"],
-            description="The Speedtest.net tool.",
-            config=config,
-            data_cb=data_cb,
-        )
-
-        self.add_property(
-            Property(
-                self,
-                "results",
-                Value([]),
-                metadata={
-                    "@type": "MurakamiJsonl",
-                    "title": "Results",
-                    "type": "array",
-                    "description": "The results of the last test",
-                },
-            ))
-
-        self.add_available_action("run", {
-            "title": "Run",
-            "description": "Run tests"
-        }, RunSpeedtest)
-
-        self.add_available_event(
-            "error",
-            {
-                "description": "There was an error running the tests",
-                "type": "string",
-                "unit": "error",
-            },
-        )
+        self.attype="SpeedtestRunner"
+        self.id_="https://github.com/sivel/speedtest-cli"
+        self.title="Speedtest.net"
+        self.type=["Test"]
+        self.description="The Speedtest.net tool."
+        self.config=config
+        self.data_cb=data_cb
 
     def _start_test(self):
         if shutil.which("speedtest-cli") is not None:

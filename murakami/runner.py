@@ -1,25 +1,74 @@
 from datetime import datetime
 import logging
+import pkg_resources
+import shutil
 
-from webthing import Thing
+from webthing import Action, Property, Thing, Value
 
 from murakami.errors import RunnerError
 
 logger = logging.getLogger(__name__)
 
+class Murakami(Thing):
+    def __init__(self):
+        self._runners = {}
 
-class MurakamiRunner(Thing):
-    def __init__(self,
-                 id_,
-                 title,
-                 type_=[],
-                 description="",
-                 config=None,
-                 data_cb=None):
+        Thing.__init__(
+            self,
+            id_="https://github.com/throneless-tech/murakami",
+            title="Murakami",
+            type_=[],
+            description="The M-Lab Murakami network measurement tap."
+        )
 
-        super().__init__(id_, title, type_, description)
-        self._config = config
-        self._data_cb = data_cb
+        # Load test runners
+        for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
+            logging.debug("Loading test runner %s", entry_point.name)
+            rconfig = {}
+            self._runners[entry_point.name] = entry_point.load()(
+                config=rconfig)
+
+        for r in self._runners:
+            self.add_property(
+                Property(
+                    self,
+                    r,
+                    Value([]),
+                    metadata={
+                        "@type": self._runners[r].attype,
+                        "id": self._runners[r].id_,
+                        "title": self._runners[r].title,
+                        "type": self._runners[r].type,
+                        "description": self._runners[r].description,
+                        "config": self._runners[r].config,
+                        "data_cb": self._runners[r].data_cb,
+                    },
+                )
+            )
+
+            self.add_available_action("run", {
+                "title": "run_" + self._runners[r].title,
+                "description": "Run tests",
+                "input": {
+                    "type": "object",
+                    "required": [self._runners[r].title],
+                    "properties": {
+                        "test": {
+                            "type": ["Test"],
+
+                        }
+                    }
+                }
+            }, self._runners[r].action)
+
+        self.add_available_event(
+            "error",
+            {
+                "description": "There was an error running the tests",
+                "type": "string",
+                "unit": "error",
+            },
+        )
 
     def _start_test(self):
         raise RunnerError(self.name, "No _start_test() function implemented.")
