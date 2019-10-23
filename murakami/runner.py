@@ -29,40 +29,23 @@ class Murakami(Thing):
             self._runners[entry_point.name] = entry_point.load()(
                 config=rconfig)
 
-        for r in self._runners:
+        for name, runner in self._runners.items():
             self.add_property(
                 Property(
                     self,
-                    r,
-                    Value([]),
+                    runner.title + "on",
+                    Value(
+                        runner.config.get("enabled", True),
+                        lambda onoff: runner.config.update(enabled=onoff),
+                    ),
                     metadata={
-                        "@type": self._runners[r].attype,
-                        "id": self._runners[r].id_,
-                        "title": self._runners[r].title,
-                        "type": self._runners[r].type,
-                        "description": self._runners[r].description,
-                        "config": self._runners[r].config,
-                        "data_cb": self._runners[r].data_cb,
+                        "@type": "OnOffProperty",
+                        "id": runner.title + "on",
+                        "title": runner.title,
+                        "type": "boolean",
+                        "description": runner.description,
                     },
                 ))
-
-            self.add_available_action(
-                "run" + self._runners[r].title,
-                {
-                    "title": "Run " + self._runners[r].title,
-                    "description": "Run tests",
-                    "input": {
-                        "type": "object",
-                        "required": [self._runners[r].title],
-                        "properties": {
-                            "test": {
-                                "type": ["Test"]
-                            }
-                        },
-                    },
-                },
-                self._runners[r].action,
-            )
 
         self.add_available_event(
             "error",
