@@ -86,7 +86,7 @@ class MurakamiServer:
             if enabled:
                 logger.info("Running test: %s", r)
                 try:
-                    self._runners[r].start_test()
+                    self._runners[r].start_test
                 except Exception as exc:
                     logger.error("Failed to run test %s: %s", r, str(exc))
             else:
@@ -104,6 +104,13 @@ class MurakamiServer:
         thing = Murakami()
         trigger = RandomTrigger(tests_per_day=self._tests_per_day,
                                 immediate=self._immediate)
+
+        # Load test runners
+        for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
+            logging.debug("Loading test runner %s", entry_point.name)
+            rconfig = {}
+            self._runners[entry_point.name] = entry_point.load()(
+                config=rconfig, data_cb=self._call_exporters)
 
         # Start webthings server if enabled
         if self._webthings:
