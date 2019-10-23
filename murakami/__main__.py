@@ -34,18 +34,6 @@ def load_env():
     return {}
 
 
-def update_config(old, new, overwrite=False):
-    for key, value in new.items():
-        ov = old.get(key, {})
-        if not isinstance(ov, Mapping):
-            old[key] = value
-        elif isinstance(value, Mapping):
-            old[key] = update_config(ov, value, overwrite)
-        else:
-            old[key] = value
-    return old
-
-
 class TomlConfigFileParser(configargparse.ConfigFileParser):
     """
     This custom parser uses Tomlkit to parse a .toml configuration file,
@@ -191,7 +179,7 @@ def main():
     if not config:
         config = load_env()
     if settings.webthings:
-        state = livejson.File(settings.dynamic)
+        state = livejson.File(settings.dynamic, pretty=True)
         config = ChainMap(state, config)
 
     server = MurakamiServer(

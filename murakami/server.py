@@ -1,21 +1,22 @@
 import datetime
 import logging
 import random
-import time
 import pkg_resources
 
 from apscheduler.schedulers.tornado import TornadoScheduler
 from apscheduler.triggers.base import BaseTrigger
 from tornado.ioloop import IOLoop
 from tornado import gen
-from webthing import WebThingServer, MultipleThings
+from webthing import WebThingServer, SingleThing
 
 import murakami.defaults as defaults
+from murakami.thing import MurakamiThing
 import murakami.utils as utils
 
 logger = logging.getLogger(__name__)
 
 _SHUTDOWN_TIMEOUT = 30
+
 
 class RandomTrigger(BaseTrigger):
     def __init__(self, *args, **kwargs):
@@ -72,23 +73,12 @@ class MurakamiServer:
         self._config = config
 
     def _call_runners(self):
-        for r in self._runners:
-            # Only run test if enabled
-            enabled = True
-            if "tests" in self._config:
-                if r in self._config["tests"]:
-                    rconfig = self._config["tests"][r]
-                    if "enabled" in rconfig:
-                        enabled = utils.is_enabled(rconfig["enabled"])
-            if enabled:
-                logger.info("Running test: %s", r)
-                try:
-                    self._runners[r].start_test()
-                except Exception as exc:
-                    logger.error("Failed to run test %s: %s", r, str(exc))
-            else:
-                logging.debug("Test runner %s disabled, skipping.",
-                              r)
+        for r in self._runners.values():
+            logger.info("Running test: %s", r.title)
+            try:
+                r.start_test()
+            except Exception as exc:
+                logger.error("Failed to run test %s: %s", r.title, str(exc))
 
     def _call_exporters(self, test_name="", data="", timestamp=None):
         for e in self._exporters.values():
@@ -101,18 +91,23 @@ class MurakamiServer:
     def _load_runners(self):
         trigger = RandomTrigger(tests_per_day=self._tests_per_day,
                                 immediate=self._immediate)
+
         # Load test runners
         for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
             logging.debug("Loading test runner %s", entry_point.name)
-            rconfig = {}
+            if "tests" not in self._config:
+                self._config["tests"] = {}
+            if entry_point.name not in self._config["tests"]:
+                self._config["tests"][entry_point.name] = {}
             self._runners[entry_point.name] = entry_point.load()(
-                config=rconfig, data_cb=self._call_exporters)
+                config=self._config["tests"][entry_point.name],
+                data_cb=self._call_exporters,
+            )
 
         # Start webthings server if enabled
         if self._webthings:
             self._server = WebThingServer(
-                MultipleThings([r for r in self._runners.values()],
-                               "Murakami"),
+                SingleThing(MurakamiThing(self._runners.values())),
                 port=self._port,
                 hostname=self._hostname,
                 ssl_options=self._ssl_options,
