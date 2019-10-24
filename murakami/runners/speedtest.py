@@ -34,4 +34,6 @@ class SpeedtestClient(MurakamiRunner):
             raise RunnerError(
                 "speedtest",
                 "Executable does not exist, please install speedtest-cli.")
-        return [*reader.iter()]
+        return [
+            *reader.iter(skip_empty=True, skip_invalid=True)
+        ]

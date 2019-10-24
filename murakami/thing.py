@@ -1,13 +1,17 @@
-from datetime import datetime
-import logging
-import pkg_resources
-
+"""
+This module contains the Thing wrapper, used for accessing tests via WebThings.
+"""
 from webthing import Property, Thing, Value
-
-logger = logging.getLogger(__name__)
 
 
 class MurakamiThing(Thing):
+    """
+    This class wraps a (Web)Thing instance that includes properties for all test
+    runners.
+
+    ####Arguments
+    * `runners`: a List of MurakamiRunner instances passed from MurakamiServer
+    """
     def __init__(self, runners):
         super().__init__(
             id_="https://github.com/throneless-tech/murakami",

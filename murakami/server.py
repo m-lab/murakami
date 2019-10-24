@@ -1,3 +1,8 @@
+"""
+This module contains the core of Murakami. It includes the plugin and
+WebThingServer loading code.
+"""
+
 import datetime
 import logging
 import random
@@ -13,12 +18,16 @@ import murakami.defaults as defaults
 from murakami.thing import MurakamiThing
 import murakami.utils as utils
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 _SHUTDOWN_TIMEOUT = 30
 
 
 class RandomTrigger(BaseTrigger):
+    """
+    An implementation of apscheduler's BaseTrigger to schedule tests in an
+    exponential distribution.
+    """
     def __init__(self, *args, **kwargs):
         self._tests_per_day = kwargs.pop("tests_per_day",
                                          defaults.TESTS_PER_DAY)
@@ -29,7 +38,7 @@ class RandomTrigger(BaseTrigger):
             1.0 /
             (datetime.timedelta(days=1).total_seconds() / self._tests_per_day))
         if not previous_fire_time:
-            logger.debug("Not previously fired before")
+            _logger.debug("Not previously fired before")
             if self._immediate:
                 return now
             previous_fire_time = now
@@ -38,6 +47,24 @@ class RandomTrigger(BaseTrigger):
 
 
 class MurakamiServer:
+    """
+    *MurakamiServer* is responsible for loading all test runner and result
+    exporter plugins, as well as managing the main eventloop and loading
+    WebThings if desired.
+
+    ####Keyword arguments:
+    * `port`: port that WebThingsServer listens on
+    * `hostname`: this WebThingServer's hostname
+    * `ssl_options`: any TLS options to supply to WebThingServer
+    * `additonal_routes`: routes to add to the WebThingServer
+    * `base_path`: path to add to URL where we're listening in case we're
+    behind a proxy
+    * `tests_per_day`: number of tests to run in a day
+    * `location`: string describing physical location of this device
+    * `network_type`: string describing the network this device is connected to
+    * `connection_type`: string describing type of connection this device is
+    using
+    """
     def __init__(
             self,
             port=defaults.HTTP_PORT,
@@ -74,19 +101,20 @@ class MurakamiServer:
 
     def _call_runners(self):
         for r in self._runners.values():
-            logger.info("Running test: %s", r.title)
+            _logger.info("Running test: %s", r.title)
             try:
                 r.start_test()
             except Exception as exc:
-                logger.error("Failed to run test %s: %s", r.title, str(exc))
+                _logger.error("Failed to run test %s: %s", r.title, str(exc))
 
     def _call_exporters(self, test_name="", data="", timestamp=None):
         for e in self._exporters.values():
-            logger.info("Running exporter %s for test %s", e.name, test_name)
+            _logger.info("Running exporter %s for test %s", e.name, test_name)
             try:
                 e.push(test_name, data, timestamp)
             except Exception as exc:
-                logger.error("Failed to run exporter %s: %s", e.name, str(exc))
+                _logger.error("Failed to run exporter %s: %s", e.name,
+                              str(exc))
 
     def _load_runners(self):
         trigger = RandomTrigger(tests_per_day=self._tests_per_day,
@@ -157,32 +185,34 @@ class MurakamiServer:
                     logging.debug("Exporter %s disabled, skipping.", name)
 
     def start(self):
-        logger.info("Starting Murakami services.")
+        """Start MurakamiServer, including WebThingServer if directed."""
+        _logger.info("Starting Murakami services.")
         self._load_runners()
         self._load_exporters()
 
         if self._scheduler is not None:
-            logger.info("Starting the job scheduler.")
+            _logger.info("Starting the job scheduler.")
             self._scheduler.start()
         if self._server is not None:
-            logger.info("Starting the WebThing server.")
+            _logger.info("Starting the WebThing server.")
             self._server.start()
         if self._scheduler is not None and self._server is None:
             IOLoop.current().start()
 
     def stop(self):
-        logger.info("Stopping Murakami services.")
+        """Stop MurakamiServer."""
+        _logger.info("Stopping Murakami services.")
 
         IOLoop.current().stop()
 
         if self._scheduler is not None:
-            logger.info("Stopping the job scheduler.")
+            _logger.info("Stopping the job scheduler.")
             self._scheduler.shutdown()
         if self._server is not None:
-            logger.info("Stopping the WebThing server.")
+            _logger.info("Stopping the WebThing server.")
             self._server.stop()
 
-        logger.info("Cleaning up test runners.")
+        _logger.info("Cleaning up test runners.")
 
         for r in self._runners:
             self._runners[r].stop_test()
@@ -190,8 +220,9 @@ class MurakamiServer:
 
     @gen.coroutine
     def reload(self, signum, frame, **kwargs):
+        """Reload MurakamiServer, to be called as an event handler."""
         local_args = dict(locals())
-        logger.info("Reloading Murakami services...")
+        _logger.info("Reloading Murakami services...")
         for key, _ in local_args.items():
             if key in kwargs:
                 setattr(self, key, kwargs[key])

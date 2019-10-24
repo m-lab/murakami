@@ -1,12 +1,25 @@
-import logging
-
+"""
+This module includes the wrapper for all result exporters, which defines their
+interface.
+"""
 from datetime import datetime
 from murakami.errors import ExporterError
 
-logger = logging.getLogger(__name__)
-
 
 class MurakamiExporter:
+    """
+    MurakamiRunner is the superclass of all test runner plugins, and largely
+    defines their interface to the rest of Murakami.
+
+    ####Arguments
+    * `name`: The name of this exporter
+    * `location`: string describing physical location of this device
+    * `network_type`: string describing the network this device is connected to
+    * `connection_type`: string describing type of connection this device is
+    using
+    * `config`: A configuration dictionary passed to this instance from
+    MurakamiServer
+    """
     def __init__(
             self,
             name="",
@@ -22,6 +35,14 @@ class MurakamiExporter:
         self._config = config
 
     def push(self, test_name="", data=None, timestamp=None):
+        """
+        Push results to this exporter (must be implemented by all exporters).
+
+        ####Arguments
+        * `test_name`: The name of this test.
+        * `data`: A list of JSON objects containing test data.
+        * `timestamp`: The timestamp of this test.
+        """
         raise ExporterError(self.name, "No push() function implemented.")
 
     def _generate_filename(self, test_name="", timestamp=None):

@@ -34,4 +34,4 @@ class DashClient(MurakamiRunner):
             raise RunnerError(
                 "dash",
                 "Executable dash-client does not exist, please install DASH.")
-        return [*reader.iter()]
+        return [*reader.iter(skip_empty=True, skip_invalid=True)]
