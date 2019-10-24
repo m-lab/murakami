@@ -6,19 +6,19 @@ Murakami is a tool for creating an automated internet measurement service, runni
 
 * [M-Lab Network Diagnostic Tool](https://www.measurementlab.net/tests/ndt/) (NDT) - both [ndt5](https://www.measurementlab.net/tests/ndt/ndt5) and [ndt7](https://www.measurementlab.net/tests/ndt/ndt7) protocols, using the [libndt client library](https://github.com/measurement-kit/libndt)
 * [Neubot DASH](https://github.com/neubot/dash) - Dynamic Adaptive Streaming over HTTP, hosted by M-Lab
-* [speedtest-cli](https://github.com/sivel/speedtest-cli) - Command line interface for testing internet bandwidth using speedtest.net 
+* [speedtest-cli](https://github.com/sivel/speedtest-cli) - Command line interface for testing internet bandwidth using speedtest.net
 
 ## Murakami Deployment Scenarios
 
 Murakami supports three types of container deployment scenarios on supported systems:
 
 * **[Standalone](INSTALL-MURAKAMI-STANDALONE.md)**: a single Murakami device, configured on-device
-* **[Local Managed]((INSTALL-MURAKAMI-LOCAL-MANAGED.md))**: one or more Murakami devices in a single network, configured individually on-device, or using a [Mozilla WebThings Gateway](https://iot.mozilla.org/gateway/) on the same network, via the [M-Lab WebThings Murakami Add-on](#)
-* **[Balena Cloud]((INSTALL-MURAKAMI-BALENA-CLOUD.md))**: one or more Murakami devices, configured and managed by the [Balena Cloud IoT platform](https://www.balena.io)
+* **[Local Managed](INSTALL-MURAKAMI-LOCAL-MANAGED.md)**: one or more Murakami devices in a single network, configured individually on-device, or using a [Mozilla WebThings Gateway](https://iot.mozilla.org/gateway/) on the same network, via the [M-Lab WebThings Murakami Add-on](#)
+* **[Balena Cloud](INSTALL-MURAKAMI-BALENA-CLOUD.md)**: one or more Murakami devices, configured and managed by the [Balena Cloud IoT platform](https://www.balena.io)
 
 ## Supported Operating Systems
 
-Murakami supports Linux operating systems like Ubuntu, Debian, etc. Windows is not supported. Mac OS _might be_ supportable, but has not yet been tested.
+Murakami supports Linux operating systems like Ubuntu, Debian, etc. Windows is not supported. Mac OS is supportable as a standalone device, but is not completely compatible with the Webthings interface. Balena cloud has not beed tested on Mac OS.
 
 **TO DO:** test deployment on MacOS
 
@@ -57,7 +57,7 @@ The table below summarizes the options you can configure in `murakami.toml` and 
 | port = 22 | MURAKAMI_EXPORTERS_SCP_PORT | 22, alternate SCP port used by the remote server | Defines the port used by the remote server for the server's SCP/SSH service. |
 | username = "murakami" | MURAKAMI_EXPORTERS_SCP_USERNAME | remote server username | Defines the username to be used by the SCP exporter. |
 | private_key = "/murakami/keys/id_rsa_murakami" | MURAKAMI_EXPORTERS_SCP_PRIVATE_KEY | The system path within the Murakami container where the SCP user's private SSH key is located. |
-| | | | | 
+| | | | |
 | [exporters.gcs] | | | The 'gcs' exporter defines a storage bucket in a Google Cloud Storage project where test data should be saved. |
 | type = "gcs" | MURAKAMI_EXPORTERS_GCS_TYPE | gcs | |
 | enabled = true | MURAKAMI_EXPORTERS_GCS_ENABLED | 0, 1, true, false | |
