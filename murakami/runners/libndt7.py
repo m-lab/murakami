@@ -42,6 +42,7 @@ class LibndtClient(MurakamiRunner):
                 capture_output=True,
             )
             reader = jsonlines.Reader(output.stdout.splitlines())
+            logger.info("NDT7 test complete.")
         else:
             raise RunnerError(
                 "libndt",

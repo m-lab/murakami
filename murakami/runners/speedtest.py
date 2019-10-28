@@ -30,6 +30,7 @@ class SpeedtestClient(MurakamiRunner):
                                     text=True,
                                     capture_output=True)
             reader = jsonlines.Reader(output.stdout.splitlines())
+            logger.info("Speedtest test complete.")
         else:
             raise RunnerError(
                 "speedtest",

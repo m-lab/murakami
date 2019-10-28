@@ -30,6 +30,7 @@ class DashClient(MurakamiRunner):
                                     text=True,
                                     capture_output=True)
             reader = jsonlines.Reader(output.stdout.splitlines())
+            logger.info("Dash test complete.")
         else:
             raise RunnerError(
                 "dash",
