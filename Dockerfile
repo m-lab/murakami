@@ -49,4 +49,4 @@ RUN poetry config settings.virtualenvs.create false \
 # Add binaries' path to PATH.
 ENV PATH="/murakami/bin:${PATH}"
 
-ENTRYPOINT [ "/usr/local/bin/poetry", "run", "murakami" ]
+ENTRYPOINT [ "python", "-m", "murakami" ]

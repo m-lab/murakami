@@ -50,4 +50,4 @@ COPY --from=dashbuild /go/bin/dash-client /murakami/bin/
 # Add binaries' path to PATH.
 ENV PATH="/murakami/bin:${PATH}"
 
-ENTRYPOINT [ "/usr/local/bin/poetry", "run", "murakami" ]
+ENTRYPOINT [ "python", "-m", "murakami" ]
