@@ -3,8 +3,8 @@ port = 80
 loglevel = "DEBUG"
 immediate = 1
 location = "Baltimore"
-network_type = "home"
-connection_type = "wired"
+network-type = "home"
+connection-type = "wired"
 
 [exporters]
 
