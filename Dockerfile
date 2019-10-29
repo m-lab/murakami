@@ -46,7 +46,10 @@ COPY --from=dashbuild /go/bin/dash-client /murakami/bin/
 RUN poetry config settings.virtualenvs.create false \
     && poetry install --no-dev --no-interaction --develop=murakami
 
+# Store state information in a volume
+VOLUME ["/data"]
+
 # Add binaries' path to PATH.
 ENV PATH="/murakami/bin:${PATH}"
 
-ENTRYPOINT [ "python", "-m", "murakami" ]
+ENTRYPOINT [ "murakami", "-d", "/data/config.json", "-c", "/murakami/murakami.toml" ]
