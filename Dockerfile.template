@@ -49,7 +49,4 @@ RUN poetry config settings.virtualenvs.create false \
 # Add binaries' path to PATH.
 ENV PATH="/murakami/bin:${PATH}"
 
-# Mount the expected system path for saving data
-VOLUME ["/data/", "/var/lib/murakami"]
-
-ENTRYPOINT [ "murakami", "-c", "/murakami/murakami.toml" ]
+ENTRYPOINT [ "murakami", "-d", "/data/config.json", "-c", "/murakami/murakami.toml" ]
