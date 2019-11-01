@@ -22,9 +22,9 @@ Please see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Murakami supports three types of Docker container deployments on supported systems:
 
-* **[Standalone](INSTALL-MURAKAMI-STANDALONE.md)**: a single Murakami device, configured on-device
-* **[Standalone Locally Managed](INSTALL-MURAKAMI-LOCAL-MANAGED.md)**: one or more Murakami devices in a single network, configured individually on-device, or using a [Mozilla WebThings Gateway](https://iot.mozilla.org/gateway/) on the same network
-* **[Fleet Managed Murakami using Balena Cloud](INSTALL-MURAKAMI-BALENA-CLOUD.md)**: one or more Murakami devices, configured and managed by the [Balena Cloud IoT platform](https://www.balena.io)
+* **[Standalone](docs/INSTALL-MURAKAMI-STANDALONE.md)**: a single Murakami device, configured on-device
+* **[Standalone Locally Managed](docs/INSTALL-MURAKAMI-LOCAL-MANAGED.md)**: one or more Murakami devices in a single network, configured individually on-device, or using a [Mozilla WebThings Gateway](https://iot.mozilla.org/gateway/) on the same network
+* **[Fleet Managed Murakami using Balena Cloud](docs/INSTALL-MURAKAMI-BALENA-CLOUD.md)**: one or more Murakami devices, configured and managed by the [Balena Cloud IoT platform](https://www.balena.io)
 
 It is also possible to install Murakami directly on supported systems without Docker, however currently documenting direct system installation of Murakami is beyond our project scope. Future testing and documentation is needed to test and confirm supported systems and requirements.
 
