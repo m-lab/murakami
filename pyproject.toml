@@ -26,6 +26,7 @@ pytest = "^3.0"
 pylint = "^2.4"
 portray = "^1.3"
 pdocs = "^1.0"
+tox = "^3.14"
 
 [tool.poetry.plugins."murakami.runners"]
 "dash" = "murakami.runners.dash:DashClient"
@@ -38,6 +39,19 @@ pdocs = "^1.0"
 "scp" = "murakami.exporters.scp:SCPExporter"
 "gcs" = "murakami.exporters.gcs:GCSExporter"
 
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+isolated_build = true
+envlist = py36, py37
+
+[testenv]
+whitelist_externals = poetry
+commands =
+    poetry install -v
+    poetry run pytest tests/
+"""
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
