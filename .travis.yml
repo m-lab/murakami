@@ -1,26 +1,21 @@
 language: python
 dist: xenial
 cache: pip
+python:
+  - 3.6
+  - 3.7
 stages:
   - test
-  - name: deploy
-    if: branch = master
+  - deploy
+before_script:
+  - pip install -U poetry tox-travis codecov
+script:
+  - tox
 jobs:
   include:
-    - stage: test
-      python:
-        - 3.6
-        - 3.7
-      install: skip
-      before_script:
-        - pip install -U poetry tox-travis codecov
-      script:
-        - tox
     - stage: deploy
       python: 3.7
       script: skip
-      before_install:
-        - pip install -U poetry
       install:
         - poetry install
       before_deploy:
