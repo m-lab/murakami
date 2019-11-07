@@ -1,8 +1,5 @@
 language: python
 dist: xenial
-python:
-  - 3.6
-  - 3.7
 cache: pip
 stages:
   - test
@@ -11,12 +8,14 @@ stages:
 jobs:
   include:
     - stage: test
+      python: 3.6
       install: skip
       before_script:
         - pip install -U tox-travis codecov
       script:
         - tox
     - stage: deploy
+      python: 3.7
       script: skip
       before_install:
         - pip install -U poetry
