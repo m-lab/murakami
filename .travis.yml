@@ -4,28 +4,31 @@ python:
   - 3.6
   - 3.7
 cache: pip
-before_install:
-  - pip install -U poetry
-install:
-  - poetry install
-before_script:
-  - pip install -U tox-travis codecov
-script:
-  - tox
-before_deploy:
-  - poetry build
-after_success:
-  - codecov
+stages:
+  - test
+  - name: deploy
+    if: branch = master
 jobs:
   include:
     - stage: test
       install: skip
-      after_success: skip
+      before_script:
+        - pip install -U tox-travis codecov
+      script:
+        - tox
     - stage: deploy
       script: skip
+      before_install:
+        - pip install -U poetry
+      install:
+        - poetry install
+      before_deploy:
+        - poetry build
       deploy:
         provider: script
         script: poetry publish --username $PYPI_USER --password $PYPI_PASSWORD
         skip_cleanup: true
         on:
           tags: true
+      after_success:
+        - codecov
