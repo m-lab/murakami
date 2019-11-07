@@ -8,10 +8,12 @@ stages:
 jobs:
   include:
     - stage: test
-      python: 3.6
+      python:
+        - 3.6
+        - 3.7
       install: skip
       before_script:
-        - pip install -U tox-travis codecov
+        - pip install -U poetry tox-travis codecov
       script:
         - tox
     - stage: deploy
