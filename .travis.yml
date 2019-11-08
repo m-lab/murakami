@@ -16,6 +16,8 @@ jobs:
     - stage: deploy
       python: 3.7
       script: skip
+      before_install:
+        - pip install -U poetry
       install:
         - poetry install
       before_deploy:
