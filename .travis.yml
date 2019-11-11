@@ -17,14 +17,14 @@ jobs:
       python: 3.7
       script: skip
       before_install:
-        - pip install -U poetry
+        - pip install --pre -U poetry
       install:
         - poetry install
       before_deploy:
         - poetry build
       deploy:
         provider: script
-        script: poetry publish --username $PYPI_USER --password $PYPI_PASSWORD
+        script: poetry publish
         skip_cleanup: true
         on:
           tags: true
