@@ -52,4 +52,4 @@ VOLUME ["/data"]
 # Add binaries' path to PATH.
 ENV PATH="/murakami/bin:${PATH}"
 
-ENTRYPOINT [ "murakami", "-d", "/data/config.json", "-c", "/murakami/murakami.toml" ]
+ENTRYPOINT [ "murakami", "-d", "/data/config.json" ]

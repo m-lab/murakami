@@ -81,7 +81,7 @@ def main():
         config_file_parser_class=TomlConfigFileParser,
         default_config_files=[default_config],
         description="The Murakami network test runner.",
-        ignore_unknown_config_file_keys=True,
+        ignore_unknown_config_file_keys=False,
     )
     parser.add(
         "-c",
@@ -130,7 +130,7 @@ def main():
     )
     parser.add(
         "-l",
-        "--log",
+        "--loglevel",
         dest="loglevel",
         default="DEBUG",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
