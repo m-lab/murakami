@@ -9,6 +9,7 @@ repository = "https://github.com/throneless-tech/murakami"
 
 [tool.poetry.scripts]
 murakami = 'murakami.__main__:main'
+murakami-convert = 'scripts.convert:main'
 
 [tool.poetry.dependencies]
 python = "^3.6"
