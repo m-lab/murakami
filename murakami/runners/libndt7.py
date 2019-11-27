@@ -37,10 +37,10 @@ class LibndtClient(MurakamiRunner):
             ]
 
             if "host" in self._config:
-                # If a host has been specified, also default to -insecure
-                # as it will likely use a self-signed certificate.
-                cmdargs.append("--insecure")
                 cmdargs.append(self._config['host'])
+                insecure = self._config.get('insecure', True)
+                if insecure:
+                    cmdargs.append('--insecure')
 
             output = subprocess.run(
                 cmdargs,
