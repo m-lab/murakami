@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 class LibndtClient(MurakamiRunner):
     """Run LibNDT tests."""
     def __init__(self, config=None, data_cb=None):
-        print(config)
         super().__init__(
             title="ndt7",
             description="The Network Diagnostic Tool v7 test.",
