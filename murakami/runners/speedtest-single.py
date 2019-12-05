@@ -15,22 +15,22 @@ class SpeedtestClient(MurakamiRunner):
     """Run Speedtest.net tests."""
     def __init__(self, config=None, data_cb=None):
         super().__init__(
-            title="Speedtest.net",
-            description="The Speedtest.net multi-stream test (https://github.com/sivel/speedtest-cli).",
+            title="Speedtest-cli",
+            description="The Speedtest.net test (https://github.com/sivel/speedtest-cli).",
             config=config,
             data_cb=data_cb,
         )
 
     @staticmethod
     def _start_test():
-        logger.info("Starting Speedtest multi-stream test...")
+        logger.info("Starting Speedtest single stream test...")
         if shutil.which("speedtest-cli") is not None:
-            output = subprocess.run(["speedtest-cli", "--json"],
+            output = subprocess.run(["speedtest-cli", "--single", "--json"],
                                     check=True,
                                     text=True,
                                     capture_output=True)
             reader = jsonlines.Reader(output.stdout.splitlines())
-            logger.info("Speedtest multi-stream test complete.")
+            logger.info("Speedtest single stream test complete.")
         else:
             raise RunnerError(
                 "speedtest",
