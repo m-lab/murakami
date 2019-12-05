@@ -11,11 +11,11 @@ from murakami.runner import MurakamiRunner
 logger = logging.getLogger(__name__)
 
 
-class SpeedtestClient(MurakamiRunner):
+class SpeedtestSingleClient(MurakamiRunner):
     """Run Speedtest.net tests."""
     def __init__(self, config=None, data_cb=None):
         super().__init__(
-            title="Speedtest-cli",
+            title="Speedtest-cli single stream",
             description="The Speedtest.net test (https://github.com/sivel/speedtest-cli).",
             config=config,
             data_cb=data_cb,
