@@ -15,7 +15,7 @@ class SpeedtestClient(MurakamiRunner):
     """Run Speedtest.net tests."""
     def __init__(self, config=None, data_cb=None):
         super().__init__(
-            title="Speedtest.net",
+            title="Speedtest-cli-multi-stream",
             description="The Speedtest.net multi-stream test (https://github.com/sivel/speedtest-cli).",
             config=config,
             data_cb=data_cb,
