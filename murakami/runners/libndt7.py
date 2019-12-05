@@ -21,22 +21,28 @@ class LibndtClient(MurakamiRunner):
             data_cb=data_cb,
         )
 
-    @staticmethod
-    def _start_test():
+    def _start_test(self):
         logger.info("Starting NDT7 test...")
         if shutil.which("libndt-client") is not None:
+            cmdargs = [
+                "libndt-client",
+                "--download",
+                "--upload",
+                "--json",
+                "--websocket",
+                "--tls",
+                "--ndt7",
+                "--batch",
+            ]
+
+            if "host" in self._config:
+                cmdargs.append(self._config['host'])
+                insecure = self._config.get('insecure', True)
+                if insecure:
+                    cmdargs.append('--insecure')
+
             output = subprocess.run(
-                [
-                    "libndt-client",
-                    "--download",
-                    "--upload",
-                    "--lookup-policy=closest",
-                    "--json",
-                    "--websocket",
-                    "--tls",
-                    "--ndt7",
-                    "--batch",
-                ],
+                cmdargs,
                 check=True,
                 text=True,
                 capture_output=True,
