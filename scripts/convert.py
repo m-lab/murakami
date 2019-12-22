@@ -72,7 +72,61 @@ def import_speedtest(path):
         return flatten_json(line, "_")
 
 
-tests = {"speedtest": import_speedtest}
+def import_dash_legacy(path):
+    """
+    Import function for legacy-format DASH tests..
+    """
+    record = {}
+    with jsonlines.open(path, mode="r") as reader:
+        data = reader.read()
+        if "test_name" in data:
+            record["test_name"] = data["test_name"]
+            record["test_runtime"] = data["test_runtime"]
+            record["test_start_time"] = data["test_start_time"]
+            record["connect_latency"] = data["test_keys"]["simple"][
+                "connect_latency"]
+            record["median_bitrate"] = data["test_keys"]["simple"][
+                "median_bitrate"]
+            record["min_playout_delay"] = data["test_keys"]["simple"][
+                "min_playout_delay"]
+            record["probe_asn"] = data["probe_asn"]
+            record["probe_cc"] = data["probe_cc"]
+            return record
+
+
+def import_ndt_legacy(path):
+    """
+    Import function for legacy-format NDT tests..
+    """
+    record = {}
+    with jsonlines.open(path, mode="r") as reader:
+        data = reader.read()
+        if "probe_asn" in data:
+            record["server_address"] = data["test_keys"]["server_address"]
+            record["download"] = data["test_keys"]["simple"]["download"]
+            record["upload"] = data["test_keys"]["simple"]["upload"]
+            record["ping"] = data["test_keys"]["simple"]["ping"]
+            record["avg_rtt"] = data["test_keys"]["advanced"]["avg_rtt"]
+            record["max_rtt"] = data["test_keys"]["advanced"]["max_rtt"]
+            record["min_rtt"] = data["test_keys"]["advanced"]["min_rtt"]
+            record["congestion_limited"] = data["test_keys"]["advanced"][
+                "congestion_limited"]
+            record["packet_loss"] = data["test_keys"]["advanced"][
+                "packet_loss"]
+            record["sender_limited"] = data["test_keys"]["advanced"][
+                "sender_limited"]
+            record["receiver_limited"] = data["test_keys"]["advanced"][
+                "receiver_limited"]
+            record["probe_asn"] = data["probe_asn"]
+            record["probe_cc"] = data["probe_cc"]
+            return record
+
+
+tests = {
+    "speedtest": import_speedtest,
+    "dash_legacy": import_dash_legacy,
+    "ndt_legacy": import_ndt_legacy,
+}
 
 
 def export_csv(path, data):
@@ -99,7 +153,7 @@ def main():
         "-l",
         "--loglevel",
         dest="loglevel",
-        default="DEBUG",
+        default="INFO",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         help="Set the logging level",
     )
@@ -108,7 +162,7 @@ def main():
         "--format",
         dest="format",
         default=DEFAULT_FORMAT,
-        choices=["csv"],
+        choices=exporters.keys(),
         help="Set the output format.",
     )
     parser.add(
@@ -116,7 +170,7 @@ def main():
         "--test",
         dest="test",
         required=True,
-        choices=["speedtest"],
+        choices=tests.keys(),
         help="The type of test data that is being parsed.",
     )
     parser.add(
@@ -149,6 +203,11 @@ def main():
     )
     settings = parser.parse_args()
 
+    logging.basicConfig(
+        level=settings.loglevel,
+        format="%(asctime)s %(filename)s:%(lineno)s %(levelname)s %(message)s",
+    )
+
     pathlist = []
     for i in settings.input:
         pathlist.append(glob.glob(i, recursive=settings.recurse))
@@ -173,8 +232,3 @@ def main():
 
     exporter = exporters.get(settings.format, DEFAULT_FORMAT)
     exporter(settings.output, records)
-
-    logging.basicConfig(
-        level=settings.loglevel,
-        format="%(asctime)s %(filename)s:%(lineno)s %(levelname)s %(message)s",
-    )
