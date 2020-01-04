@@ -34,8 +34,8 @@ pytest-cov = "^2.8"
 "dash" = "murakami.runners.dash:DashClient"
 "ndt5" = "murakami.runners.libndt5:LibndtClient"
 "ndt7" = "murakami.runners.libndt7:LibndtClient"
-"speedtest-multistream" = "murakami.runners.speedtest:SpeedtestClient"
-"speedtest-singlestream" = "murakami.runners.speedtestsingle:SpeedtestSingleClient"
+"speedtestmulti" = "murakami.runners.speedtest:SpeedtestClient"
+"speedtestsingle" = "murakami.runners.speedtestsingle:SpeedtestSingleClient"
 
 [tool.poetry.plugins."murakami.exporters"]
 "local" = "murakami.exporters.local:LocalExporter"
