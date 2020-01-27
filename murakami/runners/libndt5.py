@@ -32,6 +32,7 @@ class LibndtClient(MurakamiRunner):
                 "--websocket",
                 "--tls",
                 "--batch",
+                "--summary"
             ]
 
             if "host" in self._config:
