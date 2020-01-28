@@ -7,7 +7,7 @@ RUN apk add --update build-base gcc cmake libressl-dev curl-dev git linux-header
 # Download and build libndt.
 RUN git clone https://github.com/measurement-kit/libndt.git
 WORKDIR /libndt
-RUN git checkout 358dce1403c30a1d86307f86c42a10a57c352a9f
+RUN git checkout 9369f65ad47dd4c21b1df69c609ddb1d6ef2d493
 
 RUN cmake .
 RUN cmake --build . -j $(nproc)

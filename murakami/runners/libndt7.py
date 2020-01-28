@@ -33,6 +33,7 @@ class LibndtClient(MurakamiRunner):
                 "--tls",
                 "--ndt7",
                 "--batch",
+                "--summary",
             ]
 
             if "host" in self._config:
