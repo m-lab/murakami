@@ -2,6 +2,7 @@ import logging
 import os
 
 import jsonlines
+from xdg import BaseDirectory
 
 import murakami.defaults as defaults
 from murakami.exporter import MurakamiExporter
@@ -26,8 +27,10 @@ class LocalExporter(MurakamiExporter):
             connection_type=connection_type,
             config=config,
         )
-        logging.debug(config)
-        self._path = config.get("path", defaults.EXPORT_PATH)
+        if "path" not in config:
+            self._path = BaseDirectory.save_cache_path("murakami")
+        else:
+            self._path = config["path"]
 
     def push(self, test_name="", data=None, timestamp=None):
         try:

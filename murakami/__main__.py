@@ -14,6 +14,7 @@ import signal
 
 import configargparse
 import livejson
+from xdg import BaseDirectory
 import tomlkit
 
 import murakami.defaults as defaults
@@ -73,10 +74,12 @@ class TomlConfigFileParser(configargparse.ConfigFileParser):
 
 def main():
     """ The main function for Murakami."""
+    default_config = os.path.join(BaseDirectory.save_config_path("murakami"),
+                                  "murakami.toml")
     parser = configargparse.ArgParser(
         auto_env_var_prefix="murakami_settings_",
         config_file_parser_class=TomlConfigFileParser,
-        default_config_files=defaults.CONFIG_FILES,
+        default_config_files=[default_config],
         description="The Murakami network test runner.",
         ignore_unknown_config_file_keys=False,
     )
@@ -90,7 +93,6 @@ def main():
     parser.add(
         "-d",
         "--dynamic-state",
-        default=defaults.DYNAMIC_FILE,
         dest="dynamic",
         help=
         "Path to dynamic configuration store, used to override settings via Webthings (default: /var/lib/murakami/config.json).",
@@ -182,6 +184,10 @@ def main():
         level=settings.loglevel,
         format="%(asctime)s %(filename)s:%(lineno)s %(levelname)s %(message)s",
     )
+
+    if not settings.dynamic:
+        settings.dynamic = os.path.join(
+            BaseDirectory.save_data_path("murakami"), "config.json")
 
     global config
     if not config:
