@@ -52,11 +52,12 @@ class GCSExporter(MurakamiExporter):
         self.client = storage.Client.from_service_account_json(self.key)
 
         try:
+            test_filename = self._generate_filename(test_name, timestamp)
+
             # Split the "target" configuration value into a bucket_name and
             # path. e.g. gs://bucket/path/to/results becomes:
             # - bucket_name: bucket
             # - path: path/to/results
-            test_filename = self._generate_filename(test_name, timestamp)
             t = self.target.split('/')
             bucket_name = t[2]
 
