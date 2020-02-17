@@ -72,7 +72,6 @@ The table below summarizes the options you can configure in `murakami.toml` and 
 | type = "gcs" | MURAKAMI_EXPORTERS_GCS_TYPE | gcs | |
 | enabled = true | MURAKAMI_EXPORTERS_GCS_ENABLED | 0, 1, true, false | |
 | target = "gs://murakami-gcs-test/" | MURAKAMI_EXPORTERS_GCS_TARGET | gs://bucketname | Defines the GCS storage bucket name where data should be stored. |
-| account = "murakami-test-gcs@mlab-sandbox.iam.gserviceaccount.com" | MURAKAMI_EXPORTERS_GCS_ACCOUNT | The name of the GCS service account which has access to write data to the GCS storage bucket. |
 | key = "/murakami/keys/murakami-gcs-serviceaccount.json" | MURAKAMI_EXPORTERS_GCS_KEY | The system path within the Murakami container where the GCS service account's JSON keyfile is located. |
 
 Multiple exporters of any type are supported. For example if you wanted to define two different SCP servers or GCS storage buckets where data should be exported, the config file exporters section might look like this:
