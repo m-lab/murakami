@@ -1,35 +1,21 @@
-# Builder image
-FROM python:3-alpine3.10 AS build
-MAINTAINER Measurement Lab Support <support@measurementlab.net>
-
-RUN apk add --update build-base gcc cmake libressl-dev curl-dev git linux-headers
-
-# Download and build libndt.
-RUN git clone https://github.com/measurement-kit/libndt.git
-WORKDIR /libndt
-RUN git checkout 9369f65ad47dd4c21b1df69c609ddb1d6ef2d493
-
-RUN cmake .
-RUN cmake --build . -j $(nproc)
-
-# Build dash-client
-FROM golang:1.13.0-alpine3.10 AS dashbuild
+# Build ndt7, ndt5 and dash Go clients.
+FROM golang:1.13.0-alpine3.10 AS build
 RUN apk add --no-cache git
-RUN go get github.com/neubot/dash/cmd/dash-client
+RUN go get github.com/m-lab/dash/cmd/dash-client
+RUN go get github.com/m-lab/ndt7-client-go/cmd/ndt7-client
 
 # Murakami image
 FROM python:3-alpine3.10
 RUN apk update && apk upgrade
 # Install dependencies and speedtest-cli
-RUN apk add git curl libstdc++ libgcc gcc libc-dev libffi-dev libressl-dev speedtest-cli make
+RUN apk add git libgcc gcc libc-dev libffi-dev libressl-dev speedtest-cli make
 RUN pip install 'poetry==0.12.17'
 
 WORKDIR /murakami
 
 # Copy Murakami and previously built test clients into the container.
 COPY . /murakami/
-COPY --from=build /libndt/libndt-client /murakami/bin/
-COPY --from=dashbuild /go/bin/dash-client /murakami/bin/
+COPY --from=build /go/bin/* /murakami/bin/
 
 # Set up poetry to not create a virtualenv, since the docker container is
 # isolated already, and install the required dependencies.

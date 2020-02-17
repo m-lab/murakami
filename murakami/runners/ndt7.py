@@ -11,7 +11,7 @@ from murakami.runner import MurakamiRunner
 logger = logging.getLogger(__name__)
 
 
-class LibndtClient(MurakamiRunner):
+class Ndt7Client(MurakamiRunner):
     """Run LibNDT tests."""
     def __init__(self, config=None, data_cb=None):
         super().__init__(
@@ -23,17 +23,11 @@ class LibndtClient(MurakamiRunner):
 
     def _start_test(self):
         logger.info("Starting NDT7 test...")
-        if shutil.which("libndt-client") is not None:
+        if shutil.which("ndt7-client") is not None:
             cmdargs = [
-                "libndt-client",
-                "--download",
-                "--upload",
-                "--json",
-                "--websocket",
-                "--tls",
-                "--ndt7",
-                "--batch",
-                "--summary",
+                "ndt7-client",
+                "-format=json",
+                "-quiet"
             ]
 
             if "host" in self._config:
@@ -52,7 +46,7 @@ class LibndtClient(MurakamiRunner):
             logger.info("NDT7 test complete.")
         else:
             raise RunnerError(
-                "libndt",
-                "Executable libndt-client does not exist, please install libndt.",
+                "ndt7-client",
+                "Executable ndt7-client does not exist, please install ndt7-client-go.",
             )
         return [*reader.iter(skip_empty=True, skip_invalid=True)]
