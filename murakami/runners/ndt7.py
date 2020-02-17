@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class Ndt7Client(MurakamiRunner):
-    """Run LibNDT tests."""
+    """Run ndt7 test."""
     def __init__(self, config=None, data_cb=None):
         super().__init__(
             title="ndt7",
