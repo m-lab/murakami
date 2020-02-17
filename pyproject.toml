@@ -21,6 +21,7 @@ paramiko = "^2.6"
 scp = "^0.13.2"
 jsonlines = "^1.2"
 livejson = "^1.8"
+google-cloud-storage = "^1.26.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
