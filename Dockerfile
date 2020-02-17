@@ -26,17 +26,6 @@ RUN pip install 'poetry==0.12.17'
 
 WORKDIR /murakami
 
-# Install gcloud SDK so we can use gsutil.
-RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
-
-# Installing the package
-RUN mkdir -p /usr/local/gcloud \
-  && tar -C /usr/local/gcloud -xvf /tmp/google-cloud-sdk.tar.gz \
-  && /usr/local/gcloud/google-cloud-sdk/install.sh
-
-# Adding the package path to local
-ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
-
 # Copy Murakami and previously built test clients into the container.
 COPY . /murakami/
 COPY --from=build /libndt/libndt-client /murakami/bin/
