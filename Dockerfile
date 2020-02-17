@@ -3,6 +3,12 @@ FROM golang:1.13.0-alpine3.10 AS build
 RUN apk add --no-cache git
 RUN go get github.com/m-lab/dash/cmd/dash-client
 RUN go get github.com/m-lab/ndt7-client-go/cmd/ndt7-client
+# TODO: just use go get after the -format and -quiet flags have been merged
+# into master.
+RUN git clone https://github.com/m-lab/ndt5-client-go.git \
+    && cd ndt5-client-go/cmd/ndt5-client \
+    && git checkout b179d3bd11fbdb33f1c7ba15130bf684f7e64910 \
+    && go install
 
 # Murakami image
 FROM python:3-alpine3.10
