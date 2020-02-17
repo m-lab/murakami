@@ -22,7 +22,7 @@ class Ndt7Client(MurakamiRunner):
         )
 
     def _start_test(self):
-        logger.info("Starting NDT7 test...")
+        logger.info("Starting ndt7 test...")
         if shutil.which("ndt7-client") is not None:
             cmdargs = [
                 "ndt7-client",
