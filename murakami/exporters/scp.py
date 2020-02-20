@@ -71,9 +71,7 @@ class SCPExporter(MurakamiExporter):
                 filename = self._generate_filename(test_name, timestamp)
                 dst_path = os.path.join(dst_path, filename)
                 logger.info("Copying data to %s", dst_path)
-                buf = io.StringIO()
-                with jsonlines.Writer(buf) as writer:
-                    writer.write_all(data)
+                buf = io.StringIO(data)
                 buf.seek(0)
                 scp.putfo(buf, dst_path)
         except Exception as err:

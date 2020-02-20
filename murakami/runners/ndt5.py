@@ -13,12 +13,16 @@ logger = logging.getLogger(__name__)
 
 class Ndt5Client(MurakamiRunner):
     """Run NDT5 test."""
-    def __init__(self, config=None, data_cb=None):
+    def __init__(self, config=None, data_cb=None,
+        location=None, network_type=None, connection_type=None):
         super().__init__(
             title="ndt5",
             description="The Network Diagnostic Tool v5 test.",
             config=config,
             data_cb=data_cb,
+            location=location,
+            network_type=network_type,
+            connection_type=connection_type
         )
 
     def _start_test(self):

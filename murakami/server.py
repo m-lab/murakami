@@ -130,6 +130,9 @@ class MurakamiServer:
             self._runners[entry_point.name] = entry_point.load()(
                 config=self._config["tests"][entry_point.name],
                 data_cb=self._call_exporters,
+                location=self._location,
+                network_type=self._network_type,
+                connection_type=self._connection_type
             )
 
         # Start webthings server if enabled

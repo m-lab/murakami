@@ -13,12 +13,16 @@ logger = logging.getLogger(__name__)
 
 class SpeedtestSingleClient(MurakamiRunner):
     """Run Speedtest.net tests."""
-    def __init__(self, config=None, data_cb=None):
+    def __init__(self, config=None, data_cb=None,
+        location=None, network_type=None, connection_type=None):
         super().__init__(
             title="Speedtest-cli-single-stream",
             description="The Speedtest.net test (https://github.com/sivel/speedtest-cli).",
             config=config,
             data_cb=data_cb,
+            location=location,
+            network_type=network_type,
+            connection_type=connection_type
         )
 
     @staticmethod
