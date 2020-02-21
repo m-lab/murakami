@@ -57,10 +57,9 @@ class Ndt7Client(MurakamiRunner):
                 'MurakamiNetworkType': self._network_type
             }
 
-             # Parse ndt7 summary.
-            summary = {}
-
             if output.returncode == 0:
+                # Parse ndt7 summary.
+                summary = {}
                 try:
                     summary = json.loads(output.stdout)
                 except json.JSONDecodeError:
