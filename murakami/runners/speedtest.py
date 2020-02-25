@@ -33,12 +33,12 @@ class SpeedtestClient(MurakamiRunner):
                                     check=True,
                                     text=True,
                                     capture_output=True)
-            reader = jsonlines.Reader(output.stdout.splitlines())
+
             logger.info("Speedtest multi-stream test complete.")
+
+            # TODO: write parser. Only print the last line for now.
+            return output.stdout.splitlines()[-1]
         else:
             raise RunnerError(
                 "speedtest",
                 "Executable does not exist, please install speedtest-cli.")
-        return [
-            *reader.iter(skip_empty=True, skip_invalid=True)
-        ]

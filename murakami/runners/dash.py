@@ -33,10 +33,10 @@ class DashClient(MurakamiRunner):
                                     check=True,
                                     text=True,
                                     capture_output=True)
-            reader = jsonlines.Reader(output.stdout.splitlines())
             logger.info("Dash test complete.")
+            # TODO: write parser. Only print the last line for now.
+            return output.stdout.splitlines()[-1]
         else:
             raise RunnerError(
                 "dash",
                 "Executable dash-client does not exist, please install DASH.")
-        return [*reader.iter(skip_empty=True, skip_invalid=True)]
