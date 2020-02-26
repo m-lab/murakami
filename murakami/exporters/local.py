@@ -35,8 +35,7 @@ class LocalExporter(MurakamiExporter):
                 self._path, self._generate_filename(test_name, timestamp))
             output = open(dst_path, "w")
             logger.info("Copying data to %s", dst_path)
-            with jsonlines.Writer(output) as writer:
-                writer.write_all(data)
+            output.write(data)
         except Exception as err:
             logger.error("Exporting to local file failed: %s", err)
         else:

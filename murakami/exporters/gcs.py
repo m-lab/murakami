@@ -68,15 +68,9 @@ class GCSExporter(MurakamiExporter):
                     object_name += '/'
             object_name += test_filename
 
-            # Write JSONL output to a string.
-            fp = io.StringIO()
-            writer = jsonlines.Writer(fp)
-            writer.write_all(data)
-            writer.close()
-
             logger.info("Uploading test data - Bucket: %s, Object: %s",
                 bucket_name, object_name)
 
-            self.upload(fp.getvalue(), bucket_name, object_name)
+            self.upload(data, bucket_name, object_name)
         except ValueError as e:
             logger.error('Error while uploading to GCS: %s', e)
