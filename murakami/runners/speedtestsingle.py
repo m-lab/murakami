@@ -2,11 +2,12 @@ import logging
 import shutil
 import subprocess
 import uuid
-
-import jsonlines
+import datetime
+import json
 
 from murakami.errors import RunnerError
 from murakami.runner import MurakamiRunner
+from murakami.runners.speedtest import SpeedtestClient
 
 logger = logging.getLogger(__name__)
 
@@ -25,19 +26,27 @@ class SpeedtestSingleClient(MurakamiRunner):
             connection_type=connection_type
         )
 
-    @staticmethod
-    def _start_test():
+    def _start_test(self):
         logger.info("Starting Speedtest single stream test...")
         if shutil.which("speedtest-cli") is not None:
-            output = subprocess.run(["speedtest-cli", "--single", "--json"],
-                                    check=True,
+            starttime = datetime.datetime.utcnow()
+            output = subprocess.run(["speedtest-cli",
+                                     "--single", "--json"],
                                     text=True,
                                     capture_output=True)
+            endtime = datetime.datetime.utcnow()
 
-            logger.info("Speedtest single-stream test complete.")
+            murakami_output = {
+                'TestName': "speedtest-cli-single-stream",
+                'TestStartTime': starttime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
+                'TestEndTime': endtime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
+                'MurakamiLocation': self._location,
+                'MurakamiConnectionType': self._connection_type,
+                'MurakamiNetworkType': self._network_type
+            }
 
-            # TODO: write parser. Only print the last line for now.
-            return output.stdout.splitlines()[-1]
+            murakami_output.update(SpeedtestClient._parse_summary(output))
+            return json.dumps(murakami_output)
         else:
             raise RunnerError(
                 "speedtest",
