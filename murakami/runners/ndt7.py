@@ -35,7 +35,7 @@ class Ndt7Client(MurakamiRunner):
             ]
 
             if "host" in self._config:
-                cmdargs.append(self._config['host'])
+                cmdargs.append("-server=" + self._config['host'])
                 insecure = self._config.get('insecure', True)
                 if insecure:
                     cmdargs.append('--insecure')
