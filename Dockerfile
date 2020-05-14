@@ -1,12 +1,12 @@
 # Build ndt7, ndt5 and dash Go clients.
-FROM golang:1.13.0-alpine3.10 AS build
-RUN apk add --no-cache git
+FROM golang:1.13.10-buster AS build
+RUN apt install -y git
 RUN go get github.com/m-lab/dash/cmd/dash-client
 RUN go get github.com/m-lab/ndt7-client-go/cmd/ndt7-client
 RUN go get github.com/m-lab/ndt5-client-go/cmd/ndt5-client
 
 # Murakami image
-FROM python:3.7-stretch
+FROM python:3.7-buster
 # Install dependencies and speedtest-cli
 RUN apt-get update
 RUN apt-get install -y git gcc libc-dev libffi-dev libssl-dev speedtest-cli make
