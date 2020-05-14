@@ -6,10 +6,10 @@ RUN go get github.com/m-lab/ndt7-client-go/cmd/ndt7-client
 RUN go get github.com/m-lab/ndt5-client-go/cmd/ndt5-client
 
 # Murakami image
-FROM python:3-alpine3.10
-RUN apk update && apk upgrade
+FROM python:3.7-stretch
 # Install dependencies and speedtest-cli
-RUN apk add git libgcc gcc libc-dev libffi-dev libressl-dev speedtest-cli make
+RUN apt-get update
+RUN apt-get install -y git gcc libc-dev libffi-dev libssl-dev speedtest-cli make
 RUN pip install 'poetry==0.12.17'
 
 WORKDIR /murakami
