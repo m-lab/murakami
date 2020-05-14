@@ -1,5 +1,5 @@
 # Build ndt7, ndt5 and dash Go clients.
-FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-golang:1.12-3.10-build AS build
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-golang:1.13.10-buster-build AS build
 RUN apk add --no-cache git
 RUN go get github.com/m-lab/dash/cmd/dash-client
 RUN go get github.com/m-lab/ndt7-client-go/cmd/ndt7-client
