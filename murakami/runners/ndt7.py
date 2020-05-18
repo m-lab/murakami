@@ -3,7 +3,7 @@ import shutil
 import subprocess
 import uuid
 import json
-import datetime 
+import datetime
 
 from murakami.errors import RunnerError
 from murakami.runner import MurakamiRunner
@@ -87,13 +87,13 @@ class Ndt7Client(MurakamiRunner):
                 if upload is not None:
                     murakami_output['UploadValue'] = upload.get('Value')
                     murakami_output['UploadUnit'] = upload.get('Unit')
-                    murakami_output['UploadError'] = None 
+                    murakami_output['UploadError'] = None
                 if retrans is not None:
                     murakami_output['DownloadRetransValue'] = retrans.get('Value')
                     murakami_output['DownloadRetransUnit'] = retrans.get('Unit')
                 if rtt is not None:
-                    murakami_output['RTTValue'] = rtt.get('Value')
-                    murakami_output['RTTUnit'] = rtt.get('Unit')
+                    murakami_output['MinRTTValue'] = rtt.get('Value')
+                    murakami_output['MinRTTUnit'] = rtt.get('Unit')
             else:
                 logger.warn("ndt7 test completed with errors.")
 
@@ -113,7 +113,7 @@ class Ndt7Client(MurakamiRunner):
                             )
                     except Exception as exc:
                         logger.error("Cannot parse error message: %s", exc)
-                
+
                 # All the other fields are set to None (which will become null
                 # in the JSON.)
                 murakami_output['ServerName'] = None
