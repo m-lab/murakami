@@ -49,7 +49,7 @@ class SpeedtestClient(MurakamiRunner):
             murakami_output['UploadValue'] = summary.get('upload')
             murakami_output['UploadUnit'] = 'Bit/s'
             murakami_output['Ping'] = summary.get('ping')
-            murakami_output['PingUnits'] = 'ms'
+            murakami_output['PingUnit'] = 'ms'
             murakami_output['BytesSent'] = summary.get('bytes_sent')
             murakami_output['BytesReceived'] = summary.get('bytes_received')
             murakami_output['Share'] = summary.get('share')
@@ -70,7 +70,7 @@ class SpeedtestClient(MurakamiRunner):
                 murakami_output['ServerHost'] = server.get('host')
                 murakami_output['ServerDistance'] = server.get('d')
                 murakami_output['ServerLatency'] = server.get('latency')
-                murakami_output['ServerLatencyUnits'] = 'ms'
+                murakami_output['ServerLatencyUnit'] = 'ms'
 
             if client is not None:
                 murakami_output['ClientIP'] = client.get('ip')
@@ -108,7 +108,7 @@ class SpeedtestClient(MurakamiRunner):
             murakami_output['ServerHost'] = None
             murakami_output['ServerDistance'] = None
             murakami_output['ServerLatency'] = None
-            murakami_output['ServerLatencyUnits'] = None
+            murakami_output['ServerLatencyUnit'] = None
             murakami_output['ClientIP'] = None
             murakami_output['ClientLat'] = None
             murakami_output['ClientLon'] = None
