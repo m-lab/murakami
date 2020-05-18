@@ -74,7 +74,7 @@ class Ndt7Client(MurakamiRunner):
                 download = summary.get('Download')
                 upload = summary.get('Upload')
                 retrans = summary.get('DownloadRetrans')
-                rtt = summary.get('RTT')
+                minrtt = summary.get('MinRTT')
 
                 murakami_output['ServerName'] = summary.get('ServerFQDN')
                 murakami_output['ServerIP'] = summary.get('ServerIP')
@@ -91,9 +91,9 @@ class Ndt7Client(MurakamiRunner):
                 if retrans is not None:
                     murakami_output['DownloadRetransValue'] = retrans.get('Value')
                     murakami_output['DownloadRetransUnit'] = retrans.get('Unit')
-                if rtt is not None:
-                    murakami_output['MinRTTValue'] = rtt.get('Value')
-                    murakami_output['MinRTTUnit'] = rtt.get('Unit')
+                if minrtt is not None:
+                    murakami_output['MinRTTValue'] = minrtt.get('Value')
+                    murakami_output['MinRTTUnit'] = minrtt.get('Unit')
             else:
                 logger.warn("ndt7 test completed with errors.")
 
