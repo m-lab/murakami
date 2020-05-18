@@ -44,10 +44,10 @@ class SpeedtestClient(MurakamiRunner):
             summary = json.loads(output.stdout)
 
             murakami_output = {}
-            murakami_output['Download'] = summary.get('download')
-            murakami_output['DownloadUnits'] = 'Bit/s'
-            murakami_output['Upload'] = summary.get('upload')
-            murakami_output['UploadUnits'] = 'Bit/s'
+            murakami_output['DownloadValue'] = summary.get('download')
+            murakami_output['DownloadUnit'] = 'Bit/s'
+            murakami_output['UploadValue'] = summary.get('upload')
+            murakami_output['UploadUnit'] = 'Bit/s'
             murakami_output['Ping'] = summary.get('ping')
             murakami_output['PingUnits'] = 'ms'
             murakami_output['BytesSent'] = summary.get('bytes_sent')
@@ -89,10 +89,10 @@ class SpeedtestClient(MurakamiRunner):
             # Set TestError and every other field to None.
             murakami_output['TestError'] = output.stderr
 
-            murakami_output['Download'] = None
-            murakami_output['DownloadUnits'] = None
-            murakami_output['Upload'] = None
-            murakami_output['UploadUnits'] = None
+            murakami_output['DownloadValue'] = None
+            murakami_output['DownloadUnit'] = None
+            murakami_output['UploadValue'] = None
+            murakami_output['UploadUnit'] = None
             murakami_output['BytesSent'] = None
             murakami_output['BytesReceived'] = None
             murakami_output['Share'] = None
