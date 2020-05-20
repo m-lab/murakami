@@ -174,7 +174,13 @@ def main():
         "--connection-type",
         default=None,
         dest="connection_type",
-        help="Connection this associated with this node (default: '').",
+        help="Connection associated with this node (default: '').",
+    )
+    parser.add(
+        "--device-id",
+        default="",
+        dest="device_id",
+        help="Unique identifier for the current Murakami device (default: '').",
     )
     settings = parser.parse_args()
 
@@ -190,6 +196,8 @@ def main():
         state = livejson.File(settings.dynamic, pretty=True)
         config = ChainMap(state, config)
 
+    print(settings.connection_type)
+    print(config)
     server = MurakamiServer(
         port=settings.port,
         hostname=settings.hostname,
@@ -202,6 +210,7 @@ def main():
         location=settings.location,
         network_type=settings.network_type,
         connection_type=settings.connection_type,
+        device_id=settings.device_id,
         config=config,
     )
 

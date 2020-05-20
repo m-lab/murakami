@@ -26,14 +26,16 @@ class MurakamiRunner:
     * `data_cb`: The callback function that receives the test results
     """
     def __init__(self, title, description="", config=None, data_cb=None,
-        location=None, network_type=None, connection_type=None):
+        location=None, network_type=None, connection_type=None,
+        device_id=None):
         self.title = title
         self.description = description
         self._config = config
         self._data_cb = data_cb
         self._location = location
         self._network_type = network_type
-        self._connection_type = connection_type
+        self._connection_type = connection_type,
+        self._device_id = device_id
 
     def _start_test(self):
         raise RunnerError(self.title, "No _start_test() function implemented.")

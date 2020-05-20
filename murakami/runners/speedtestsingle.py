@@ -15,7 +15,8 @@ logger = logging.getLogger(__name__)
 class SpeedtestSingleClient(MurakamiRunner):
     """Run Speedtest.net tests."""
     def __init__(self, config=None, data_cb=None,
-        location=None, network_type=None, connection_type=None):
+        location=None, network_type=None, connection_type=None,
+        device_id=None):
         super().__init__(
             title="Speedtest-cli-single-stream",
             description="The Speedtest.net test (https://github.com/sivel/speedtest-cli).",
@@ -23,7 +24,8 @@ class SpeedtestSingleClient(MurakamiRunner):
             data_cb=data_cb,
             location=location,
             network_type=network_type,
-            connection_type=connection_type
+            connection_type=connection_type,
+            device_id=device_id
         )
 
     def _start_test(self):
@@ -42,7 +44,8 @@ class SpeedtestSingleClient(MurakamiRunner):
                 'TestEndTime': endtime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
                 'MurakamiLocation': self._location,
                 'MurakamiConnectionType': self._connection_type,
-                'MurakamiNetworkType': self._network_type
+                'MurakamiNetworkType': self._network_type,
+                'MurakamiDeviceID': self._device_id,
             }
 
             murakami_output.update(SpeedtestClient._parse_summary(output))

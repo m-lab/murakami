@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 class Ndt5Client(MurakamiRunner):
     """Run NDT5 test."""
     def __init__(self, config=None, data_cb=None,
-        location=None, network_type=None, connection_type=None):
+        location=None, network_type=None, connection_type=None,
+        device_id=None):
         super().__init__(
             title="ndt5",
             description="The Network Diagnostic Tool v5 test.",
@@ -22,7 +23,8 @@ class Ndt5Client(MurakamiRunner):
             data_cb=data_cb,
             location=location,
             network_type=network_type,
-            connection_type=connection_type
+            connection_type=connection_type,
+            device_id=device_id
         )
 
     def _start_test(self):
@@ -54,7 +56,8 @@ class Ndt5Client(MurakamiRunner):
                 'TestEndTime': endtime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
                 'MurakamiLocation': self._location,
                 'MurakamiConnectionType': self._connection_type,
-                'MurakamiNetworkType': self._network_type
+                'MurakamiNetworkType': self._network_type,
+                'MurakamiDeviceID': self._device_id,
             }
 
             if output.returncode == 0:
