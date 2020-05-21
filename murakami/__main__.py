@@ -41,7 +41,7 @@ def load_env():
             acc[key] = value
 
     for k, v in env.items():
-        _, *sec = k.lower().split('_')
+        _, *sec = k.lower().split('_', maxsplit=3)
         recurse(sec, v, acc)
     return acc
 
