@@ -262,8 +262,8 @@ def main():
         importer = tests.get(settings.test, DEFAULT_TEST)
         try:
             contents = importer(path)
-        except ConvertException as ex:
-            print(ex.message)
+        except Exception as ex:
+            print(ex)
             continue
 
         if settings.pattern:
