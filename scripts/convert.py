@@ -12,12 +12,26 @@ import os
 import configargparse
 import csv
 import jsonlines
+import json
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_FORMAT = "csv"
 DEFAULT_TEST = "speedtest"
 
+
+class ConvertException(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            return "ConvertException, {}".format(self.message)
+        else:
+            return "ConvertException"
 
 def flatten_json(b, delim):
     """
@@ -121,11 +135,40 @@ def import_ndt_legacy(path):
             record["probe_cc"] = data["probe_cc"]
             return record
 
+def import_ndt5(path):
+    print("Converting {}...".format(path))
+    with open(path) as f:
+        data = json.load(f)
+
+        # Check this is an NDT5 test summary.
+        if data.get('TestName') != "ndt5":
+            raise ConvertException("{}: Invalid ndt5 output file."
+                .format(path))
+
+        # Check this test completed without errors.
+        if data.get('TestError') is not None:
+            raise ConvertException(
+                "{}: test did not complete successfully, skipping."
+                    .format(path))
+        return data
+
+def import_ndt7(path):
+    print("Converting {}...".format(path))
+    with open(path) as f:
+        data = json.load(f)
+
+        # Check this is an ndt7 test summary.
+        if data.get("TestName") != "ndt7":
+            raise ConvertException("{}: Invalid ndt7 output file."
+                .format(path))
+        return data
 
 tests = {
     "speedtest": import_speedtest,
     "dash_legacy": import_dash_legacy,
     "ndt_legacy": import_ndt_legacy,
+    "ndt5": import_ndt5,
+    "ndt7": import_ndt7
 }
 
 
@@ -134,10 +177,10 @@ def export_csv(path, data):
     Export function for CSV-format output files.
     """
     with open(path, "w", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=data[0].keys())
+        writer = csv.DictWriter(file, fieldnames=data[0].keys(), quotechar='"',
+            quoting=csv.QUOTE_NONNUMERIC)
         writer.writeheader()
         return writer.writerows(data)
-
 
 exporters = {"csv": export_csv}
 
@@ -217,7 +260,12 @@ def main():
     records = []
     for path in pathlist:
         importer = tests.get(settings.test, DEFAULT_TEST)
-        contents = importer(path)
+        try:
+            contents = importer(path)
+        except ConvertException as ex:
+            print(ex.message)
+            continue
+
         if settings.pattern:
             pattern = extract_pattern(os.path.basename(path), settings.pattern)
             if "l" in pattern:
