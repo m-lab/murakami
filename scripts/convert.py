@@ -29,7 +29,7 @@ class ConvertException(Exception):
 
     def __str__(self):
         if self.message:
-            return "ConvertException, {}".format(self.message)
+            return self.message
         else:
             return "ConvertException"
 
@@ -161,6 +161,12 @@ def import_ndt7(path):
         if data.get("TestName") != "ndt7":
             raise ConvertException("{}: Invalid ndt7 output file."
                 .format(path))
+
+        # Check this test completed without errors.
+        if data.get('TestError') is not None:
+            raise ConvertException(
+                "{}: test did not complete successfully, skipping."
+                    .format(path))
         return data
 
 tests = {
