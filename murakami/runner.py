@@ -34,7 +34,7 @@ class MurakamiRunner:
         self._data_cb = data_cb
         self._location = location
         self._network_type = network_type
-        self._connection_type = connection_type,
+        self._connection_type = connection_type
         self._device_id = device_id
 
     def _start_test(self):

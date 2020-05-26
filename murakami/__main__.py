@@ -196,8 +196,6 @@ def main():
         state = livejson.File(settings.dynamic, pretty=True)
         config = ChainMap(state, config)
 
-    print(settings.connection_type)
-    print(config)
     server = MurakamiServer(
         port=settings.port,
         hostname=settings.hostname,
