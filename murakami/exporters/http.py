@@ -33,12 +33,19 @@ class HTTPExporter(MurakamiExporter):
         # Make a JSON payload with the expected format
         json_data = {
             'apiVersion': 1,
-            data: data
+            'data': data
         }
 
         # POST the payload.
         resp = requests.post(self._url, data=json.dumps(json_data))
-        if resp.status_code != 200:
+        if not resp.ok:
             logger.error("Exporting to HTTP endpoint failed: {}".format(
-                resp.text
+                resp.json()
             ))
+            return False
+        logger.info("Test data successfully sent to {}. Response: {}"
+            .format(
+                self._url,
+                resp.json()
+            ))
+        return True
