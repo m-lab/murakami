@@ -45,6 +45,10 @@ def load_env():
         recurse(sec, v, acc)
     return acc
 
+def default_device_id():
+    """Return the value of the environment variable BALENA_DEVICE_ID if set, or
+    an empty string."""
+    return os.environ.get('BALENA_DEVICE_UUID', "")
 
 class TomlConfigFileParser(configargparse.ConfigFileParser):
     """
@@ -184,7 +188,13 @@ def main():
         "--connection-type",
         default=None,
         dest="connection_type",
-        help="Connection this associated with this node (default: '').",
+        help="Connection associated with this node (default: '').",
+    )
+    parser.add(
+        "--device-id",
+        default=default_device_id(),
+        dest="device_id",
+        help="Unique identifier for the current Murakami device (default: '').",
     )
     settings = parser.parse_args()
     print(settings)
@@ -218,6 +228,7 @@ def main():
         location=settings.location,
         network_type=settings.network_type,
         connection_type=settings.connection_type,
+        device_id=settings.device_id,
         config=config,
     )
 

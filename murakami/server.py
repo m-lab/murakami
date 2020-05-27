@@ -78,6 +78,7 @@ class MurakamiServer:
             location=None,
             network_type=None,
             connection_type=None,
+            device_id=None,
             config=None,
     ):
         self._runners = {}
@@ -97,6 +98,7 @@ class MurakamiServer:
         self._location = location
         self._network_type = network_type
         self._connection_type = connection_type
+        self._device_id = device_id
         self._config = config
 
     def _call_runners(self):
@@ -132,7 +134,8 @@ class MurakamiServer:
                 data_cb=self._call_exporters,
                 location=self._location,
                 network_type=self._network_type,
-                connection_type=self._connection_type
+                connection_type=self._connection_type,
+                device_id=self._device_id,
             )
 
         # Start webthings server if enabled
