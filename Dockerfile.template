@@ -27,4 +27,7 @@ RUN poetry config settings.virtualenvs.create false \
 # Add binaries' path to PATH.
 ENV PATH="/murakami/bin:${PATH}"
 
+# Set the DEVICE_ID to the BALENA_DEVICE_ID.
+ENV MURAKAMI_SETTINGS_DEVICE_ID="$BALENA_DEVICE_ID"
+
 ENTRYPOINT [ "murakami", "-d", "/data/config.json" ]
