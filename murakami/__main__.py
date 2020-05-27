@@ -25,9 +25,13 @@ config = None
 
 
 def load_env():
-    """This function loads the local environment into a dict and returns it."""
+    """This function loads the Murakami configuration from the local
+    environment into a dict and returns it.
+    It ignores variables starting with MURAKAMI_SETTINGS as those are read and
+    managed by configargparse."""
     acc = {}
-    env = {k: v for k, v in os.environ.items() if k.startswith("MURAKAMI_")}
+    env = {k: v for k, v in os.environ.items() if k.startswith('MURAKAMI_') and
+        not k.startswith('MURAKAMI_SETTINGS')}
 
     def recurse(sec, value, acc):
         key = sec.pop(0)
@@ -37,7 +41,7 @@ def load_env():
             acc[key] = value
 
     for k, v in env.items():
-        _, *sec = k.lower().split("_", 3)
+        _, *sec = k.lower().split('_', maxsplit=3)
         recurse(sec, v, acc)
     return acc
 
@@ -56,13 +60,19 @@ class TomlConfigFileParser(configargparse.ConfigFileParser):
 
     def parse(self, stream):
         """
-        Takes a TOML file stream and parses it, merging it with the
-        environment, and then passes back just the settings portion.
+        Takes a TOML file stream, parses it and then returns just the
+        [settings] table as a dict.
         """
-        global config
         config_file = tomlkit.parse(stream.read())
-        config_env = load_env()
-        config = {**config_file, **config_env}
+
+        # Note: this is a bit of a hack. We want to be able to use
+        # configargparse's env variables mapping capabilities, thus we only
+        # return the [settings] section here -- which maps 1-to-1 with command
+        # line flags -- but we also want to read this TOML file exactly once.
+        # To do this, we put the configuration dict on the global scope here.
+        global config
+        config = {**config_file}
+
         settings = OrderedDict()
         if "settings" in config:
             for key, value in config["settings"].items():
@@ -85,7 +95,7 @@ def main():
         "--config",
         is_config_file=True,
         required=False,
-        help="Configuration file path (default: /etc/murakami/murakami.toml).",
+        help="TOML configuration file path.",
     )
     parser.add(
         "-d",
@@ -93,7 +103,7 @@ def main():
         default=defaults.DYNAMIC_FILE,
         dest="dynamic",
         help=
-        "Path to dynamic configuration store, used to override settings via Webthings (default: /var/lib/murakami/config.json).",
+        "Path to dynamic configuration store, used to override settings via Webthings (default:" + defaults.DYNAMIC_FILE + ").",
     )
     parser.add(
         "-p",
@@ -177,15 +187,21 @@ def main():
         help="Connection this associated with this node (default: '').",
     )
     settings = parser.parse_args()
+    print(settings)
 
     logging.basicConfig(
         level=settings.loglevel,
         format="%(asctime)s %(filename)s:%(lineno)s %(levelname)s %(message)s",
     )
 
+    # Merge the content of the TOML config file with the environment variables.
+    # If no configuration file has been parsed at this point, just use env.
     global config
-    if not config:
-        config = load_env()
+    config_from_env = load_env()
+    if config:
+        config = {**config, **config_from_env}
+    else:
+        config = config_from_env
     if settings.webthings:
         state = livejson.File(settings.dynamic, pretty=True)
         config = ChainMap(state, config)
