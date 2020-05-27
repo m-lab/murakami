@@ -41,6 +41,10 @@ def load_env():
         recurse(sec, v, acc)
     return acc
 
+def default_device_id():
+    """Return the value of the environment variable BALENA_DEVICE_ID if set, or
+    an empty string."""
+    return os.environ.get('BALENA_DEVICE_ID', "")
 
 class TomlConfigFileParser(configargparse.ConfigFileParser):
     """
@@ -178,7 +182,7 @@ def main():
     )
     parser.add(
         "--device-id",
-        default="",
+        default=default_device_id(),
         dest="device_id",
         help="Unique identifier for the current Murakami device (default: '').",
     )
