@@ -44,7 +44,7 @@ def load_env():
 def default_device_id():
     """Return the value of the environment variable BALENA_DEVICE_ID if set, or
     an empty string."""
-    return os.environ.get('BALENA_DEVICE_ID', "")
+    return os.environ.get('BALENA_DEVICE_UUID', "")
 
 class TomlConfigFileParser(configargparse.ConfigFileParser):
     """
