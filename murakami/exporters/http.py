@@ -31,6 +31,7 @@ class HTTPExporter(MurakamiExporter):
 
     def push(self, test_name="", data=None, timestamp=None):
         # Make a JSON payload with the expected format
+        data = json.loads(data)
         json_data = {
             'apiVersion': 1,
             'data': data
