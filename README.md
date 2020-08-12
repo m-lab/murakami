@@ -37,7 +37,7 @@ Murakami supports Linux operating systems like Ubuntu, Debian, etc. Windows is n
 
 ## Murakami Configurations and Customization
 
-A Murkami container can be configured flexibly depending on the deployment scenario. If you simply run a Murakami container using M-Lab's pre-built images on Dockerhub, by default all tests are configured to run four times daily at randomized intervals, but with no data exporters enabled. This section focuses on which options can be configured using the file `murakami.toml` OR using environment variables.
+A Murakami container can be configured flexibly depending on the deployment scenario. If you simply run a Murakami container using M-Lab's pre-built images on Dockerhub, by default all tests are configured to run four times daily at randomized intervals, but with no data exporters enabled. This section focuses on which options can be configured using the file `murakami.toml` OR using environment variables.
 
 The Murakami container can be customized using:
 * environment variables on the command line when running docker (Standalone, Standalone Locally Managed)
