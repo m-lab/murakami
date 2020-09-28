@@ -42,6 +42,7 @@ pytest-cov = "^2.8"
 "local" = "murakami.exporters.local:LocalExporter"
 "scp" = "murakami.exporters.scp:SCPExporter"
 "gcs" = "murakami.exporters.gcs:GCSExporter"
+"http" = "murakami.exporters.http:HTTPExporter"
 
 [tool.tox]
 legacy_tox_ini = """

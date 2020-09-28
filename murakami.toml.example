@@ -28,6 +28,11 @@ connection-type = "wired"
   service_account = "murakami-test-gcs@mlab-sandbox.iam.gserviceaccount.com"
   key = "/murakami/keys/murakami-gcs-serviceaccount.json"
 
+  [exporters.http]
+  type = "http"
+  enabled = true
+  url = "http://some-test-url/v1/upload"
+
 [tests]
 
   [tests.dash]
