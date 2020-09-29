@@ -3,7 +3,7 @@ FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-golang:1.13.10-buster-build AS bui
 RUN apt-get update
 RUN apt-get install -y git
 ENV GO111MODULE=on
-RUN go get github.com/m-lab/dash/cmd/dash-client
+RUN go get github.com/neubot/dash/cmd/dash-client@master
 RUN go get github.com/m-lab/ndt7-client-go/cmd/ndt7-client
 RUN go get github.com/m-lab/ndt5-client-go/cmd/ndt5-client
 
