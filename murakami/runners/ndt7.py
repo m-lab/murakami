@@ -33,7 +33,8 @@ class Ndt7Client(MurakamiRunner):
             cmdargs = [
                 "ndt7-client",
                 "-format=json",
-                "-quiet"
+                "-quiet",
+                "-scheme=ws"
             ]
 
             if "host" in self._config:
