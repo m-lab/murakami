@@ -32,15 +32,14 @@ class Ndt5Client(MurakamiRunner):
         if shutil.which("ndt5-client") is not None:
             cmdargs = [
                 "ndt5-client",
+                "-protocol=ndt5",
                 "-format=json",
                 "-quiet"
             ]
 
             if "host" in self._config:
-                cmdargs.append(self._config['host'])
-                insecure = self._config.get('insecure', True)
-                if insecure:
-                    cmdargs.append('--insecure')
+                logger.info("host value set:"+self._config['host'])
+                cmdargs.append('-server='+self._config['host'])
 
             starttime = datetime.datetime.utcnow()
             output = subprocess.run(
