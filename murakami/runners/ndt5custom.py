@@ -4,6 +4,7 @@ import subprocess
 import uuid
 import datetime
 import json
+import pkg_resources
 
 from murakami.errors import RunnerError
 from murakami.runner import MurakamiRunner
@@ -27,20 +28,67 @@ class Ndt5ClientCustom(MurakamiRunner):
             device_id=device_id
         )
 
+        self._server_selection = {}
+
+        # Load all the available server selection algorithms.
+        for entry_point in pkg_resources.iter_entry_points(
+            "murakami.selection"
+        ):
+            self._server_selection[entry_point.name] = entry_point.load()()
+
     def _start_test(self):
-        logger.info("Starting NDT5 test...")
-        if shutil.which("ndt5-client") is not None:
+        logger.info("Starting ndt5custom test...")
+        
+        # Check that a configuration file has been specified
+        if "config" not in self._config:
+            raise RunnerError(
+                'ndt5custom',
+                'No configuration file specified for the custom runner, \
+                    skipping.')
+        
+        # Check that the ndt5-client executable is available.
+        if shutil.which('ndt5-client') is None:
+            raise RunnerError(
+                'ndt5custom',
+                "Executable ndt5-client does not exist, please install ndt5-client-go.",
+            )
+
+        custom_config = {}
+        try:
+            with open(self._config['config']) as config_file:
+                custom_config = json.load(config_file)
+        except IOError as err:
+            raise RunnerError(
+            'ndt5custom',
+            'Cannot open the custom configuration file: ' + str(err))
+        
+        # Get all the servers to run measurements against from the config,
+        # applying the corresponding selection algorithm.
+        servers = set()
+        for group in custom_config.get('serverGroups', []):
+            # the default selection algorithm is 'random'
+            selection = group.get('selection', 'random')
+            if selection not in self._server_selection:
+                raise RunnerError(
+                'ndt5custom',
+                'Invalid server selection algorithm specified:' +
+                selection)
+
+            servers = servers | self._server_selection[selection].get_servers(
+                group.get('servers', []))
+
+        # Run a measurement against each of the selected servers.
+        results = []
+        for server in servers:
             cmdargs = [
                 "ndt5-client",
                 "-protocol=ndt5",
                 "-format=json",
-                "-quiet"
+                "-quiet",
+                "-server=" + server
             ]
-
-            if "host" in self._config:
-                logger.info("host value set:"+self._config['host'])
-                cmdargs.append('-server='+self._config['host'])
-
+        
+            logger.info("Running ndt5custom measurement: " + server)
             starttime = datetime.datetime.utcnow()
             output = subprocess.run(
                 cmdargs,
@@ -114,9 +162,6 @@ class Ndt5ClientCustom(MurakamiRunner):
                 murakami_output['DownloadRetransUnit'] = None
                 murakami_output['MinRTTValue'] = None
                 murakami_output['MinRTTUnit'] = None
-            return json.dumps(murakami_output)
-        else:
-            raise RunnerError(
-                "ndt5-client",
-                "Executable ndt5-client does not exist, please install ndt5-client-go.",
-            )
+            
+            results.append(json.dumps(murakami_output))
+        return results

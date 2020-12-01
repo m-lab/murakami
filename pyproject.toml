@@ -46,6 +46,10 @@ pytest-cov = "^2.8"
 "gcs" = "murakami.exporters.gcs:GCSExporter"
 "http" = "murakami.exporters.http:HTTPExporter"
 
+[tool.poetry.plugins."murakami.selection"]
+"all" = "murakami.selection.all:AllSelection"
+"random" = "murakami.selection.rand:RandomSelection"
+
 [tool.tox]
 legacy_tox_ini = """
 [tox]

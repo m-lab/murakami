@@ -29,8 +29,18 @@ class HTTPExporter(MurakamiExporter):
         )
         logging.debug(config)
         self._url = config.get("url")
-
+    
     def push(self, test_name="", data=None, timestamp=None):
+        if type(data) is list:
+            for d in data:
+                try:
+                    self._push_single(test_name, d, timestamp)
+                except Exception as ex:
+                    logger.error("export failed: " + ex)
+        else:
+            self._push_single(test_name, data, timestamp)
+
+    def _push_single(self, test_name="", data=None, timestamp=None):
         # Make a JSON payload with the expected format
         data = json.loads(data)
         data = {k: v for k, v in data.items() if v is not None}
