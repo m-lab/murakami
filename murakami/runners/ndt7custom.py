@@ -4,6 +4,7 @@ import subprocess
 import uuid
 import json
 import datetime
+import pkg_resources
 
 from murakami.errors import RunnerError
 from murakami.runner import MurakamiRunner
@@ -27,22 +28,71 @@ class Ndt7ClientCustom(MurakamiRunner):
             device_id=device_id
         )
 
+        self._server_selection = {}
+
+        # Load all the available server selection algorithms.
+        for entry_point in pkg_resources.iter_entry_points(
+            "murakami.selection"
+        ):
+            self._server_selection[entry_point.name] = entry_point.load()()
+
     def _start_test(self):
         logger.info("Starting ndt7 test...")
-        if shutil.which("ndt7-client") is not None:
+
+        # Check that a configuration file has been specified
+        if "config" not in self._config:
+            raise RunnerError(
+                'ndt7custom',
+                'No configuration file specified for the custom runner, \
+                    skipping.')
+        
+        # Check that the ndt7-client executable is available.
+        if shutil.which('ndt7-client') is None:
+            raise RunnerError(
+                'ndt7custom',
+                "Executable ndt7-client does not exist, please install ndt7-client-go.",
+            )
+
+        custom_config = {}
+        try:
+            with open(self._config['config']) as config_file:
+                custom_config = json.load(config_file)
+        except IOError as err:
+            raise RunnerError(
+            'ndt7custom',
+            'Cannot open the custom configuration file: ' + str(err))
+        
+        # Get all the servers to run measurements against from the config,
+        # applying the corresponding selection algorithm.
+        servers = set()
+        for group in custom_config.get('serverGroups', []):
+            # the default selection algorithm is 'random'
+            selection = group.get('selection', 'random')
+            if selection not in self._server_selection:
+                raise RunnerError(
+                'ndt7custom',
+                'Invalid server selection algorithm specified:' +
+                selection)
+
+            servers = servers | self._server_selection[selection].get_servers(
+                group.get('servers', []))
+
+        # Run a measurement against each of the selected servers.
+        results = []
+        for server in servers:
             cmdargs = [
                 "ndt7-client",
                 "-format=json",
                 "-quiet",
-                "-scheme=ws"
+                "-scheme=ws",
+                "-server=" + server
             ]
-
-            if "host" in self._config:
-                cmdargs.append("-server=" + self._config['host'])
-                insecure = self._config.get('insecure', True)
-                if insecure:
-                    cmdargs.append('-no-verify')
-
+            
+            insecure = self._config.get('insecure', True)
+            if insecure:
+                cmdargs.append('-no-verify')
+            
+            logger.info("Running ndt7custom measurement: " + server)
             starttime = datetime.datetime.utcnow()
             output = subprocess.run(
                 cmdargs,
@@ -132,9 +182,6 @@ class Ndt7ClientCustom(MurakamiRunner):
                 murakami_output['DownloadRetransUnit'] = None
                 murakami_output['RTTValue'] = None
                 murakami_output['RTTUnit'] = None
-            return json.dumps(murakami_output)
-        else:
-            raise RunnerError(
-                "ndt7-client",
-                "Executable ndt7-client does not exist, please install ndt7-client-go.",
-            )
+            results.append(json.dumps(murakami_output))
+        return results
+        

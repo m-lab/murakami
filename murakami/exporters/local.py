@@ -29,21 +29,11 @@ class LocalExporter(MurakamiExporter):
         logging.debug(config)
         self._path = config.get("path", defaults.EXPORT_PATH)
 
-    def push(self, test_name="", data=None, timestamp=None):
-        if type(data) is list:
-            for d in data:
-                try:
-                    self._push_single(test_name, d, timestamp)
-                except Exception as ex:
-                    logger.error("export failed: " + ex)
-        else:
-            self._push_single(test_name, data, timestamp)
-
-
-    def _push_single(self, test_name="", data=None, timestamp=None):
+    def _push_single(self, test_name="", data=None, timestamp=None,
+        test_idx=None):
         try:
             dst_path = os.path.join(
-                self._path, self._generate_filename(test_name, timestamp))
+                self._path, self._generate_filename(test_name, timestamp, test_idx))
             output = open(dst_path, "w")
             logger.info("Copying data to %s", dst_path)
             output.write(data)

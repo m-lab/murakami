@@ -39,16 +39,6 @@ class SCPExporter(MurakamiExporter):
         self.password = config.get("password", None)
         self.private_key = config.get("key", None)
 
-    def push(self, test_name="", data=None, timestamp=None):
-        if type(data) is list:
-            for d in data:
-                try:
-                    self._push_single(test_name, d, timestamp)
-                except Exception as ex:
-                    logger.error("export failed: " + ex)
-        else:
-            self._push_single(test_name, data, timestamp)
-
     def _push_single(self, test_name="", data=None, timestamp=None):
         """Copy the files over SCP using the provided configuration."""
         if self.target is None:
