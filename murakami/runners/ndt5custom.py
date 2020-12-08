@@ -36,6 +36,83 @@ class Ndt5ClientCustom(MurakamiRunner):
         ):
             self._server_selection[entry_point.name] = entry_point.load()()
 
+    def _run_client(self, args):
+        starttime = datetime.datetime.utcnow()
+        output = subprocess.run(
+            args,
+            text=True,
+            capture_output=True,
+        )
+        endtime = datetime.datetime.utcnow()
+
+        murakami_output = {
+            'TestName': "ndt5",
+            'TestStartTime': starttime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
+            'TestEndTime': endtime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
+            'MurakamiLocation': self._location,
+            'MurakamiConnectionType': self._connection_type,
+            'MurakamiNetworkType': self._network_type,
+            'MurakamiDeviceID': self._device_id,
+        }
+
+        if output.returncode == 0:
+            # Parse ndt5 summary.
+            summary = {}
+            try:
+                summary = json.loads(output.stdout)
+            except json.JSONDecodeError:
+                raise RunnerError(
+                    'ndt5-client',
+                    'ndt5-client did not return a valid JSON summary.')
+
+            logger.info("ndt5 test completed successfully.")
+
+            # Parse ndt7-client-go's summary JSON and generate Murakami's
+            # output format.
+            download = summary.get('Download')
+            upload = summary.get('Upload')
+            retrans = summary.get('DownloadRetrans')
+            min_rtt = summary.get('MinRTT')
+
+            murakami_output['ServerName'] = summary.get('ServerFQDN')
+            murakami_output['ServerIP'] = summary.get('ServerIP')
+            murakami_output['ClientIP'] = summary.get('ClientIP')
+            murakami_output['DownloadUUID'] = summary.get('DownloadUUID')
+            if download is not None:
+                murakami_output['DownloadValue'] = download.get('Value')
+                murakami_output['DownloadUnit'] = download.get('Unit')
+            if upload is not None:
+                murakami_output['UploadValue'] = upload.get('Value')
+                murakami_output['UploadUnit'] = upload.get('Unit')
+            if retrans is not None:
+                murakami_output['DownloadRetransValue'] = retrans.get('Value')
+                murakami_output['DownloadRetransUnit'] = retrans.get('Unit')
+            if min_rtt is not None:
+                murakami_output['MinRTTValue'] = min_rtt.get('Value')
+                murakami_output['MinRTTUnit'] = min_rtt.get('Unit')
+        else:
+            logger.warn("ndt5 test completed with errors.")
+
+            # Consider any output as 'TestError'.
+            murakami_output['TestError'] = output.stdout
+
+            # All the other fields are set to None (which will become null
+            # in the JSON.)
+            murakami_output['ServerName'] = None
+            murakami_output['ServerIP'] = None
+            murakami_output['ClientIP'] = None
+            murakami_output['DownloadUUID'] = None
+            murakami_output['DownloadValue'] = None
+            murakami_output['DownloadUnit'] = None
+            murakami_output['UploadValue'] = None
+            murakami_output['UploadUnit'] = None
+            murakami_output['DownloadRetransValue'] = None
+            murakami_output['DownloadRetransUnit'] = None
+            murakami_output['MinRTTValue'] = None
+            murakami_output['MinRTTUnit'] = None
+        
+        return json.dumps(murakami_output)
+
     def _start_test(self):
         logger.info("Starting ndt5custom test...")
         
@@ -87,81 +164,9 @@ class Ndt5ClientCustom(MurakamiRunner):
                 "-quiet",
                 "-server=" + server
             ]
+            logger.info("Running ndt5custom measurement (server): " + server)
+            results.append(self._run_client(cmdargs))
         
-            logger.info("Running ndt5custom measurement: " + server)
-            starttime = datetime.datetime.utcnow()
-            output = subprocess.run(
-                cmdargs,
-                text=True,
-                capture_output=True,
-            )
-            endtime = datetime.datetime.utcnow()
+        
 
-            murakami_output = {
-                'TestName': "ndt5",
-                'TestStartTime': starttime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
-                'TestEndTime': endtime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
-                'MurakamiLocation': self._location,
-                'MurakamiConnectionType': self._connection_type,
-                'MurakamiNetworkType': self._network_type,
-                'MurakamiDeviceID': self._device_id,
-            }
-
-            if output.returncode == 0:
-                # Parse ndt5 summary.
-                summary = {}
-                try:
-                    summary = json.loads(output.stdout)
-                except json.JSONDecodeError:
-                    raise RunnerError(
-                        'ndt5-client',
-                        'ndt5-client did not return a valid JSON summary.')
-
-                logger.info("ndt5 test completed successfully.")
-
-                # Parse ndt7-client-go's summary JSON and generate Murakami's
-                # output format.
-                download = summary.get('Download')
-                upload = summary.get('Upload')
-                retrans = summary.get('DownloadRetrans')
-                min_rtt = summary.get('MinRTT')
-
-                murakami_output['ServerName'] = summary.get('ServerFQDN')
-                murakami_output['ServerIP'] = summary.get('ServerIP')
-                murakami_output['ClientIP'] = summary.get('ClientIP')
-                murakami_output['DownloadUUID'] = summary.get('DownloadUUID')
-                if download is not None:
-                    murakami_output['DownloadValue'] = download.get('Value')
-                    murakami_output['DownloadUnit'] = download.get('Unit')
-                if upload is not None:
-                    murakami_output['UploadValue'] = upload.get('Value')
-                    murakami_output['UploadUnit'] = upload.get('Unit')
-                if retrans is not None:
-                    murakami_output['DownloadRetransValue'] = retrans.get('Value')
-                    murakami_output['DownloadRetransUnit'] = retrans.get('Unit')
-                if min_rtt is not None:
-                    murakami_output['MinRTTValue'] = min_rtt.get('Value')
-                    murakami_output['MinRTTUnit'] = min_rtt.get('Unit')
-            else:
-                logger.warn("ndt5 test completed with errors.")
-
-                # Consider any output as 'TestError'.
-                murakami_output['TestError'] = output.stdout
-
-                # All the other fields are set to None (which will become null
-                # in the JSON.)
-                murakami_output['ServerName'] = None
-                murakami_output['ServerIP'] = None
-                murakami_output['ClientIP'] = None
-                murakami_output['DownloadUUID'] = None
-                murakami_output['DownloadValue'] = None
-                murakami_output['DownloadUnit'] = None
-                murakami_output['UploadValue'] = None
-                murakami_output['UploadUnit'] = None
-                murakami_output['DownloadRetransValue'] = None
-                murakami_output['DownloadRetransUnit'] = None
-                murakami_output['MinRTTValue'] = None
-                murakami_output['MinRTTUnit'] = None
-            
-            results.append(json.dumps(murakami_output))
         return results
