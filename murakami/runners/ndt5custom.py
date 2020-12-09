@@ -166,7 +166,5 @@ class Ndt5ClientCustom(MurakamiRunner):
             ]
             logger.info("Running ndt5custom measurement (server): " + server)
             results.append(self._run_client(cmdargs))
-        
-        
 
         return results
