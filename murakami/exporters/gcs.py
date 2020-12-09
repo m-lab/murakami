@@ -41,7 +41,8 @@ class GCSExporter(MurakamiExporter):
         blob = storage.Blob(object_name, bucket)
         blob.upload_from_string(data)
 
-    def _push_single(self, test_name="", data=None, timestamp=None):
+    def _push_single(self, test_name="", data=None, timestamp=None,
+        test_idx=None):
         """Upload the test data to GCS using the provided configuration."""
         if self.target is None:
             logger.error("GCS: target must be provided.")
