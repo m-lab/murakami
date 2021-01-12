@@ -5,11 +5,12 @@ description = "A webthings-compliant network measurement tool from M-Lab."
 authors = ["Josh King <josh@throneless.tech>", "Rae Gaines <rae@throneless.tech>"]
 license = "Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/throneless-tech/murakami"
+repository = "https://github.com/m-lab/murakami"
 
 [tool.poetry.scripts]
 murakami = 'murakami.__main__:main'
 murakami-convert = 'scripts.convert:main'
+murakami-upload = 'scripts.upload:main'
 
 [tool.poetry.dependencies]
 python = "^3.6"
