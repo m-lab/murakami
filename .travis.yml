@@ -17,7 +17,7 @@ jobs:
       python: 3.7
       script: skip
       before_install:
-        - pip install --pre -U poetry
+        - pip install 'poetry==1.1.7'
       install:
         - poetry install
       before_deploy:
