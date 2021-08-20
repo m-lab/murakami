@@ -1,0 +1,134 @@
+[
+	{
+		"description": "Test Name",
+		"mode": "NULLABLE",
+		"name": "TestName",
+		"type":"STRING"
+	},
+	{
+		"description": "Test Start Time",
+		"mode": "NULLABLE",
+		"name": "TestStartTime",
+		"type":"TIMESTAMP"
+	},
+	{
+		"description": "Test End Time",
+		"mode": "NULLABLE",
+		"name": "TestEndTime",
+		"type":"TIMESTAMP"
+	},
+	{
+		"description": "Murakami Location",
+		"mode": "NULLABLE",
+		"name": "MurakamiLocation",
+		"type":"STRING"
+	},
+	{
+		"description": "Murakami Connection Type",
+		"mode": "NULLABLE",
+		"name": "MurakamiConnectionType",
+		"type":"STRING"
+	},
+	{
+		"description": "Murakami Network Type",
+		"mode": "NULLABLE",
+		"name": "MurakamiNetworkType",
+		"type":"STRING"
+	},
+	{
+		"description": "Murakami Device ID",
+		"mode": "NULLABLE",
+		"name": "MurakamiDeviceID",
+		"type":"STRING"
+	},
+	{
+		"description": "Server Name",
+		"mode": "NULLABLE",
+		"name": "ServerName",
+		"type":"STRING"
+	},
+	{
+		"description": "Server IP",
+		"mode": "NULLABLE",
+		"name": "ServerIP",
+		"type":"STRING"
+	},
+	{
+		"description": "Client IP",
+		"mode": "NULLABLE",
+		"name": "ClientIP",
+		"type":"STRING"
+	},
+	{
+		"description": "Download UUID",
+		"mode": "NULLABLE",
+		"name": "DownloadUUID",
+		"type":"STRING"
+	},
+	{
+		"description": "Download Value",
+		"mode": "NULLABLE",
+		"name": "DownloadValue",
+		"type":"FLOAT"
+	},
+	{
+		"description": "Download Unit",
+		"mode": "NULLABLE",
+		"name": "DownloadUnit",
+		"type":"STRING"
+	},
+	{
+		"description": "Upload Value",
+		"mode": "NULLABLE",
+		"name": "UploadValue",
+		"type":"FLOAT"
+	},
+	{
+		"description": "Upload Unit",
+		"mode": "NULLABLE",
+		"name": "UploadUnit",
+		"type":"STRING"
+	},
+	{
+		"description": "Download Retransmission Rate Value",
+		"mode": "NULLABLE",
+		"name": "DownloadRetransValue",
+		"type":"FLOAT"
+	},
+	{
+		"description": "Download Retransmission Rate Unit",
+		"mode": "NULLABLE",
+		"name": "DownloadRetransUnit",
+		"type":"STRING"
+	},
+	{
+		"description": "Minimum Round Trip Time Value",
+		"mode": "NULLABLE",
+		"name": "MinRTTValue",
+		"type":"FLOAT"
+	},
+	{
+		"description": "Minimum Round Trip Time Unit",
+		"mode": "NULLABLE",
+		"name": "MinRTTUnit",
+		"type":"STRING"
+	},
+	{
+		"description": "Test Error",
+		"mode": "NULLABLE",
+		"name": "TestError",
+		"type":"STRING"
+	},
+	{
+		"description": "Download Error",
+		"mode": "NULLABLE",
+		"name": "DownloadError",
+		"type":"STRING"
+	},
+	{
+		"description": "Upload Error",
+		"mode": "NULLABLE",
+		"name": "UploadError",
+		"type":"STRING"
+	}
+]

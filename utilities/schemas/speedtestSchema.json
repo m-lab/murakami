@@ -1,0 +1,236 @@
+[
+	{
+		"description": "Test Name",
+		"mode": "NULLABLE",
+		"name": "TestName",
+		"type": "STRING"
+	},
+	{
+		"description": "Test Start Time",
+		"mode": "NULLABLE",
+		"name": "TestStartTime",
+		"type": "TIMESTAMP"
+	},
+	{
+		"description": "Test End Time",
+		"mode": "NULLABLE",
+		"name": "TestEndTime",
+		"type": "TIMESTAMP"
+	},
+	{
+		"description": "Murakami Location",
+		"mode": "NULLABLE",
+		"name": "MurakamiLocation",
+		"type": "STRING"
+	},
+	{
+		"description": "Murakami Connection Type",
+		"mode": "NULLABLE",
+		"name": "MurakamiConnectionType",
+		"type": "STRING"
+	},
+	{
+		"description": "Murakami Network Type",
+		"mode": "NULLABLE",
+		"name": "MurakamiNetworkType",
+		"type": "STRING"
+	},
+	{
+		"description": "Murakami Device ID",
+		"mode": "NULLABLE",
+		"name": "MurakamiDeviceID",
+		"type": "STRING"
+	},
+	{
+		"description": "Download Value",
+		"mode": "NULLABLE",
+		"name": "DownloadValue",
+		"type": "FLOAT"
+	},
+	{
+		"description": "Download Units",
+		"mode": "NULLABLE",
+		"name": "DownloadUnit",
+		"type": "STRING"
+	},
+	{
+		"description": "Upload Value",
+		"mode": "NULLABLE",
+		"name": "UploadValue",
+		"type": "FLOAT"
+	},
+	{
+		"description": "Upload Units",
+		"mode": "NULLABLE",
+		"name": "UploadUnit",
+		"type": "STRING"
+	},
+	{
+		"description": "Ping",
+		"mode": "NULLABLE",
+		"name": "Ping",
+		"type": "FLOAT"
+	},
+	{
+		"description": "Ping Units",
+		"mode": "NULLABLE",
+		"name": "PingUnit",
+		"type": "STRING"
+	},
+	{
+		"description": "Bytes Sent",
+		"mode": "NULLABLE",
+		"name": "BytesSent",
+		"type": "INTEGER"
+	},
+	{
+		"description": "Bytes Received",
+		"mode": "NULLABLE",
+		"name": "BytesReceived",
+		"type": "INTEGER"
+	},
+	{
+		"description": "Share",
+		"mode": "NULLABLE",
+		"name": "Share",
+		"type": "STRING"
+	},
+	{
+		"description": "Timestamp",
+		"mode": "NULLABLE",
+		"name": "Timestamp",
+		"type": "STRING"
+	},
+	{
+		"description": "Server URL",
+		"mode": "NULLABLE",
+		"name": "ServerURL",
+		"type": "STRING"
+	},
+	{
+		"description": "Server Latitude",
+		"mode": "NULLABLE",
+		"name": "ServerLat",
+		"type": "STRING"
+	},
+	{
+		"description": "Server Longitude",
+		"mode": "NULLABLE",
+		"name": "ServerLon",
+		"type": "STRING"
+	},
+	{
+		"description": "Server Name",
+		"mode": "NULLABLE",
+		"name": "ServerName",
+		"type": "STRING"
+	},
+	{
+		"description": "Server Country",
+		"mode": "NULLABLE",
+		"name": "ServerCountry",
+		"type": "STRING"
+	},
+	{
+		"description": "Server Country Code",
+		"mode": "NULLABLE",
+		"name": "ServerCountryCode",
+		"type": "STRING"
+	},
+	{
+		"description": "Server Sponsor",
+		"mode": "NULLABLE",
+		"name": "ServerSponsor",
+		"type": "STRING"
+	},
+	{
+		"description": "Server ID",
+		"mode": "NULLABLE",
+		"name": "ServerID",
+		"type": "STRING"
+	},
+	{
+		"description": "Server Host",
+		"mode": "NULLABLE",
+		"name": "ServerHost",
+		"type": "STRING"
+	},
+	{
+		"description": "Server Distance",
+		"mode": "NULLABLE",
+		"name": "ServerDistance",
+		"type": "FLOAT"
+	},
+	{
+		"description": "Server Latency",
+		"mode": "NULLABLE",
+		"name": "ServerLatency",
+		"type": "FLOAT"
+	},
+	{
+		"description": "Server Latency Unit",
+		"mode": "NULLABLE",
+		"name": "ServerLatencyUnit",
+		"type": "STRING"
+	},
+	{
+		"description": "Client IP Address",
+		"mode": "NULLABLE",
+		"name": "ClientIP",
+		"type": "STRING"
+	},
+	{
+		"description": "Client Latitude",
+		"mode": "NULLABLE",
+		"name": "ClientLat",
+		"type": "STRING"
+	},
+	{
+		"description": "Client Longitude",
+		"mode": "NULLABLE",
+		"name": "ClientLon",
+		"type": "STRING"
+	},
+	{
+		"description": "Isp",
+		"mode": "NULLABLE",
+		"name": "Isp",
+		"type": "STRING"
+	},
+	{
+		"description": "Isp Rating",
+		"mode": "NULLABLE",
+		"name": "IspRating",
+		"type": "STRING"
+	},
+	{
+		"description": "Rating",
+		"mode": "NULLABLE",
+		"name": "Rating",
+		"type": "STRING"
+	},
+	{
+		"description": "Isp Download Avg",
+		"mode": "NULLABLE",
+		"name": "IspDownloadAvg",
+		"type": "STRING"
+	},
+	{
+		"description": "Isp Upload Avg",
+		"mode": "NULLABLE",
+		"name": "IspUploadAvg",
+		"type": "STRING"
+	},
+	{
+		"description": "Logged In",
+		"mode": "NULLABLE",
+		"name": "LoggedIn",
+		"type": "STRING"
+	},
+	{
+		"description": "Country",
+		"mode": "NULLABLE",
+		"name": "Country",
+		"type": "STRING"
+	}
+]
