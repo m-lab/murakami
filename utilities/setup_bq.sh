@@ -4,8 +4,8 @@
 # for a new measurement program that uses Murakami.
 
 # Set the variables below for your installation
-gcp_project="<gcp project>"
-bq_dataset="<bigquery dataset>"
+gcp_project="mlab-collaboration"
+bq_dataset="murakami_demo_test"
 bq_ndt7_table="ndt7"
 bq_ndt5_table="ndt5"
 bq_speedtest_table="speedtest"
@@ -38,3 +38,163 @@ if [ -z ${speedtestExists} ]; then
    bq mk -t --description="Murakami speedtest results table." \
    $gcp_project:$bq_dataset.$bq_speedtest_table schemas/speedtestSchema.json
 fi
+
+## Supporting table - locations_metadata
+locationsMetaExists=`bq query "SELECT size_bytes FROM $bq_dataset.__TABLES__ WHERE table_id='locations_metadata'"`
+if [ -z ${locationsMetaExists} ]; then
+   echo "Creating locations_metadata in $gcp_project.$bq_dataset."
+   bq mk -t --description="Metadata for locations being measured." \
+   $gcp_project:$bq_dataset.locations_metadata schemas/locationsMetaSchema.json
+fi
+
+
+# Make views
+
+## device_metadata
+bq mk --use_legacy_sql=false \
+--description "a view summarizing metadata about devices measuring in a murakami fleet" \
+--view \
+'WITH 
+ndt5 AS 
+(SELECT MurakamiDeviceID, MurakamiLocation, MurakamiConnectionType,
+MurakamiNetworkType FROM `'${gcp_project}'.'${bq_dataset}'.'${bq_ndt5_table}'`
+GROUP BY MurakamiDeviceID, MurakamiLocation, MurakamiConnectionType,
+MurakamiNetworkType ),
+ndt7 AS 
+(SELECT MurakamiDeviceID, MurakamiLocation, MurakamiConnectionType, 
+MurakamiNetworkType FROM `'${gcp_project}'.'${bq_dataset}'.'${bq_ndt5_table}'`
+GROUP BY MurakamiDeviceID, MurakamiLocation, MurakamiConnectionType,
+MurakamiNetworkType ),
+speedtest AS 
+(SELECT MurakamiDeviceID, MurakamiLocation, MurakamiConnectionType, MurakamiNetworkType FROM `'${gcp_project}'.'${bq_dataset}'.'${bq_ndt5_table}'`
+GROUP BY MurakamiDeviceID, MurakamiLocation, MurakamiConnectionType,
+MurakamiNetworkType )
+SELECT * FROM ndt5 GROUP BY MurakamiDeviceID, MurakamiLocation,
+MurakamiConnectionType, MurakamiNetworkType
+UNION DISTINCT (SELECT * FROM ndt7)
+UNION DISTINCT (SELECT * FROM speedtest)' \
+$bq_dataset.device_metadata
+
+## server_coordinates
+
+bq mk --use_legacy_sql=false \
+--description "a view identifying the locations of all servers used to conduct tests and some metadata about each server." \
+--view \
+'WITH 
+mlabsites AS (
+  SELECT transit.asn AS asn, location.city AS city, location.country_code AS country, 
+  network.ipv4.prefix AS ipv4_prefix, network.ipv6.prefix AS ipv6_prefix, location.metro AS metro, 
+  name, transit.provider AS provider, transit.uplink AS uplink, CONCAT(location.latitude,",",location.longitude) AS coordinates 
+  FROM `mlab-collaboration.platform_meta.mlab_site_info`
+),
+locations_meta AS (
+  SELECT LocName, LocSecondaryName, LocTertiaryName, CountryName, CountryCode, 
+  TimeZone, PostalCode, LatLon, MurakamiLocation, Isp1Name, Isp1Type, Isp1AccessMedia, 
+  Isp1ConnectionType, Isp1NetworkType, Isp1ASN, Isp1ASName, Isp2Name, Isp2Type, Isp2AccessMedia, 
+  Isp2ConnectionType, Isp2NetworkType, Isp2ASN, Isp2ASName
+  FROM `'${gcp_project}'.'${bq_dataset}'.locations_metadata`
+),
+ndt5_client_server AS (
+  SELECT "ndt5" AS TestName, tests.MurakamiLocation, locations_meta.LatLon AS library_lat_lon, ClientIP, ServerIP, 
+  ServerName, 
+  mlabsites.coordinates AS server_lat_lon,
+  mlabsites.provider AS host,
+  CONCAT(mlabsites.city, ", ", mlabsites.country) AS ServerLocation
+  FROM `'${gcp_project}'.'${bq_dataset}'.'${bq_ndt5_table}'` tests, 
+   mlabsites, locations_meta
+  WHERE ServerName LIKE CONCAT("%",mlabsites.name,"%")
+  AND tests.MurakamiLocation = locations_meta.MurakamiLocation
+  GROUP BY TestName, MurakamiLocation, library_lat_lon, ClientIP, ServerIP, 
+  ServerName, server_lat_lon, host, ServerLocation
+),
+ndt7_client_server AS (
+  SELECT "ndt7" AS TestName, tests.MurakamiLocation, locations_meta.LatLon AS library_lat_lon, ClientIP, ServerIP, 
+  ServerName, 
+  mlabsites.coordinates AS server_lat_lon, 
+  mlabsites.provider AS host,
+  CONCAT(mlabsites.city, ", ", mlabsites.country) AS ServerLocation
+  FROM `'${gcp_project}'.'${bq_dataset}'.'${bq_ndt7_table}'` tests, 
+   mlabsites, locations_meta
+  WHERE ServerName LIKE CONCAT("%",mlabsites.name,"%")
+  AND tests.MurakamiLocation = locations_meta.MurakamiLocation
+  GROUP BY TestName, MurakamiLocation, library_lat_lon, ClientIP, ServerIP, 
+  ServerName, server_lat_lon, host, ServerLocation
+),
+speedtest_client_server AS (
+  SELECT TestName, tests.MurakamiLocation, locations_meta.LatLon AS library_lat_lon, ClientIP, "" AS ServerIP, 
+  ServerURL AS ServerName, 
+  CONCAT(ServerLat, ", ", ServerLon) AS server_lat_lon, ServerSponsor AS host, ServerName AS ServerLocation
+  FROM `'${gcp_project}'.'${bq_dataset}'.'${bq_speedtest_table}'` tests, locations_meta
+  GROUP BY TestName, MurakamiLocation, library_lat_lon, ClientIP, ServerIP, 
+  ServerURL, server_lat_lon, host, ServerLocation
+)
+SELECT * FROM ndt5_client_server
+GROUP BY TestName, MurakamiLocation, library_lat_lon, ClientIP, ServerIP, 
+ServerName, server_lat_lon, host, ServerLocation
+UNION ALL (SELECT * FROM ndt7_client_server)
+UNION ALL (SELECT * FROM speedtest_client_server)' $bq_dataset.server_coords
+
+## Unified view of performance tests
+
+bq mk --use_legacy_sql=false \
+--description "a view combining supported performance tests: ndt5, ndt7, speedtest single, & speedtest multi, with client & server location metadata" \
+--view \
+'
+WITH
+device_metadata AS (
+  SELECT * FROM `'${gcp_project}'.'${bq_dataset}'.device_metadata`
+),
+locations_meta AS (
+  SELECT LocName, LocSecondaryName, LocTertiaryName, CountryName, CountryCode, 
+  TimeZone, PostalCode, LatLon, MurakamiLocation, Isp1Name, Isp1Type, Isp1AccessMedia, 
+  Isp1ConnectionType, Isp1NetworkType, Isp1ASN, Isp1ASName, Isp2Name, Isp2Type, Isp2AccessMedia, 
+  Isp2ConnectionType, Isp2NetworkType, Isp2ASN, Isp2ASName
+  FROM `'${gcp_project}'.'${bq_dataset}'.locations_metadata`
+),
+mlabsites AS (
+  SELECT transit.asn AS asn, location.city AS city, location.country_code AS country, 
+  network.ipv4.prefix AS ipv4_prefix, network.ipv6.prefix AS ipv6_prefix, location.metro AS metro, 
+  name, transit.provider AS provider, transit.uplink AS uplink, CONCAT(location.latitude,",",location.longitude) AS coordinates 
+  FROM `mlab-collaboration.platform_meta.mlab_site_info`
+),
+server_coords AS (
+  SELECT * FROM `'${gcp_project}'.'${bq_dataset}'.server_coords`
+),
+ndt5 AS (
+  SELECT TestName, DATETIME(TestStartTime, TimeZone) AS TestStartTime, tests.MurakamiLocation, 
+  MurakamiConnectionType, MurakamiNetworkType, MurakamiDeviceID, DownloadValue, DownloadUnit, 
+  UploadValue, UploadUnit, MinRTTValue, MinRTTUnit, LocName, LocSecondaryName, LocTertiaryName, 
+  CountryName, CountryCode, TimeZone, PostalCode, LatLon, CAST(ClientIP AS STRING) AS ClientIP, 
+  DownloadUUID, CAST(ServerIP AS STRING) AS ServerIP, ServerName, mlabsites.coordinates AS server_lat_lon, 
+  mlabsites.provider AS host, CONCAT(mlabsites.city, ", ", mlabsites.country) AS ServerLocation
+  FROM `'${gcp_project}'.'${bq_dataset}'.'${bq_ndt5_table}'` tests, locations_meta meta, mlabsites
+  WHERE tests.MurakamiLocation = meta.MurakamiLocation
+  AND ServerName LIKE CONCAT("%",mlabsites.name,"%")
+),
+ndt7 AS (
+  SELECT TestName, DATETIME(TestStartTime, TimeZone) AS TestStartTime, tests.MurakamiLocation, 
+  MurakamiConnectionType, MurakamiNetworkType, MurakamiDeviceID, DownloadValue, DownloadUnit, 
+  UploadValue, UploadUnit, MinRTTValue, MinRTTUnit, LocName, LocSecondaryName, LocTertiaryName, 
+  CountryName, CountryCode, TimeZone, PostalCode, LatLon, CAST(ClientIP AS STRING) AS ClientIP, 
+  DownloadUUID, CAST(ServerIP AS STRING) AS ServerIP, ServerName, mlabsites.coordinates AS server_lat_lon, 
+  mlabsites.provider AS host, CONCAT(mlabsites.city, ", ", mlabsites.country) AS ServerLocation
+  FROM `'${gcp_project}'.'${bq_dataset}'.'${bq_ndt7_table}'` tests, locations_meta meta, mlabsites
+  WHERE tests.MurakamiLocation = meta.MurakamiLocation
+  AND ServerName LIKE CONCAT("%",mlabsites.name,"%")
+),
+speedtest AS (
+  SELECT TestName, DATETIME(TestStartTime, TimeZone) AS TestStartTime, tests.MurakamiLocation, 
+  MurakamiConnectionType, MurakamiNetworkType, MurakamiDeviceID, DownloadValue/1000000 AS DownloadValue, 
+  DownloadUnit, UploadValue/1000000 AS UploadValue, UploadUnit, Ping AS MinRTTValue, PingUnit AS MinRTTUnit, 
+  LocName, LocSecondaryName, LocTertiaryName, CountryName, CountryCode, TimeZone, PostalCode, LatLon, 
+  CAST(ClientIP AS STRING) AS ClientIP, "" AS DownloadUUID, "" AS ServerIP, ServerURL AS ServerName, 
+  CONCAT(ServerLat, ", ", ServerLon) AS server_lat_lon, ServerSponsor AS host, ServerName AS ServerLocation
+  FROM `'${gcp_project}'.'${bq_dataset}'.'${bq_speedtest_table}'` tests, locations_meta meta
+  WHERE tests.MurakamiLocation = meta.MurakamiLocation
+),
+combined_results AS (
+  SELECT * FROM ndt5
+  UNION ALL (SELECT * FROM ndt7 )
+  UNION ALL (SELECT * FROM speedtest)
+)
+SELECT * FROM combined_results' $bq_dataset.unified_perf_tests
