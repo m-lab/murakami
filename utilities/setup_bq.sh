@@ -95,7 +95,7 @@ locations_meta AS (
   FROM `'${gcp_project}'.'${bq_dataset}'.locations_metadata`
 ),
 ndt5_client_server AS (
-  SELECT "ndt5" AS TestName, tests.MurakamiLocation, locations_meta.LatLon AS library_lat_lon, ClientIP, ServerIP, 
+  SELECT "ndt5" AS TestName, tests.MurakamiLocation, locations_meta.LatLon AS location_lat_lon, ClientIP, ServerIP, 
   ServerName, 
   mlabsites.coordinates AS server_lat_lon,
   mlabsites.provider AS host,
@@ -104,11 +104,11 @@ ndt5_client_server AS (
    mlabsites, locations_meta
   WHERE ServerName LIKE CONCAT("%",mlabsites.name,"%")
   AND tests.MurakamiLocation = locations_meta.MurakamiLocation
-  GROUP BY TestName, MurakamiLocation, library_lat_lon, ClientIP, ServerIP, 
+  GROUP BY TestName, MurakamiLocation, location_lat_lon, ClientIP, ServerIP, 
   ServerName, server_lat_lon, host, ServerLocation
 ),
 ndt7_client_server AS (
-  SELECT "ndt7" AS TestName, tests.MurakamiLocation, locations_meta.LatLon AS library_lat_lon, ClientIP, ServerIP, 
+  SELECT "ndt7" AS TestName, tests.MurakamiLocation, locations_meta.LatLon AS location_lat_lon, ClientIP, ServerIP, 
   ServerName, 
   mlabsites.coordinates AS server_lat_lon, 
   mlabsites.provider AS host,
@@ -117,19 +117,19 @@ ndt7_client_server AS (
    mlabsites, locations_meta
   WHERE ServerName LIKE CONCAT("%",mlabsites.name,"%")
   AND tests.MurakamiLocation = locations_meta.MurakamiLocation
-  GROUP BY TestName, MurakamiLocation, library_lat_lon, ClientIP, ServerIP, 
+  GROUP BY TestName, MurakamiLocation, location_lat_lon, ClientIP, ServerIP, 
   ServerName, server_lat_lon, host, ServerLocation
 ),
 speedtest_client_server AS (
-  SELECT TestName, tests.MurakamiLocation, locations_meta.LatLon AS library_lat_lon, ClientIP, "" AS ServerIP, 
+  SELECT TestName, tests.MurakamiLocation, locations_meta.LatLon AS location_lat_lon, ClientIP, "" AS ServerIP, 
   ServerURL AS ServerName, 
   CONCAT(ServerLat, ", ", ServerLon) AS server_lat_lon, ServerSponsor AS host, ServerName AS ServerLocation
   FROM `'${gcp_project}'.'${bq_dataset}'.'${bq_speedtest_table}'` tests, locations_meta
-  GROUP BY TestName, MurakamiLocation, library_lat_lon, ClientIP, ServerIP, 
+  GROUP BY TestName, MurakamiLocation, location_lat_lon, ClientIP, ServerIP, 
   ServerURL, server_lat_lon, host, ServerLocation
 )
 SELECT * FROM ndt5_client_server
-GROUP BY TestName, MurakamiLocation, library_lat_lon, ClientIP, ServerIP, 
+GROUP BY TestName, MurakamiLocation, location_lat_lon, ClientIP, ServerIP, 
 ServerName, server_lat_lon, host, ServerLocation
 UNION ALL (SELECT * FROM ndt7_client_server)
 UNION ALL (SELECT * FROM speedtest_client_server)' $bq_dataset.server_coords
@@ -198,3 +198,31 @@ combined_results AS (
   UNION ALL (SELECT * FROM speedtest)
 )
 SELECT * FROM combined_results' $bq_dataset.unified_perf_tests
+
+wait
+
+## Max speeds per test, location, & user supplied metadata.
+
+bq mk --use_legacy_sql=false \
+--description "a view providing the maximum measured speeds test, location, and user supplied metadata values." \
+--view \
+'SELECT
+MurakamiLocation, TestName, MurakamiConnectionType, MurakamiNetworkType, 
+ROUND(MAX(DownloadValue),2) AS MaxDownload, ROUND(MAX(UploadValue),2) AS MaxUpload
+FROM `'${gcp_project}'.'${bq_dataset}'.unified_perf_tests`
+GROUP BY MurakamiLocation, TestName, MurakamiConnectionType, MurakamiNetworkType
+ORDER BY MurakamiLocation, TestName, MurakamiConnectionType, MurakamiNetworkType' $bq_dataset.max_by_test_location_metadata
+
+wait
+
+## Max speeds per test, aggregated by month
+
+bq mk --use_legacy_sql=false \
+--description "a view providing the maximum measured speeds by month and test" \
+--view \
+'SELECT
+FORMAT_DATE("%Y-%m",TestStartTime) AS YearMonth, MurakamiLocation, MurakamiConnectionType, MurakamiNetworkType, TestName,
+ROUND(MAX(DownloadValue),2) AS MaxDownload, ROUND(MAX(UploadValue),2) AS MaxUpload
+FROM `'${gcp_project}'.'${bq_dataset}'.unified_perf_tests`
+GROUP BY YearMonth, MurakamiLocation, MurakamiConnectionType, MurakamiNetworkType, TestName
+ORDER BY YearMonth, MurakamiLocation, MurakamiConnectionType, MurakamiNetworkType, TestName' $bq_dataset.max_by_month_test
