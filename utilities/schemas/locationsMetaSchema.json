@@ -1,0 +1,140 @@
+[
+	{
+		"description": "Location Name - Top level name for this location.",
+		"mode": "NULLABLE",
+		"name": "LocName",
+		"type":"STRING"
+	},
+	{
+		"description": "Location Secondary Name - Additional name field to support locations with second level of named locations in a hierarchy, such as branch names for libraries.",
+		"mode": "NULLABLE",
+		"name": "LocSecondaryName",
+		"type":"STRING"
+	},
+	{
+		"description": "Location Tertiary Name - Additional name field to support locations with third level of named locations in a hierarchy.",
+		"mode": "NULLABLE",
+		"name": "LocTertiaryName",
+		"type":"STRING"
+	},
+	{
+		"description": "Country Name",
+		"mode": "NULLABLE",
+		"name": "CountryName",
+		"type":"STRING"
+	},
+	{
+		"description": "Country Code - 2 alphanumeric code within ISO3166 standard.",
+		"mode": "NULLABLE",
+		"name": "CountryCode",
+		"type":"STRING"
+	},
+	{
+		"description": "Timezone of this location. Example: America/New_York",
+		"mode": "NULLABLE",
+		"name": "TimeZone",
+		"type":"STRING"
+	},
+	{
+		"description": "Postal code of this location (if applicable)",
+		"mode": "NULLABLE",
+		"name": "PostalCode",
+		"type":"STRING"
+	},
+	{
+		"description": "Latitude & Longitude of this location. Format: latitude, longitude ",
+		"mode": "NULLABLE",
+		"name": "LatLon",
+		"type":"STRING"
+	},
+	{
+		"description": "Murakami Location - Should match a value for MURAKAMI_SETTINGS_LOCATION as defined in a measurement device's environment variables. See Murakami documentation for more details.",
+		"mode": "NULLABLE",
+		"name": "MurakamiLocation",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 Name - The name of this ISP as presented on terms of service, bill, or other. Can be different than ASN/AS Name.",
+		"mode": "NULLABLE",
+		"name": "Isp1Name",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 Type - If useful to measurement programs, use this field to classify different types of providers. Examples: Non-profit, Cooperative, State/City, Commercial Business ISP, Consumer ISP, Research & Education Network, Commercial Direct Transit.",
+		"mode": "NULLABLE",
+		"name": "Isp1Type",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 Access Media - Examples: Cable, DSL, Fiber, Satellite, etc.",
+		"mode": "NULLABLE",
+		"name": "Isp1AccessMedia",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 Connection Type - Should match a value for MURAKAMI_SETTINGS_CONNECTION_TYPE as defined in a measurement device's environment variables. See Murakami documentation for more details.",
+		"mode": "NULLABLE",
+		"name": "Isp1ConnectionType",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 Network Type - Should match a value for MURAKAMI_SETTINGS_NETWORK_TYPE as defined in a measurement device's environment variables. See Murakami documentation for more details.",
+		"mode": "NULLABLE",
+		"name": "Isp1NetworkType",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 ASN - The Autonomous System Number of the ISP providing service to this location. Lookup the ASN from a computer connected to this location by visiting: https://ipinfo.io ",
+		"mode": "NULLABLE",
+		"name": "Isp1ASN",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 AS Name - The Autonomous System Name of the ISP providing service to this location. Lookup the AS Name from a computer connected to this location by visiting: https://ipinfo.io ",
+		"mode": "NULLABLE",
+		"name": "Isp1ASName",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 Name - The name of this ISP as presented on terms of service, bill, or other. Can be different than ASN/AS Name.",
+		"mode": "NULLABLE",
+		"name": "Isp2Name",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 Type - If useful to measurement programs, use this field to classify different types of providers. Examples: Non-profit, Cooperative, State/City, Commercial Business ISP, Consumer ISP, Research & Education Network, Commercial Direct Transit.",
+		"mode": "NULLABLE",
+		"name": "Isp2Type",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 Access Media - Examples: Cable, DSL, Fiber, Satellite, etc.",
+		"mode": "NULLABLE",
+		"name": "Isp2AccessMedia",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 Connection Type - Should match a value for MURAKAMI_SETTINGS_CONNECTION_TYPE as defined in a measurement device's environment variables. See Murakami documentation for more details.",
+		"mode": "NULLABLE",
+		"name": "Isp2ConnectionType",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 Network Type - Should match a value for MURAKAMI_SETTINGS_NETWORK_TYPE as defined in a measurement device's environment variables. See Murakami documentation for more details.",
+		"mode": "NULLABLE",
+		"name": "Isp2NetworkType",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 ASN - The Autonomous System Number of the ISP providing service to this location. Lookup the ASN from a computer connected to this location by visiting: https://ipinfo.io ",
+		"mode": "NULLABLE",
+		"name": "Isp2ASN",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 AS Name - The Autonomous System Name of the ISP providing service to this location. Lookup the AS Name from a computer connected to this location by visiting: https://ipinfo.io ",
+		"mode": "NULLABLE",
+		"name": "Isp2ASName",
+		"type":"STRING"
+	}
+]
