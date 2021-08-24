@@ -5,7 +5,7 @@
 
 usage="$0 <project> <bucket> <dataset>"
 gcp_project=${1:?Please provide the GCP project: ${usage}}
-bucket=${2:?Please provide the GCS bucket: ${usage}}
+gcs_bucket=${2:?Please provide the GCS bucket: ${usage}}
 bq_dataset=${3:?Please provide the dataset name: ${usage}}
 
 # Set table names
@@ -15,7 +15,7 @@ bq_speedtest_table="speedtest"
 
 # Create the GCS bucket if it doesn't exist.
 buckets=$(gsutil ls)
-mybucket=$bucket
+mybucket=$gcs_bucket
 
 if [[ "$buckets" == *"gs://$mybucket"* ]]; then
 	echo "This GCS bucket already exists: $mybucket"
