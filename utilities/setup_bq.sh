@@ -20,7 +20,6 @@ mybucket=$gcs_bucket
 if [[ "$buckets" == *"gs://$mybucket"* ]]; then
 	echo "This GCS bucket already exists: $mybucket"
 else
-	echo "Creating GCS bucket: $mybucket"
   gsutil mb gs://$mybucket
 fi
 
