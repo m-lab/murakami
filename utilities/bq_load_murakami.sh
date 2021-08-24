@@ -8,10 +8,11 @@
 # requires these permissions in your project:  
 #  BigQuery Job User, BigQuery Data Editor, Storage Object Viewer
 
-# Set the variables below for your installation
-gcp_project="<gcp project>"
-gcs_bucket="<gcs bucket>/<path>"
-bq_dataset="<bigquery dataset>"
+usage="$0 <project> <bucket> <dataset>"
+gcp_project=${1:?Please provide the GCP project: ${usage}}
+gcs_bucket=${2:?Please provide the GCS bucket: ${usage}}
+bq_dataset=${3:?Please provide the dataset name: ${usage}}
+
 bq_ndt7_table="ndt7"
 bq_ndt5_table="ndt5"
 bq_speedtest_table="speedtest"
