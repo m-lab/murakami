@@ -22,9 +22,9 @@ deviceName="${uuid}"
 balena device rename ${uuid} ${deviceName}
 
 # set device environment variables used by Murakami
-balena env add MURAKAMI_LOCATION ${loc} --device ${uuid}
-balena env add MURAKAMI_CONNECTION_TYPE ${conn} --device ${uuid}
-balena env add MURAKAMI_NETWORK_TYPE ${net} --device ${uuid}
+balena env add MURAKAMI_SETTINGS_LOCATION ${loc} --device ${uuid}
+balena env add MURAKAMI_SETTINGS_CONNECTION_TYPE ${conn} --device ${uuid}
+balena env add MURAKAMI_SETTINGS_NETWORK_TYPE ${net} --device ${uuid}
 
 # let us know the operation was completed
 echo "added $deviceName to $balenaFleet"
