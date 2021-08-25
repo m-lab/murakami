@@ -6,7 +6,7 @@
 ## See: https://github.com/balena-io/balena-cli/
 ##
 
-usage="$0 <balena fleet name> <MURAKAMI_LOCATION> <MURAKAMI_CONNECTION_TYPE> <MURAKAMI_NETWORK_TYPE>"
+usage="$0 <balena fleet name> <MURAKAMI_NETWORK_TYPE> <MURAKAMI_CONNECTION_TYPE>"
 balenaFleet=${1:?Please provide the Balena fleet name: ${usage}}
 net=${2:?Please provide the ISP Name for this device without spaces (e.g. IspName, Isp-Name, Isp_Name): ${usage}}
 conn=${3:?Please provide the ISP Plan for this device without spaces (e.g. PlanName, 10_4, 25_3): ${usage}}
