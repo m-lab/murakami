@@ -16,7 +16,7 @@ net=${4:?Please provide the MURAKAMI_NETWORK_TYPE for this device: ${usage}}
 uuid=$(balena device register $balenaFleet | awk '{ print $4 }')
 
 ## construct a unique but recognizable device name
-deviceName="${loc}-${conn}-${uuid}"
+deviceName="${uuid}"
 
 # rename the device
 balena device rename ${uuid} ${deviceName}
