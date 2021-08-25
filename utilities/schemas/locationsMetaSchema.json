@@ -1,20 +1,20 @@
 [
 	{
-		"description": "Device ID - The unique identifier for a device. If using Balena Cloud, this should be the UUID assigned to the device.",
+		"description": "Murakami Device ID - The unique identifier for a device. If using Balena Cloud, this should be the UUID assigned to the device.",
 		"mode": "NULLABLE",
-		"name": "DeviceID",
+		"name": "MurakamiDeviceID",
 		"type":"STRING"
 	},
 	{
-		"description": "Device Metadata 1 - One of two general metadata fields used to logically define devices based on the measurement focus of a given measurement program using Murakami. For example, these could identify the ISP name and ISP service plan. They could identify the location within a network where a device is placed (e.g. egress-switch or router) and the type of connection the device has to its network (e.g. ethernet or wifi). When using the Balena Cloud scripts provided with Murakami to provision devices, these two fields must both be set.",
+		"description": "Murakami Device Metadata 1 - One of two general metadata fields used to logically define devices based on the measurement focus of a given measurement program using Murakami. For example, these could identify the ISP name and ISP service plan. They could identify the location within a network where a device is placed (e.g. egress-switch or router) and the type of connection the device has to its network (e.g. ethernet or wifi). When using the Balena Cloud scripts provided with Murakami to provision devices, these two fields must both be set.",
 		"mode": "NULLABLE",
-		"name": "DeviceMetadata1",
+		"name": "MurakamiDeviceMetadata1",
 		"type":"STRING"
 	},
 	{
-		"description": "Device Metadata 2 - The second of two general metadata fields used to logically define devices based on the measurement focus of a given measurement program using Murakami. For example, these could identify the ISP name and ISP service plan. They could identify the location within a network where a device is placed (e.g. egress-switch or router) and the type of connection the device has to its network (e.g. ethernet or wifi). When using the Balena Cloud scripts provided with Murakami to provision devices, these two fields must both be set.",
+		"description": "Murakami Device Metadata 2 - The second of two general metadata fields used to logically define devices based on the measurement focus of a given measurement program using Murakami. For example, these could identify the ISP name and ISP service plan. They could identify the location within a network where a device is placed (e.g. egress-switch or router) and the type of connection the device has to its network (e.g. ethernet or wifi). When using the Balena Cloud scripts provided with Murakami to provision devices, these two fields must both be set.",
 		"mode": "NULLABLE",
-		"name": "DeviceMetadata2",
+		"name": "MurakamiDeviceMetadata2",
 		"type":"STRING"
 	},
 	{
@@ -104,7 +104,7 @@
 	{
 		"description": "ISP 1 Service Cost Units - The units for ISP 1 Service Cost. For example: 'USD' (United States Dollars) for plans within the United States.",
 		"mode": "NULLABLE",
-		"name": "Isp1ServiceCost",
+		"name": "Isp1ServiceCostUnits",
 		"type":"STRING"
 	},
 	{
@@ -152,6 +152,7 @@
 	{
 		"description": "ISP 2 Service Cost Units - The units for ISP 1 Service Cost. For example: 'USD' (United States Dollars) for plans within the United States.",
 		"mode": "NULLABLE",
-		"name": "Isp2ServiceCost",
+		"name": "Isp2ServiceCostUnits",
 		"type":"STRING"
 	}
+]
