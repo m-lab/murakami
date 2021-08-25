@@ -8,9 +8,8 @@
 
 usage="$0 <balena fleet name> <MURAKAMI_LOCATION> <MURAKAMI_CONNECTION_TYPE> <MURAKAMI_NETWORK_TYPE>"
 balenaFleet=${1:?Please provide the Balena fleet name: ${usage}}
-loc=${2:?Please provide the MURAKAMI_LOCATION for this device: ${usage}}
-conn=${3:?Please provide the MURAKAMI_CONNECTION_TYPE for this device: ${usage}}
-net=${4:?Please provide the MURAKAMI_NETWORK_TYPE for this device: ${usage}}
+net=${2:?Please provide the ISP Name for this device without spaces (e.g. IspName, Isp-Name, Isp_Name): ${usage}}
+conn=${3:?Please provide the ISP Plan for this device without spaces (e.g. PlanName, 10_4, 25_3): ${usage}}
 
 ## register new device
 uuid=$(balena device register $balenaFleet | awk '{ print $4 }')
@@ -23,8 +22,8 @@ balena device rename ${uuid} ${deviceName}
 
 # set device environment variables used by Murakami
 balena env add MURAKAMI_SETTINGS_LOCATION ${deviceName} --device ${uuid}
-balena env add MURAKAMI_SETTINGS_CONNECTION_TYPE ${conn} --device ${uuid}
 balena env add MURAKAMI_SETTINGS_NETWORK_TYPE ${net} --device ${uuid}
+balena env add MURAKAMI_SETTINGS_CONNECTION_TYPE ${conn} --device ${uuid}
 
 # let us know the operation was completed
 echo "added $deviceName to $balenaFleet"
@@ -40,10 +39,12 @@ echo ""
 echo "${deviceName} has been registered in ${balenaFleet}."
 echo "Next, complete the provisioning of this device by:"
 echo ""
-echo "  * Write the OS image below to an SD card:"
+echo "  * Write the OS image below to an SD card using Etcher or other utility:"
 echo "    ${balenaFleet}.img"
+echo ""
 echo "  * Then, with the SD card still inserted, run the command below"
 echo "    to add the device's configuration:"
-echo "    balena config inject balenaDeviceConfigs/${uuid}_config.json --type odroid-xu4 --drive /your/sdcard/disk"
+echo ""
+echo "    sudo balena config inject balenaDeviceConfigs/${uuid}_config.json --type odroid-xu4 --drive /your/sdcard/disk"
 echo ""
 echo "Note: substitute the drive path for your SD card for '/your/sdcard/disk' in the command above."
