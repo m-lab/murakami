@@ -101,10 +101,7 @@ mlabsites AS (
   FROM \`mlab-collaboration.platform_meta.mlab_site_info\`
 ),
 locations_meta AS (
-  SELECT LocName, LocSecondaryName, LocTertiaryName, CountryName, CountryCode, 
-  TimeZone, PostalCode, LatLon, MurakamiLocation, Isp1Name, Isp1Type, Isp1AccessMedia, 
-  Isp1ConnectionType, Isp1NetworkType, Isp1ASN, Isp1ASName, Isp2Name, Isp2Type, Isp2AccessMedia, 
-  Isp2ConnectionType, Isp2NetworkType, Isp2ASN, Isp2ASName
+  SELECT MurakamiDeviceID, MurakamiDeviceMetadata1, MurakamiDeviceMetadata2, LocName, LocSecondaryName, LocTertiaryName, CountryName, CountryCode, TimeZone, LatLon, Isp1Name, Isp1Type, Isp1AccessMedia, Isp1ASN, Isp1ASName, Isp1ServicePlan, Isp1ServiceCost, Isp1ServiceCostUnits, Isp2Name, Isp2Type, Isp2AccessMedia, Isp2ASN, Isp2ASName, Isp2ServicePlan, Isp2ServiceCost, Isp2ServiceCostUnits
   FROM \`${gcp_project}.${bq_dataset}.locations_metadata\`
 ),
 ndt5_client_server AS (
@@ -116,7 +113,7 @@ ndt5_client_server AS (
   FROM \`${gcp_project}.${bq_dataset}.${bq_ndt5_table}\` tests, 
    mlabsites, locations_meta
   WHERE ServerName LIKE CONCAT('%',mlabsites.name,'%')
-  AND tests.MurakamiLocation = locations_meta.MurakamiLocation
+  AND tests.MurakamiDeviceID = locations_meta.MurakamiDeviceID
   GROUP BY TestName, MurakamiLocation, location_lat_lon, ClientIP, ServerIP, 
   ServerName, server_lat_lon, host, ServerLocation
 ),
@@ -129,7 +126,7 @@ ndt7_client_server AS (
   FROM \`${gcp_project}.${bq_dataset}.${bq_ndt7_table}\` tests, 
    mlabsites, locations_meta
   WHERE ServerName LIKE CONCAT('%',mlabsites.name,'%')
-  AND tests.MurakamiLocation = locations_meta.MurakamiLocation
+  AND tests.MurakamiDeviceID = locations_meta.MurakamiDeviceID
   GROUP BY TestName, MurakamiLocation, location_lat_lon, ClientIP, ServerIP, 
   ServerName, server_lat_lon, host, ServerLocation
 ),
@@ -158,10 +155,7 @@ device_metadata AS (
   SELECT * FROM \`${gcp_project}.${bq_dataset}.device_metadata\`
 ),
 locations_meta AS (
-  SELECT LocName, LocSecondaryName, LocTertiaryName, CountryName, CountryCode, 
-  TimeZone, PostalCode, LatLon, MurakamiLocation, Isp1Name, Isp1Type, Isp1AccessMedia, 
-  Isp1ConnectionType, Isp1NetworkType, Isp1ASN, Isp1ASName, Isp2Name, Isp2Type, Isp2AccessMedia, 
-  Isp2ConnectionType, Isp2NetworkType, Isp2ASN, Isp2ASName
+  SELECT MurakamiDeviceID, MurakamiDeviceMetadata1, MurakamiDeviceMetadata2, LocName, LocSecondaryName, LocTertiaryName, CountryName, CountryCode, TimeZone, LatLon, Isp1Name, Isp1Type, Isp1AccessMedia, Isp1ASN, Isp1ASName, Isp1ServicePlan, Isp1ServiceCost, Isp1ServiceCostUnits, Isp2Name, Isp2Type, Isp2AccessMedia, Isp2ASN, Isp2ASName, Isp2ServicePlan, Isp2ServiceCost, Isp2ServiceCostUnits
   FROM \`${gcp_project}.${bq_dataset}.locations_metadata\`
 ),
 mlabsites AS (
@@ -175,35 +169,32 @@ server_coords AS (
 ),
 ndt5 AS (
   SELECT TestName, DATETIME(TestStartTime, TimeZone) AS TestStartTime, tests.MurakamiLocation, 
-  MurakamiConnectionType, MurakamiNetworkType, MurakamiDeviceID, DownloadValue, DownloadUnit, 
-  UploadValue, UploadUnit, MinRTTValue, MinRTTUnit, LocName, LocSecondaryName, LocTertiaryName, 
-  CountryName, CountryCode, TimeZone, PostalCode, LatLon, CAST(ClientIP AS STRING) AS ClientIP, 
+  MurakamiConnectionType, MurakamiNetworkType, tests.MurakamiDeviceID, DownloadValue, DownloadUnit, 
+  UploadValue, UploadUnit, MinRTTValue, MinRTTUnit, meta.MurakamiDeviceMetadata1, meta.MurakamiDeviceMetadata2, meta.LocName, meta.LocSecondaryName, meta.LocTertiaryName, meta.CountryName, meta.CountryCode, meta.TimeZone, meta.LatLon, meta.Isp1Name, meta.Isp1Type, meta.Isp1AccessMedia, meta.Isp1ASN, meta.Isp1ASName, meta.Isp1ServicePlan, meta.Isp1ServiceCost, meta.Isp1ServiceCostUnits, meta.Isp2Name, meta.Isp2Type, meta.Isp2AccessMedia, meta.Isp2ASN, meta.Isp2ASName, meta.Isp2ServicePlan, meta.Isp2ServiceCost, meta.Isp2ServiceCostUnits, CAST(ClientIP AS STRING) AS ClientIP, 
   DownloadUUID, CAST(ServerIP AS STRING) AS ServerIP, ServerName, mlabsites.coordinates AS server_lat_lon, 
   mlabsites.provider AS host, CONCAT(mlabsites.city, ', ', mlabsites.country) AS ServerLocation
   FROM \`${gcp_project}.${bq_dataset}.${bq_ndt5_table}\` tests, locations_meta meta, mlabsites
-  WHERE tests.MurakamiLocation = meta.MurakamiLocation
+  WHERE tests.MurakamiDeviceID = meta.MurakamiDeviceID
   AND ServerName LIKE CONCAT('%',mlabsites.name,'%')
 ),
 ndt7 AS (
   SELECT TestName, DATETIME(TestStartTime, TimeZone) AS TestStartTime, tests.MurakamiLocation, 
-  MurakamiConnectionType, MurakamiNetworkType, MurakamiDeviceID, DownloadValue, DownloadUnit, 
-  UploadValue, UploadUnit, MinRTTValue, MinRTTUnit, LocName, LocSecondaryName, LocTertiaryName, 
-  CountryName, CountryCode, TimeZone, PostalCode, LatLon, CAST(ClientIP AS STRING) AS ClientIP, 
+  MurakamiConnectionType, MurakamiNetworkType, tests.MurakamiDeviceID, DownloadValue, DownloadUnit, 
+  UploadValue, UploadUnit, MinRTTValue, MinRTTUnit, meta.MurakamiDeviceMetadata1, meta.MurakamiDeviceMetadata2, meta.LocName, meta.LocSecondaryName, meta.LocTertiaryName, meta.CountryName, meta.CountryCode, meta.TimeZone, meta.LatLon, meta.Isp1Name, meta.Isp1Type, meta.Isp1AccessMedia, meta.Isp1ASN, meta.Isp1ASName, meta.Isp1ServicePlan, meta.Isp1ServiceCost, meta.Isp1ServiceCostUnits, meta.Isp2Name, meta.Isp2Type, meta.Isp2AccessMedia, meta.Isp2ASN, meta.Isp2ASName, meta.Isp2ServicePlan, meta.Isp2ServiceCost, meta.Isp2ServiceCostUnits, CAST(ClientIP AS STRING) AS ClientIP, 
   DownloadUUID, CAST(ServerIP AS STRING) AS ServerIP, ServerName, mlabsites.coordinates AS server_lat_lon, 
   mlabsites.provider AS host, CONCAT(mlabsites.city, ', ', mlabsites.country) AS ServerLocation
   FROM \`${gcp_project}.${bq_dataset}.${bq_ndt7_table}\` tests, locations_meta meta, mlabsites
-  WHERE tests.MurakamiLocation = meta.MurakamiLocation
+  WHERE tests.MurakamiDeviceID = meta.MurakamiDeviceID
   AND ServerName LIKE CONCAT('%',mlabsites.name,'%')
 ),
 speedtest AS (
   SELECT TestName, DATETIME(TestStartTime, TimeZone) AS TestStartTime, tests.MurakamiLocation, 
-  MurakamiConnectionType, MurakamiNetworkType, MurakamiDeviceID, DownloadValue/1000000 AS DownloadValue, 
-  DownloadUnit, UploadValue/1000000 AS UploadValue, UploadUnit, Ping AS MinRTTValue, PingUnit AS MinRTTUnit, 
-  LocName, LocSecondaryName, LocTertiaryName, CountryName, CountryCode, TimeZone, PostalCode, LatLon, 
+  MurakamiConnectionType, MurakamiNetworkType, tests.MurakamiDeviceID, DownloadValue/1000000 AS DownloadValue, 
+  DownloadUnit, UploadValue/1000000 AS UploadValue, UploadUnit, Ping AS MinRTTValue, PingUnit AS MinRTTUnit, meta.MurakamiDeviceMetadata1, meta.MurakamiDeviceMetadata2, meta.LocName, meta.LocSecondaryName, meta.LocTertiaryName, meta.CountryName, meta.CountryCode, meta.TimeZone, meta.LatLon, meta.Isp1Name, meta.Isp1Type, meta.Isp1AccessMedia, meta.Isp1ASN, meta.Isp1ASName, meta.Isp1ServicePlan, meta.Isp1ServiceCost, meta.Isp1ServiceCostUnits, meta.Isp2Name, meta.Isp2Type, meta.Isp2AccessMedia, meta.Isp2ASN, meta.Isp2ASName, meta.Isp2ServicePlan, meta.Isp2ServiceCost, meta.Isp2ServiceCostUnits,
   CAST(ClientIP AS STRING) AS ClientIP, '' AS DownloadUUID, '' AS ServerIP, ServerURL AS ServerName, 
   CONCAT(ServerLat, ', ', ServerLon) AS server_lat_lon, ServerSponsor AS host, ServerName AS ServerLocation
   FROM \`${gcp_project}.${bq_dataset}.${bq_speedtest_table}\` tests, locations_meta meta
-  WHERE tests.MurakamiLocation = meta.MurakamiLocation
+  WHERE tests.MurakamiDeviceID = meta.MurakamiDeviceID
 ),
 combined_results AS (
   SELECT * FROM ndt5
