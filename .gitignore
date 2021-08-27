@@ -103,3 +103,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Downloaded Balena OS img files
+*.img
+
+# Generated Balena device configs
+utilities/balenaDeviceConfigs/*.json
+
+# Configs & key files
+configs/*.json
