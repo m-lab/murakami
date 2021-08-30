@@ -44,7 +44,7 @@ balena env add MURAKAMI_SETTINGS_CONNECTION_TYPE ${conn} --device ${uuid}
 echo "added $deviceName to $balenaFleet"
 
 # Download an SD card image
-balenaDeviceType=$(balena fleet murakami-demo-baltimore | grep 'DEVICE TYPE' | cut -f 1 | cut -d ":" -f2 )
+balenaDeviceType=$(balena fleet $balenaFleet | grep 'DEVICE TYPE' | cut -f 1 | cut -d ":" -f2 )
 
 echo "Enter 'Y' if you need to download the latest release image? Press any other key to continue."
 read downloadDeviceImage
