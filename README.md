@@ -2,17 +2,14 @@
 
 Murakami is a tool for creating an automated internet measurement service, running in a Docker container. A Murakami measurement container will automatically run supported tests four times a day using a randomized schedule, and can be configured to export each test result to a local storage device, to one or more remote servers via SCP, or to a Google Cloud Storage bucket. Results are saved as individual files in JSON new line format (`.jsonl`).
 
-## What Does the Name Mean?
-
-**What do we talk about when we talk about running tests?** The M-Lab team talks about this a lot, so it's no wonder that the name "Murakami" pays homage to the renown author Haruki Murakami, who's book [_What I Talk About When I Talk About Running_](http://www.harukimurakami.com/book/what-i-talk-about-when-i-talk-about-running-a-memoir) provided us inspiration.
-
 ## Contributing to Murakami
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Supported Measurement Tests
 
-* [M-Lab Network Diagnostic Tool](https://www.measurementlab.net/tests/ndt/) (NDT)
+* [Network Diagnostic Tool](https://www.measurementlab.net/tests/ndt/) (NDT) - A
+  diagnostic and single stream performance test.
   * [ndt5-client-go](https://www.github.com/m-lab/ndt5-client-go)
   * [ndt7-client-go](https://www.github.com/m-lab/ndt7-client-go)
 * [Neubot DASH](https://github.com/neubot/dash) - Dynamic Adaptive Streaming over HTTP, hosted by M-Lab
@@ -21,7 +18,32 @@ Please see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 For more information about each supported test see: [Supported Tests Runners](docs/SUPPORTED-TEST-RUNNERS.md).
 
-## Murakami Deployment Scenarios
+## Supported Operating Systems
+
+Murakami supports Linux operating systems like Ubuntu, Debian, etc. Windows is
+not supported. Mac OS may work, but is yet untested.
+
+## Configurating Murakami
+
+A Murakami container can be configured flexibly depending on the deployment
+scenario. If you simply run a Murakami container using M-Lab's `latest` [image
+on Dockerhub](https://hub.docker.com/r/measurementlab/murakami/tags?page=1&ordering=last_updated),
+by default all tests are configured to run four times daily at randomized
+intervals, but with no data exporters enabled. To use Murakami and save test
+results, either using an individual device or a fleet of managed devices, you'll
+use Docker to build and configure Murakami. 
+
+The Murakami container can be configured/customized using:
+* environment variables on the command line when running docker (Standalone, Standalone Locally Managed)
+* environment variables in a file, passed on the command line when running docker (Standalone, Standalone Locally Managed)
+* customizing the `murakami.toml` configuration file (Standalone, Standalone Locally Managed)
+* environment variables in your Balena Cloud project, or per device (Fleet
+  Managed in Balena Cloud)
+
+See [CONFIGURING-MURAKAMI](docs/CONFIGURING-MURAKAMI.md) for more information on all configuration
+variables, and in our documentation specific to each deployment scenario.
+
+## Deployment Scenarios
 
 Murakami supports three types of Docker container deployments on supported systems:
 
@@ -32,106 +54,6 @@ Murakami supports three types of Docker container deployments on supported syste
 
 It is also possible to install Murakami directly on supported systems without Docker, however currently documenting direct system installation of Murakami is beyond our project scope. Future testing and documentation is needed to test and confirm supported systems and requirements.
 
-## Supported Operating Systems
-
-Murakami supports Linux operating systems like Ubuntu, Debian, etc. Windows is not supported. Mac OS may work, but is yet untested.
-
-## Optional Data Visualization Service
-
-An optional data visualization service, [Murakami-Viz](https://github.com/m-lab/murakami-viz/), can be used to receive test results from Murakami measurement devices if desired. Please see [docs/USING_MURAKAMI_VIZ.md] for more information.
-
-## Murakami Configurations and Customization
-
-A Murakami container can be configured flexibly depending on the deployment scenario. If you simply run a Murakami container using M-Lab's pre-built images on Dockerhub, by default all tests are configured to run four times daily at randomized intervals, but with no data exporters enabled. This section focuses on which options can be configured using the file `murakami.toml` OR using environment variables.
-
-The Murakami container can be customized using:
-* environment variables on the command line when running docker (Standalone, Standalone Locally Managed)
-* environment variables in a file, passed on the command line when running docker (Standalone, Standalone Locally Managed)
-* customizing the `murakami.toml` configuration file (Standalone, Standalone Locally Managed)
-* environment variables in your Balena Cloud project, or per device (Balena Cloud)
-
-The table below summarizes the options you can configure in `murakami.toml` and how to format the options as command line variables at the command line. Three optional variables allow customization of the file names generated by test runners, which can be usefull in multi-device installations: `location`, `network_type`, and `connection_type`.
-
-| murakami.toml | corresponding environment variable | options/examples | function |
-| ------------- | ---------------------------------- | ---------------- | -------- |
-| [settings] | | |
-| port = 80  | MURAKAMI_SETTINGS_PORT | 80, 8080 | Sets the web port used by the Murakami WebThing code |
-| loglevel = "DEBUG" | MURAKAMI_SETTINGS_LOGLEVEL | DEBUG | Sets the log level for the Murakami service |
-| immediate = 1 | MURAKAMI_SETTINGS_IMMEDIATE | 0, 1, true, false | If set to `1` or `true`, instructs the container to run the first set of tests when it starts |
-| webthings = 0 | MURAKAMI_SETTINGS_WEBTHINGS | 0, 1, true, false | If set to `1` or `true`, the container will advertise its test runners as WebThings which can then be toggled using a Mozilla WebThings Gateway |
-| location = "Baltimore" | MURAKAMI_SETTINGS_LOCATION | any string | Optionally set location of the Murakami device. If set, value is used in exported test file names. |
-| network_type = "home" | MURAKAMI_SETTINGS_NETWORK_TYPE | any string | Optionally set the type of network where the Murakami device is running. If set, value is used in exported test file names. |
-| connection_type = "wired" | MURAKAMI_SETTINGS_CONNECTION_TYPE | any string | Optionally set the type of connection the Murakami device is using. If set, value is used in exported test file names |
-| [exporters] | | The 'exporters' configuration sections OR environment variables define where test data should be saved or exported. For each exporter all variables listed must be defined. |
-| | | | |
-| [exporters.local] | | | The 'local' exporter defines where on the system's local disk to save test results. |
-| type = "local" | MURAKAMI_EXPORTERS_LOCAL_TYPE | local | | |
-| enabled = true | MURAKAMI_EXPORTERS_LOCAL_ENABLED | 0, 1, true, false | |
-| path = "/data/" | MURAKAMI_EXPORTERS_LOCAL_PATH | Any system path available to the Murakami container service may be used to save local data. |
-| | | | |
-| [exporters.scp] | | | The 'scp' exporter defines a remote server where data should be copied. The server must be configured to allow secure copy via SSH using a private key file. |
-| type = "scp" | MURAKAMI_EXPORTERS_SCP_TYPE | scp | |
-| enabled = true | MURAKAMI_EXPORTERS_SCP_ENABLED | 0, 1, true, false | |
-| target = "myserver.com:system/path/" | MURAKAMI_EXPORTERS_SCP_TARGET | hostname:path/ | Defines the remote server and system path where the SCP exporter should save data. A server's IP address is also supported. |
-| port = 22 | MURAKAMI_EXPORTERS_SCP_PORT | 22, alternate SCP port used by the remote server | Defines the port used by the remote server for the server's SCP/SSH service. |
-| username = "murakami" | MURAKAMI_EXPORTERS_SCP_USERNAME | remote server username | Defines the username to be used by the SCP exporter. |
-| key = "/murakami/keys/id_rsa_murakami" | MURAKAMI_EXPORTERS_SCP_KEY | The system path within the Murakami container where the SCP user's private SSH key is located. |
-| | | | |
-| [exporters.gcs] | | | The 'gcs' exporter defines a storage bucket in a Google Cloud Storage project where test data should be saved. |
-| type = "gcs" | MURAKAMI_EXPORTERS_GCS_TYPE | gcs | |
-| enabled = true | MURAKAMI_EXPORTERS_GCS_ENABLED | 0, 1, true, false | |
-| target = "gs://murakami-gcs-test/" | MURAKAMI_EXPORTERS_GCS_TARGET | gs://bucketname | Defines the GCS storage bucket name where data should be stored. |
-| key = "/murakami/keys/murakami-gcs-serviceaccount.json" | MURAKAMI_EXPORTERS_GCS_KEY | The system path within the Murakami container where the GCS service account's JSON keyfile is located. |
-| | | | |
-| [exporters.http0] | | | The HTTP exporter is provided as a means of posting test results to an instance of [Murakami-Viz](https://github.com/m-lab/murakami-viz/). |
-| type = "http" | MURAKAMI_EXPORTERS_HTTP0_TYPE | http | |
-| enabled = true | MURAKAMI_EXPORTERS_HTTP0_ENABLED | 0, 1, true, false | Enables or disables the HTTP exporter |
-| url = "<url or IP address>/api/v1/runs" | MURAKAMI_EXPORTERS_HTTP0_URL | "<url or IP address>/api/v1/runs" | Designated URL where you are hosting Murakami Viz, referencing the API endpoint |
-| dash_enabled = 1 | MURAKAMI_TESTS_DASH_ENABLED | 0, 1, true, false | Enables or disables the DASH test runner |
-| ndt5_enabled = 1 | MURAKAMI_TESTS_NDT5_ENABLED | 0, 1, true, false | Enables or disables the NDT5 test runner |
-| ndt7_enabled = 1 | MURAKAMI_TESTS_NDT7_ENABLED | 0, 1, true, false | Enables or disables the NDT7 test runner |
-| speedtestmulti_enabled = 1 | MURAKAMI_TESTS_SPEEDTESTMULTI_ENABLED | 0, 1, true, false | Enables or disables the speedtest-cli multi-stream test runner |
-| speedtestsingle_enabled = 1 | MURAKAMI_TESTS_SPEEDTESTSINGLE_ENABLED | 0, 1, true, false | Enables or disables the speedtest-cli single-stream test runner |
-
-Multiple exporters of any type are supported. For example if you wanted to define two different SCP servers or GCS storage buckets where data should be exported, the config file exporters section might look like this:
-
-```
-[exporters]
-
-  [exporters.gcs1]
-  type = "gcs"
-  enabled = true
-  target = "gs://murakami-storage-bucket-archive/"
-  service_account = "murakami-test-gcs@mlab-sandbox.iam.gserviceaccount.com"
-  key = "/murakami/keys/murakami-gcs-serviceaccount.json"
-
-  [exporters.gcs2]
-  type = "gcs"
-  enabled = true
-  target = "gs://murakami-storage-bucket-access/"
-  service_account = "murakami-test-gcs@mlab-sandbox.iam.gserviceaccount.com"
-  key = "/murakami/keys/murakami-gcs-serviceaccount.json"
-```
-OR as environment variables:
-```
-MURAKAMI_EXPORTERS_GCS1_TYPE = "gcs"
-MURAKAMI_EXPORTERS_GCS1_ENABLED = "true"
-MURAKAMI_EXPORTERS_GCS1_TARGET = "gs://murakami-storage-bucket-archive/"
-MURAKAMI_EXPORTERS_GCS1_SERVICE_ACCOUNT = "murakami-test-gcs@mlab-sandbox.iam.gserviceaccount.com"
-MURAKAMI_EXPORTERS_GCS1_KEY = "/murakami/keys/murakami-gcs-serviceaccount.json"
-
-MURAKAMI_EXPORTERS_GCS2_TYPE = "gcs"
-MURAKAMI_EXPORTERS_GCS2_ENABLED = "true"
-MURAKAMI_EXPORTERS_GCS2_TARGET = "gs://murakami-storage-bucket-access/"
-MURAKAMI_EXPORTERS_GCS2_SERVICE_ACCOUNT = "murakami-test-gcs@mlab-sandbox.iam.gserviceaccount.com"
-MURAKAMI_EXPORTERS_GCS2_KEY = "/murakami/keys/murakami-gcs-serviceaccount.json"
-```
-
-For complete configuration examples for each deployment type, please see:
-* [Murakami Standalone Docker install](docs/INSTALL-MURAKAMI-STANDALONE.md)
-* [Murakami Standalone Docker install, managed by Mozilla WebThings Gateway](docs/INSTALL-MURAKAMI-LOCAL-MANAGED.md)
-* [Murakami Balena Cloud](docs/INSTALL-MURAKAMI-BALENA-CLOUD.md)
-
 ## Included Utility Scripts
 
 Two convenience utilities are provided with Murakami:
@@ -139,20 +61,25 @@ Two convenience utilities are provided with Murakami:
 * [murakami_convert](docs/CONVERT-DATA.py) `scripts/convert.py`
 * [murakami_upload](docs/UPLOAD-UTILITY.py) `scripts/upload.py`
 
-## M-Lab Supported Dockerhub Images and Tags
+## Dockerhub Images and Tags
 
-Measurement Lab published supported, pre-built Docker container images on Dockerhub. As new system architectures are tested, we publish images using the pattern: `measurementlab/murakami-<SYSTEM ARCHITECTURE>:<TAG>`
-
-Tags are either a release number or "latest".
-
-For example, the "latest" image for the armv7 architecture would be: `measurementlab/murakami-armv7:latest`
-Or we could refernece a release tag: `measurementlab/murakami-armv7:v2.0`
-
-Please visit [our repo on Dockerhub](https://cloud.docker.com/repository/docker/measurementlab/murakami/general) for a complete list of images/tags.
+Measurement Lab publishes a `latest` pre-built Murakami Docker container image
+on Dockerhub. Please visit [our repo on
+Dockerhub](https://cloud.docker.com/repository/docker/measurementlab/murakami/general)
+for more details.
 
 ## Building Murakami Images
 
-If you are interested in building your own Murakami Docker images, please see our [BUILD instructions](docs/BUILD.md).
+If you are interested in building your own Murakami Docker images, please see
+our [BUILD instructions](docs/BUILD.md).
+
+## Optional Data Visualization Service
+
+An optional data visualization service, [Murakami-Viz](https://github.com/m-lab/murakami-viz/), can be used to receive test results from Murakami measurement devices if desired. Please see [USING-MURAKAMI-VIZ](docs/USING_MURAKAMI_VIZ.md) for more information.
+
+## What Does the Name Mean?
+
+**What do we talk about when we talk about running tests?** The M-Lab team talks about this a lot, so it's no wonder that the name "Murakami" pays homage to the renown author Haruki Murakami, who's book [_What I Talk About When I Talk About Running_](http://www.harukimurakami.com/book/what-i-talk-about-when-i-talk-about-running-a-memoir) provided us inspiration.
 
 ## Acknowledgements
 
