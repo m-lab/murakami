@@ -2,25 +2,55 @@
 
 ## NDT
 
-The [Network Diagnostic Tool (NDT)](https://www.measurementlab.net/tests/ndt/) from M-Lab is a single stream performance measurement of a connection’s capacity for “bulk transport” (as defined in IETF’s [RFC 3148](https://tools.ietf.org/html/rfc3148). NDT measures “single stream performance” or “bulk transport capacity”. NDT reports upload and download speeds and latency metrics.
+The [Network Diagnostic Tool (NDT)](https://www.measurementlab.net/tests/ndt/)
+from M-Lab is a single stream measurement of a connection’s capacity for “bulk
+transport” (as defined in IETF’s [RFC
+3148](https://tools.ietf.org/html/rfc3148). NDT measures “single stream
+performance” or “bulk transport capacity”. NDT reports upload and download
+speeds and latency metrics.
 
-M-Lab provides two NDT protocols, [ndt5](https://www.measurementlab.net/tests/ndt/ndt5) and [ndt7](https://www.measurementlab.net/tests/ndt/ndt7).
+M-Lab provides two NDT protocols,
+[ndt5](https://www.measurementlab.net/tests/ndt/ndt5) and
+[ndt7](https://www.measurementlab.net/tests/ndt/ndt7).
 
 ### NDT 5 
 
-Murakami includes M-Lab's [NDT 5 Go client](https://github.com/m-lab/ndt5-client-go). NDT 5 is the legacy protocol, measuring a connection's performance using the TCP CUBIC and TCP RENO compression algorithms. NDT 5 requires a specific set of [network ports](https://www.measurementlab.net/faq/#what-firewall-ports-does-ndt-require-to-be-open) to be open in order to run. M-Lab will eventually deprecate the NDT5 protocol once the NDT7 protocol is adopted and in wider use.
+Murakami includes M-Lab's [NDT 5 Go
+client](https://github.com/m-lab/ndt5-client-go). NDT 5 is the legacy protocol,
+measuring a connection's performance using the TCP CUBIC and TCP RENO
+compression algorithms. NDT 5 requires a specific set of [network
+ports](https://www.measurementlab.net/faq/#what-firewall-ports-does-ndt-require-to-be-open)
+to be open in order to run. M-Lab will eventually deprecate the NDT5 protocol
+once the NDT7 protocol is adopted and in wider use.
 
 ### NDT 7
 
-Murakami includes M-Lab's [NDT 7 Go client](https://github.com/m-lab/ndt7-client-go). The [NDT 7 protocol](https://github.com/m-lab/ndt-server/blob/master/spec/ndt7-protocol.md) measures a connection's performance using TCP BBR in networks supporting it. NDT 7 operates solely on port 443 and provides a better end-to-end measurement than past NDT versions.
+Murakami includes M-Lab's [NDT 7 Go
+client](https://github.com/m-lab/ndt7-client-go). The [NDT 7
+protocol](https://github.com/m-lab/ndt-server/blob/master/spec/ndt7-protocol.md)
+measures a connection's performance using TCP BBR in networks supporting it. NDT
+7 operates solely on port 443 and provides a better end-to-end measurement than
+past NDT versions.
 
 ## DASH
 
-The [DASH Streaming Test](https://ooni.org/nettest/dash/) test is designed to measure the quality of tested networks by emulating a video streaming. This test is called DASH because it uses the DASH ([Dynamic Adaptive Streaming over HTTP](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP)) streaming technique.\
+The [DASH Streaming Test](https://ooni.org/nettest/dash/) test is designed to
+measure the quality of tested networks by emulating a video streaming. This test
+is called DASH because it uses the DASH ([Dynamic Adaptive Streaming over
+HTTP](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP))
+streaming technique.
 
 ## speedtest-cli
 
-[speedtest-cli](https://github.com/sivel/speedtest-cli) is a community developed command line program for testing the performance of a connection using the speedtest.net platform. While this tool [does not claim parity with the official test clients provided by OOKLA](https://github.com/sivel/speedtest-cli#inconsistency) (for example in measuring latency), our benchmark testing has found that it does provide similar performance measurements to the official OOKLA command line and web-based tests. speedtest-cli is also [openly licensed](https://github.com/sivel/speedtest-cli/blob/master/LICENSE).
+[speedtest-cli](https://github.com/sivel/speedtest-cli) is a community developed
+command line program for testing the performance of a connection using the
+speedtest.net platform. While this tool [does not claim parity with the official
+test clients provided by
+OOKLA](https://github.com/sivel/speedtest-cli#inconsistency) (for example in
+measuring latency), our benchmark testing has found that it does provide similar
+performance measurements to the official OOKLA command line and web-based tests.
+speedtest-cli is also [openly
+licensed](https://github.com/sivel/speedtest-cli/blob/master/LICENSE).
 
 ## Output Specifications for Murkami Test Runners
 

@@ -1,7 +1,7 @@
 # Configuring Murakami
 
 A Murakami container is configured using variables that are either set when you
-build or run a Murakami Docker image or by reading them from your Balena Fleet
+build or run a Murakami Docker image or by reading them from Balena Fleet
 or Device variables. The four methods of setting variables are:
 
 * **inline** : in-line in a terminal command when you build/run the Murakami Docker container

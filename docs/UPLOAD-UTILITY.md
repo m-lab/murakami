@@ -1,6 +1,6 @@
 # Uploading Previously Collected Test Data to an Instance of Murakami-Viz
 
-[Murakami-Viz](https://github.com/m-lab/murakami-viz/) is a separate data visualization service that can optionally be used with Murakami measurement devices, particularly a fleet of devices managed through Balena.io.
+[Murakami-Viz](https://github.com/m-lab/murakami-viz/) is a prototype data visualization service that can optionally be used with Murakami measurement devices.
 
 Included with Murakami is a utility script, **murakami-upload** found in `scripts/murakami-upload.py`, that provides a means of uploading previously collected test results from Murakami's NDT or Speedtest-CLI runners to an instance of Murakami-Viz.
 

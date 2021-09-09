@@ -1,6 +1,6 @@
 # Murakami
 
-Murakami is a tool for creating an automated internet measurement service, running in a Docker container. A Murakami measurement container will automatically run supported tests four times a day using a randomized schedule, and can be configured to export each test result to a local storage device, to one or more remote servers via SCP, or to a Google Cloud Storage bucket. Results are saved as individual files in JSON new line format (`.jsonl`).
+Murakami is a tool for creating an automated Internet measurement service, running in a Docker container. A Murakami measurement container will automatically run supported tests four times a day using a randomized schedule, and can be configured to export each test result to a local storage device, to one or more remote servers via SCP, or to a Google Cloud Storage bucket. Results are saved as individual files in JSON new line format (`.jsonl`).
 
 ## Contributing to Murakami
 
@@ -31,11 +31,12 @@ on Dockerhub](https://hub.docker.com/r/measurementlab/murakami/tags?page=1&order
 by default all tests are configured to run four times daily at randomized
 intervals, but with no data exporters enabled. To use Murakami and save test
 results, either using an individual device or a fleet of managed devices, you'll
-use Docker to build and configure Murakami. 
+use one of the options below to configure the container at runtime, or build
+your own local container image.
 
 The Murakami container can be configured/customized using:
-* environment variables on the command line when running docker (Standalone, Standalone Locally Managed)
-* environment variables in a file, passed on the command line when running docker (Standalone, Standalone Locally Managed)
+* environment variables on the command line when running Docker (Standalone, Standalone Locally Managed)
+* environment variables in a file, passed on the command line when running Docker (Standalone, Standalone Locally Managed)
 * customizing the `murakami.toml` configuration file (Standalone, Standalone Locally Managed)
 * environment variables in your Balena Cloud project, or per device (Fleet
   Managed in Balena Cloud)
@@ -54,13 +55,6 @@ Murakami supports three types of Docker container deployments on supported syste
 
 It is also possible to install Murakami directly on supported systems without Docker, however currently documenting direct system installation of Murakami is beyond our project scope. Future testing and documentation is needed to test and confirm supported systems and requirements.
 
-## Included Utility Scripts
-
-Two convenience utilities are provided with Murakami:
-
-* [murakami_convert](docs/CONVERT-DATA.py) `scripts/convert.py`
-* [murakami_upload](docs/UPLOAD-UTILITY.py) `scripts/upload.py`
-
 ## Dockerhub Images and Tags
 
 Measurement Lab publishes a `latest` pre-built Murakami Docker container image
@@ -73,7 +67,32 @@ for more details.
 If you are interested in building your own Murakami Docker images, please see
 our [BUILD instructions](docs/BUILD.md).
 
-## Optional Data Visualization Service
+## Included Utility Scripts for Google Cloud and Balena Cloud Tasks
+
+Utility scripts that provide some automation to setup Google Cloud resources and
+provisioning new devices for a Balena Cloud fleet are available in `utilities/`.
+These are designed to support M-Lab demo fleets, so please inspect and customize
+them to your liking.
+
+* `setup_bq.sh` - Intended to be run once to setup GCP resources for a new
+  measurement program or demo. The Google Cloud SDK must be installed and
+  authorized with an account that has IAM permissions to create GCS buckets
+  and BigQuery datasets, tables and views.
+* `bq_load_murakami.sh` - Intended to be scheduled daily using scheduled jobs or
+  cron, this script will load murakami test results files within a GCS bucket
+  from the previous day into BigQuery tables.
+* `setup_balena_device.sh` - This script can be used to provision new Murakami devices in
+  your Balena Cloud fleet. It requires the balena-cli to be installed and
+  authorized.
+
+## Included Convenience Scripts for Post-installation Tasks
+
+Two convenience utilities are provided with Murakami:
+
+* [murakami_convert](docs/CONVERT-DATA.py) `scripts/convert.py`
+* [murakami_upload](docs/UPLOAD-UTILITY.py) `scripts/upload.py`
+
+## Optional Prototype Data Visualization Service
 
 An optional data visualization service, [Murakami-Viz](https://github.com/m-lab/murakami-viz/), can be used to receive test results from Murakami measurement devices if desired. Please see [USING-MURAKAMI-VIZ](docs/USING_MURAKAMI_VIZ.md) for more information.
 
