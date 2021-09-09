@@ -91,6 +91,6 @@ MURAKAMI_EXPORTERS_GCS2_KEY = "/murakami/configs/<SERVICE ACCOUNT KEY FILE>.json
 ```
 
 For complete configuration examples for each deployment type, please see:
-* [Murakami Standalone Docker install](docs/INSTALL-MURAKAMI-STANDALONE.md)
-* [Murakami Standalone Docker install, managed by Mozilla WebThings Gateway](docs/INSTALL-MURAKAMI-LOCAL-MANAGED.md)
-* [Murakami Balena Cloud](docs/INSTALL-MURAKAMI-BALENA-CLOUD.md)
+* [Murakami Standalone Docker install](INSTALL-MURAKAMI-STANDALONE.md)
+* [Murakami Standalone Docker install, managed by Mozilla WebThings Gateway](INSTALL-MURAKAMI-LOCAL-MANAGED.md)
+* [Murakami Balena Cloud](INSTALL-MURAKAMI-BALENA-CLOUD.md)

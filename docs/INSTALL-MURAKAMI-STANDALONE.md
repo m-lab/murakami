@@ -117,7 +117,6 @@ like:
 port = 80
 loglevel = "DEBUG"
 immediate = 1
-hostname = "<DEVICE HOSTNAME>"
 webthings = 1
 location = "<DEVICE LOCATION>"
 network-type = "<TYPE OF NETWORK>"
@@ -167,7 +166,6 @@ If using a `.toml` formatted configuration file instead of environment variable 
 port = 80
 loglevel = "DEBUG"
 immediate = 1
-hostname = "<DEVICE HOSTNAME>"
 webthings = 1
 location = "<DEVICE LOCATION>"
 network-type = "<TYPE OF NETWORK>"
