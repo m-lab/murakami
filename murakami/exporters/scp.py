@@ -69,7 +69,7 @@ class SCPExporter(MurakamiExporter):
             )
 
             with SCPClient(ssh.get_transport()) as scp:
-                filename = self._generate_filename(test_name, timestamp)
+                filename = self._generate_filename(test_name, timestamp, test_idx)
                 dst_path = os.path.join(dst_path, filename)
                 logger.info("Copying data to %s", dst_path)
                 buf = io.StringIO(data)

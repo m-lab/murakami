@@ -31,7 +31,9 @@ class GCSExporter(MurakamiExporter):
         logging.debug(config)
         self.target = config.get("target", None)
         self.key = config.get("key", None)
-        self.client = None
+        # Initialize a GCS Client object from the provided key.
+        # This client will be reused for all the subsequent GCS uploads.
+        self.client = storage.Client.from_service_account_json(self.key)
 
     def upload(self, data, bucket_name, object_name):
         if self.client is None:
@@ -48,11 +50,8 @@ class GCSExporter(MurakamiExporter):
             logger.error("GCS: target must be provided.")
             return
 
-        # Get a Google Cloud Storage Client object from the provided key.
-        self.client = storage.Client.from_service_account_json(self.key)
-
         try:
-            test_filename = self._generate_filename(test_name, timestamp)
+            test_filename = self._generate_filename(test_name, timestamp, test_idx)
 
             # Split the "target" configuration value into a bucket_name and
             # path. e.g. gs://bucket/path/to/results becomes:
