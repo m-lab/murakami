@@ -41,11 +41,12 @@ class SpeedtestClient(MurakamiRunner):
             JSONDecodeError: if the output cannot be parsed as JSON.
         """
 
+        murakami_output = {}
+
         if output.returncode == 0:
             summary = {}
             summary = json.loads(output.stdout)
 
-            murakami_output = {}
             murakami_output['DownloadValue'] = summary.get('download')
             murakami_output['DownloadUnit'] = 'Bit/s'
             murakami_output['UploadValue'] = summary.get('upload')
