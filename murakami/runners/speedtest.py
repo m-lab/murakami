@@ -40,12 +40,12 @@ class SpeedtestClient(MurakamiRunner):
         Raises:
             JSONDecodeError: if the output cannot be parsed as JSON.
         """
+        murakami_output = {}
 
         if output.returncode == 0:
             summary = {}
             summary = json.loads(output.stdout)
 
-            murakami_output = {}
             murakami_output['DownloadValue'] = summary.get('download')
             murakami_output['DownloadUnit'] = 'Bit/s'
             murakami_output['UploadValue'] = summary.get('upload')
@@ -122,6 +122,8 @@ class SpeedtestClient(MurakamiRunner):
             murakami_output['LoggedIn'] = None
             murakami_output['Country'] = None
 
+        return murakami_output
+        
     def _start_test(self):
         logger.info("Starting Speedtest multi-stream test...")
         if shutil.which("speedtest-cli") is not None:
