@@ -1,5 +1,5 @@
 # Build ndt7, ndt5 and dash Go clients.
-FROM golang:1.13.10-buster AS build
+FROM golang:1.17-bullseye AS build
 RUN apt-get update
 RUN apt-get install -y git
 ENV GO111MODULE=on
@@ -8,13 +8,13 @@ RUN go get github.com/m-lab/ndt7-client-go/cmd/ndt7-client
 RUN go get github.com/m-lab/ndt5-client-go/cmd/ndt5-client
 
 # Murakami image
-FROM python:3.7-buster
+FROM python:3.7-bullseye
 # Install dependencies and speedtest-cli
 RUN apt-get update
 RUN apt-get install -y git gcc libc-dev libffi-dev libssl-dev make rustc cargo
 RUN /usr/local/bin/python3.7 -m pip install --upgrade pip
 RUN pip install -e git://github.com/sivel/speedtest-cli.git@v2.1.3#egg=speedtest-cli
-RUN pip install 'poetry==0.12.17'
+RUN pip install 'poetry==1.1.7'
 
 WORKDIR /murakami
 
