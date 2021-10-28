@@ -30,7 +30,8 @@ class HTTPExporter(MurakamiExporter):
         logging.debug(config)
         self._url = config.get("url")
 
-    def push(self, test_name="", data=None, timestamp=None):
+    def _push_single(self, test_name="", data=None, timestamp=None,
+        test_idx=None):
         # Make a JSON payload with the expected format
         data = json.loads(data)
         data = {k: v for k, v in data.items() if v is not None}

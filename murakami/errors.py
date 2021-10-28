@@ -29,3 +29,6 @@ class RunnerError(Error):
         super().__init__()
         self.name = name
         self.message = message
+    
+    def __str__(self):
+        return self.message
