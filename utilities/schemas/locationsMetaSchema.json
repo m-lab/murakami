@@ -1,0 +1,158 @@
+[
+	{
+		"description": "Murakami Device ID - The unique identifier for a device. If using Balena Cloud, this should be the UUID assigned to the device.",
+		"mode": "NULLABLE",
+		"name": "MurakamiDeviceID",
+		"type":"STRING"
+	},
+	{
+		"description": "Murakami Device Metadata 1 - One of two general metadata fields used to logically define devices based on the measurement focus of a given measurement program using Murakami. For example, these could identify the ISP name and ISP service plan. They could identify the location within a network where a device is placed (e.g. egress-switch or router) and the type of connection the device has to its network (e.g. ethernet or wifi). When using the Balena Cloud scripts provided with Murakami to provision devices, these two fields must both be set.",
+		"mode": "NULLABLE",
+		"name": "MurakamiDeviceMetadata1",
+		"type":"STRING"
+	},
+	{
+		"description": "Murakami Device Metadata 2 - The second of two general metadata fields used to logically define devices based on the measurement focus of a given measurement program using Murakami. For example, these could identify the ISP name and ISP service plan. They could identify the location within a network where a device is placed (e.g. egress-switch or router) and the type of connection the device has to its network (e.g. ethernet or wifi). When using the Balena Cloud scripts provided with Murakami to provision devices, these two fields must both be set.",
+		"mode": "NULLABLE",
+		"name": "MurakamiDeviceMetadata2",
+		"type":"STRING"
+	},
+	{
+		"description": "Location Name - Top level name for this location.",
+		"mode": "NULLABLE",
+		"name": "LocName",
+		"type":"STRING"
+	},
+	{
+		"description": "Location Secondary Name - Additional name field to support locations with second level of named locations in a hierarchy, such as branch names for libraries.",
+		"mode": "NULLABLE",
+		"name": "LocSecondaryName",
+		"type":"STRING"
+	},
+	{
+		"description": "Location Tertiary Name - Additional name field to support locations with third level of named locations in a hierarchy.",
+		"mode": "NULLABLE",
+		"name": "LocTertiaryName",
+		"type":"STRING"
+	},
+	{
+		"description": "Country Name",
+		"mode": "NULLABLE",
+		"name": "CountryName",
+		"type":"STRING"
+	},
+	{
+		"description": "Country Code - 2 alphanumeric code within ISO3166 standard.",
+		"mode": "NULLABLE",
+		"name": "CountryCode",
+		"type":"STRING"
+	},
+	{
+		"description": "Timezone of this location. Example: America/New_York",
+		"mode": "NULLABLE",
+		"name": "TimeZone",
+		"type":"STRING"
+	},
+	{
+		"description": "Latitude & Longitude of this location. Format: latitude, longitude ",
+		"mode": "NULLABLE",
+		"name": "LatLon",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 Name - The name of this ISP as presented on terms of service, bill, or other. Can be different than ASN/AS Name.",
+		"mode": "NULLABLE",
+		"name": "Isp1Name",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 Type - If useful to measurement programs, use this field to classify different types of providers. Examples: Non-profit, Cooperative, State/City, Commercial Business ISP, Consumer ISP, Research & Education Network, Commercial Direct Transit.",
+		"mode": "NULLABLE",
+		"name": "Isp1Type",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 Access Media - Examples: Cable, DSL, Fiber, Satellite, etc.",
+		"mode": "NULLABLE",
+		"name": "Isp1AccessMedia",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 ASN - The Autonomous System Number of the ISP providing service to this location. Lookup the ASN from a computer connected to this location by visiting: https://ipinfo.io ",
+		"mode": "NULLABLE",
+		"name": "Isp1ASN",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 AS Name - The Autonomous System Name of the ISP providing service to this location. Lookup the AS Name from a computer connected to this location by visiting: https://ipinfo.io ",
+		"mode": "NULLABLE",
+		"name": "Isp1ASName",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 Service Plan - Description of the service plan for this connection. This could be the name of a plan like 'Internet Essentials' or characteristics of the plan like upload & download speeds, such as '25/3, 10/4'.",
+		"mode": "NULLABLE",
+		"name": "Isp1ServicePlan",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 1 Service Cost - The cost per month for the service plan for the connection. For example: '75', '25', or '9.95'",
+		"mode": "NULLABLE",
+		"name": "Isp1ServiceCost",
+		"type":"FLOAT"
+	},
+	{
+		"description": "ISP 1 Service Cost Units - The units for ISP 1 Service Cost. For example: 'USD' (United States Dollars) for plans within the United States.",
+		"mode": "NULLABLE",
+		"name": "Isp1ServiceCostUnits",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 Name - The name of this ISP as presented on terms of service, bill, or other. Can be different than ASN/AS Name. 'ISP 2' fields are intended to support connections that may have dual providers that serve a single location using a load balancer.",
+		"mode": "NULLABLE",
+		"name": "Isp2Name",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 Type - If useful to measurement programs, use this field to classify different types of providers. Examples: Non-profit, Cooperative, State/City, Commercial Business ISP, Consumer ISP, Research & Education Network, Commercial Direct Transit.",
+		"mode": "NULLABLE",
+		"name": "Isp2Type",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 Access Media - Examples: Cable, DSL, Fiber, Satellite, etc.",
+		"mode": "NULLABLE",
+		"name": "Isp2AccessMedia",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 ASN - The Autonomous System Number of the ISP providing service to this location. Lookup the ASN from a computer connected to this location by visiting: https://ipinfo.io ",
+		"mode": "NULLABLE",
+		"name": "Isp2ASN",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 AS Name - The Autonomous System Name of the ISP providing service to this location. Lookup the AS Name from a computer connected to this location by visiting: https://ipinfo.io ",
+		"mode": "NULLABLE",
+		"name": "Isp2ASName",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 Service Plan - Description of the service plan for this connection. This could be the name of a plan like 'Internet Essentials' or characteristics of the plan like upload & download speeds, such as '25/3, 10/4'.",
+		"mode": "NULLABLE",
+		"name": "Isp2ServicePlan",
+		"type":"STRING"
+	},
+	{
+		"description": "ISP 2 Service Cost - The cost per month for the service plan for the connection. For example: '75', '25', or '9.95'",
+		"mode": "NULLABLE",
+		"name": "Isp2ServiceCost",
+		"type":"FLOAT"
+	},
+	{
+		"description": "ISP 2 Service Cost Units - The units for ISP 1 Service Cost. For example: 'USD' (United States Dollars) for plans within the United States.",
+		"mode": "NULLABLE",
+		"name": "Isp2ServiceCostUnits",
+		"type":"STRING"
+	}
+]

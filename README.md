@@ -26,14 +26,19 @@ For more information about each supported test see: [Supported Tests Runners](do
 Murakami supports three types of Docker container deployments on supported systems:
 
 * **[Standalone](docs/INSTALL-MURAKAMI-STANDALONE.md)**: a single Murakami device, configured on-device
-* **[Standalone Locally Managed](docs/INSTALL-MURAKAMI-LOCAL-MANAGED.md)**: Murakami test runners can be minimally managed using a [Mozilla WebThings Gateway](https://iot.mozilla.org/gateway/) on the same network
 * **[Fleet Managed Murakami using Balena Cloud](docs/INSTALL-MURAKAMI-BALENA-CLOUD.md)**: one or more Murakami devices, configured and managed by the [Balena Cloud IoT platform](https://www.balena.io)
+
+* **[Standalone Locally Managed](docs/INSTALL-MURAKAMI-LOCAL-MANAGED.md)**: Experimental support for managing Murakami test runners using a [Mozilla WebThings Gateway](https://iot.mozilla.org/gateway/) on the same network is also possible.
 
 It is also possible to install Murakami directly on supported systems without Docker, however currently documenting direct system installation of Murakami is beyond our project scope. Future testing and documentation is needed to test and confirm supported systems and requirements.
 
 ## Supported Operating Systems
 
 Murakami supports Linux operating systems like Ubuntu, Debian, etc. Windows is not supported. Mac OS may work, but is yet untested.
+
+## Optional Data Visualization Service
+
+An optional data visualization service, [Murakami-Viz](https://github.com/m-lab/murakami-viz/), can be used to receive test results from Murakami measurement devices if desired. Please see [docs/USING_MURAKAMI_VIZ.md] for more information.
 
 ## Murakami Configurations and Customization
 
@@ -77,6 +82,11 @@ The table below summarizes the options you can configure in `murakami.toml` and 
 | enabled = true | MURAKAMI_EXPORTERS_GCS_ENABLED | 0, 1, true, false | |
 | target = "gs://murakami-gcs-test/" | MURAKAMI_EXPORTERS_GCS_TARGET | gs://bucketname | Defines the GCS storage bucket name where data should be stored. |
 | key = "/murakami/keys/murakami-gcs-serviceaccount.json" | MURAKAMI_EXPORTERS_GCS_KEY | The system path within the Murakami container where the GCS service account's JSON keyfile is located. |
+| | | | |
+| [exporters.http0] | | | The HTTP exporter is provided as a means of posting test results to an instance of [Murakami-Viz](https://github.com/m-lab/murakami-viz/). |
+| type = "http" | MURAKAMI_EXPORTERS_HTTP0_TYPE | http | |
+| enabled = true | MURAKAMI_EXPORTERS_HTTP0_ENABLED | 0, 1, true, false | Enables or disables the HTTP exporter |
+| url = "<url or IP address>/api/v1/runs" | MURAKAMI_EXPORTERS_HTTP0_URL | "<url or IP address>/api/v1/runs" | Designated URL where you are hosting Murakami Viz, referencing the API endpoint |
 | dash_enabled = 1 | MURAKAMI_TESTS_DASH_ENABLED | 0, 1, true, false | Enables or disables the DASH test runner |
 | ndt5_enabled = 1 | MURAKAMI_TESTS_NDT5_ENABLED | 0, 1, true, false | Enables or disables the NDT5 test runner |
 | ndt7_enabled = 1 | MURAKAMI_TESTS_NDT7_ENABLED | 0, 1, true, false | Enables or disables the NDT7 test runner |
@@ -122,11 +132,18 @@ For complete configuration examples for each deployment type, please see:
 * [Murakami Standalone Docker install, managed by Mozilla WebThings Gateway](docs/INSTALL-MURAKAMI-LOCAL-MANAGED.md)
 * [Murakami Balena Cloud](docs/INSTALL-MURAKAMI-BALENA-CLOUD.md)
 
+## Included Utility Scripts
+
+Two convenience utilities are provided with Murakami:
+
+* [murakami_convert](docs/CONVERT-DATA.py) `scripts/convert.py`
+* [murakami_upload](docs/UPLOAD-UTILITY.py) `scripts/upload.py`
+
 ## M-Lab Supported Dockerhub Images and Tags
 
 Measurement Lab published supported, pre-built Docker container images on Dockerhub. As new system architectures are tested, we publish images using the pattern: `measurementlab/murakami-<SYSTEM ARCHITECTURE>:<TAG>`
 
-Tags are either a release number or "latest". 
+Tags are either a release number or "latest".
 
 For example, the "latest" image for the armv7 architecture would be: `measurementlab/murakami-armv7:latest`
 Or we could refernece a release tag: `measurementlab/murakami-armv7:v2.0`
@@ -136,3 +153,7 @@ Please visit [our repo on Dockerhub](https://cloud.docker.com/repository/docker/
 ## Building Murakami Images
 
 If you are interested in building your own Murakami Docker images, please see our [BUILD instructions](docs/BUILD.md).
+
+## Acknowledgements
+
+M-Lab would like to thank the Institute for Museum and Library Services (IMLS), and Simmons University, whose partnership on IMLS Award [#LG-71-18-0110-18](https://www.imls.gov/grants/awarded/lg-71-18-0110-18) supported the development of many current Murakami features, as well as Murakami-Viz.

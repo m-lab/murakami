@@ -24,8 +24,8 @@ COPY --from=build /go/bin/* /murakami/bin/
 
 # Set up poetry to not create a virtualenv, since the docker container is
 # isolated already, and install the required dependencies.
-RUN poetry config settings.virtualenvs.create false \
-    && poetry install --no-dev --no-interaction --develop=murakami
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-dev --no-interaction
 
 # Add binaries' path to PATH.
 ENV PATH="/murakami/bin:${PATH}"
