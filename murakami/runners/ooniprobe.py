@@ -158,7 +158,7 @@ class OONIProbeClient(MurakamiRunner):
                             "ooni probe list <id> --batch returned invalid JSON. (err: " + str(e) + ")"
                         )
 
-            # Wrap the test results in a JSON that's compatible with MuraKami.
+            # Wrap the test results in a JSON that's compatible with Murakami.
             murakami_output = {
                 'TestName': "ooniprobe",
                 'TestStartTime': starttime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
