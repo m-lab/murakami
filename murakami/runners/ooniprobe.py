@@ -17,7 +17,7 @@ class OONIProbeClient(MurakamiRunner):
         device_id=None):
         super().__init__(
             title="ooniprobe",
-            description="The Network Diagnostic Tool v7 test.",
+            description="Test the blocking of websites and apps.",
             config=config,
             data_cb=data_cb,
             location=location,
