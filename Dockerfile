@@ -19,8 +19,6 @@ RUN /usr/local/bin/python3.7 -m pip install --upgrade pip
 RUN pip install -e git://github.com/sivel/speedtest-cli.git@v2.1.3#egg=speedtest-cli
 RUN pip install 'poetry==1.1.7'
 
-
-
 WORKDIR /murakami
 
 # Copy Murakami and previously built test clients into the container.
