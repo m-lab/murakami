@@ -74,7 +74,7 @@ class OONIProbeClient(MurakamiRunner):
                 "ooniprobe",
                 "--software-name=murakami-ooniprobe",
                 "run",
-                "im"
+                "unattended"
             ]
 
             try:
