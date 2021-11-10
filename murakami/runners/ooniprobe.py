@@ -113,8 +113,7 @@ class OONIProbeClient(MurakamiRunner):
                 )
             
             # Parse the output of "ooniprobe list --batch". The output is in
-            # JSONL format, and we need to only parse lines containing an
-            # "id" field.
+            # JSONL format, and we need to only parse lines with type result_item.
             results = []
             try:
                 results = [json.loads(line) for line in output.stdout.splitlines()]
