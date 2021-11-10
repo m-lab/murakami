@@ -10,6 +10,7 @@ RUN go get github.com/m-lab/ndt5-client-go/cmd/ndt5-client
 # Murakami image
 FROM python:3.7-bullseye
 # Install dependencies, speedtest-cli and ooniprobe.
+# For ooniprobe, see https://ooni.org/install/cli/ubuntu-debian for instructions
 RUN apt-key adv --verbose --keyserver hkp://keyserver.ubuntu.com --recv-keys 'B5A08F01796E7F521861B449372D1FF271F2DD50'
 RUN echo "deb http://deb.ooni.org/ unstable main" | tee /etc/apt/sources.list.d/ooniprobe.list
 RUN apt-get update
