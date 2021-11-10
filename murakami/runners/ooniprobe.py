@@ -32,6 +32,7 @@ class OONIProbeClient(MurakamiRunner):
             output = None
             
             # Empty the ooniprobe database.
+            # We do that to avoid wasting disk space with ooniprobe's database (which we don't use).
             logger.info("Emptying ooniprobe database...")
             cmdargs = [
                 "ooniprobe",
