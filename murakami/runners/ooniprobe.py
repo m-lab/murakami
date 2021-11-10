@@ -124,7 +124,7 @@ class OONIProbeClient(MurakamiRunner):
 
             test_results = {}
             for js in results:
-                # If the JSON contains an "id" field, then it is a test result.
+                # If the JSON type is result_item, then it is a nettest result.
                 # Get the corresponding nettest summary data with:
                 # "ooniprobe list <id> --batch".
                 if js["fields"].get("type") == "result_item":
