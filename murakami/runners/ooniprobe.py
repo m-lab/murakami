@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class OONIProbeClient(MurakamiRunner):
-    """Run a test with ooniprobe."""
+    """Run ooniprobe's unattended tests (websites, instant messaging, etc.)."""
     def __init__(self, config=None, data_cb=None,
         location=None, network_type=None, connection_type=None,
         device_id=None):
