@@ -50,7 +50,7 @@ class OONIProbeClient(MurakamiRunner):
                 )
 
             # Programmatically perform ooniprobe's onboarding process.
-            logger.info("Skipping onboarding process...")
+            logger.info("Programmatically perform the onboarding process...")
             cmdargs = [
                 "ooniprobe",
                 "onboard",
