@@ -1,3 +1,5 @@
+# This Dockerfile is used for standalone installs.
+
 # Build ndt7, ndt5 and dash Go clients.
 FROM golang:1.17-bullseye AS build
 RUN apt-get update

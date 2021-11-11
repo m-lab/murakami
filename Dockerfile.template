@@ -1,3 +1,6 @@
+# This Dockerfile is used to build the image for a BalenaOS device. The
+# %%BALENA_MACHINE_NAME%% variable is replaced with the name of the device.
+
 # Build ndt7, ndt5 and dash Go clients.
 FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-golang:1.15-bullseye-build AS build
 RUN apt-get update
