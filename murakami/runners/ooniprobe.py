@@ -49,7 +49,7 @@ class OONIProbeClient(MurakamiRunner):
                     "ooniprobe reset --force returned a non-zero exit code."
                 )
 
-            # Tell ooniprobe to skip the onboarding process.
+            # Programmatically perform ooniprobe's onboarding process.
             logger.info("Skipping onboarding process...")
             cmdargs = [
                 "ooniprobe",
