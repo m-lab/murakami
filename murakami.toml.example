@@ -36,7 +36,35 @@ connection-type = "wired"
 [tests]
 
   [tests.dash]
-  enabled = false
+  enabled = true
 
   [tests.ndt5]
   enabled = true
+
+  [tests.ndt5]
+  enabled = true
+
+  [tests.speedtestsingle]
+  enabled = true
+
+  [tests.speedtestmulti]
+  enabled = true
+
+  # OONI Probe checks whether your provider blocks access to sites and services. Run
+  # OONI Probe to collect evidence of internet censorship and to measure your
+  # network performance.
+  #
+  # • Anyone monitoring your internet activity (such as your government or ISP) may be
+  # able to see that you are running OONI Probe.
+  #
+  # • The network data you will collect will automatically be published (unless you
+  # opt-out in the settings).
+  #
+  # • You may test objectionable sites.
+  #
+  # • Read the documentation to learn more.
+  #
+  # If you agree to the above and want to enable ooniprobe, set the following
+  # to enabled = true
+  [tests.ooniprobe]
+  enabled = false
