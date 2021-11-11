@@ -50,6 +50,12 @@ connection-type = "wired"
   [tests.speedtestmulti]
   enabled = true
 
+  [tests.ndt5custom]
+  enabled = false
+
+  [tests.ndt7custom]
+  enabled = false
+
   # OONI Probe checks whether your provider blocks access to sites and services. Run
   # OONI Probe to collect evidence of internet censorship and to measure your
   # network performance.
