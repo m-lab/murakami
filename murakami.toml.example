@@ -36,7 +36,10 @@ connection-type = "wired"
 [tests]
 
   [tests.dash]
-  enabled = true
+  # DASH is a network experiment that emulates video streaming and measures performance. It
+  # automatically submits measurements to Measurement Lab. You can read DASH's privacy
+  # policy at https://github.com/neubot/dash/blob/master/PRIVACY.md. 
+  enabled = false
 
   [tests.ndt5]
   enabled = true
