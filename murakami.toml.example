@@ -70,7 +70,7 @@ connection-type = "wired"
   #
   # • You may test objectionable sites.
   #
-  # • Read the documentation to learn more: https://ooni.org/about/risks/
+  # Read the documentation to learn more: https://ooni.org/about/risks/
   #
   # If you agree to the above and want to enable ooniprobe, set the following
   # to enabled = true.
