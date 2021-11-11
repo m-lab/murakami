@@ -65,6 +65,6 @@ connection-type = "wired"
   # • Read the documentation to learn more.
   #
   # If you agree to the above and want to enable ooniprobe, set the following
-  # to enabled = true
+  # to enabled = true.
   [tests.ooniprobe]
   enabled = false
