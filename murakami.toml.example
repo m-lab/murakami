@@ -60,8 +60,7 @@ connection-type = "wired"
   enabled = false
 
   # OONI Probe checks whether your provider blocks access to sites and services. Run
-  # OONI Probe to collect evidence of internet censorship and to measure your
-  # network performance.
+  # OONI Probe to collect evidence of internet censorship. Please, be aware that:
   #
   # • Anyone monitoring your internet activity (such as your government or ISP) may be
   # able to see that you are running OONI Probe.
