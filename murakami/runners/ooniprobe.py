@@ -122,7 +122,7 @@ class OONIProbeClient(MurakamiRunner):
                     "ooniprobe list --batch returned invalid JSON. (err: " + str(e) + ")"
                 )
 
-            test_results = {}
+            test_results = []
             for js in results:
                 # If the JSON type is result_item, then it is a nettest result.
                 # Get the corresponding nettest summary data with:
@@ -151,24 +151,26 @@ class OONIProbeClient(MurakamiRunner):
                         )
 
                     try:
-                        test_measurements = [json.loads(line) for line in output.stdout.splitlines()]
-                        test_results[test_name] = test_measurements
+                        # Wrap the test results in a JSON that's compatible with Murakami.
+                        murakami_output = {
+                            'TestName': "ooniprobe-" + test_name,
+                            'TestStartTime': starttime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
+                            'TestEndTime': endtime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
+                            'MurakamiLocation': self._location,
+                            'MurakamiConnectionType': self._connection_type,
+                            'MurakamiNetworkType': self._network_type,
+                            'MurakamiDeviceID': self._device_id,
+                        }
+                        test_measurements = []
+                        for line in output.stdout.splitlines():
+                            js = json.loads(line)
+                            if js["fields"].get("type") == "measurement_item":
+                                test_measurements.append(js)
+                        murakami_output["TestResults"] = test_measurements
+                        test_results.append(json.dumps(murakami_output))
                     except json.decoder.JSONDecodeError as e:
                         raise RunnerError(
                             "ooni probe list <id> --batch returned invalid JSON. (err: " + str(e) + ")"
                         )
-
-            # Wrap the test results in a JSON that's compatible with Murakami.
-            murakami_output = {
-                'TestName': "ooniprobe",
-                'TestStartTime': starttime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
-                'TestEndTime': endtime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
-                'MurakamiLocation': self._location,
-                'MurakamiConnectionType': self._connection_type,
-                'MurakamiNetworkType': self._network_type,
-                'MurakamiDeviceID': self._device_id,
-            }
-
-            murakami_output['TestResults'] = test_results
            
-            return json.dumps(murakami_output)
+            return test_results
