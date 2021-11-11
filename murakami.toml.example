@@ -36,7 +36,43 @@ connection-type = "wired"
 [tests]
 
   [tests.dash]
+  # DASH is a network experiment that emulates video streaming and measures performance. It
+  # automatically submits measurements to Measurement Lab. You can read DASH's privacy
+  # policy at https://github.com/neubot/dash/blob/master/PRIVACY.md. 
   enabled = false
+
+  [tests.ndt7]
+  enabled = true
 
   [tests.ndt5]
   enabled = true
+
+  [tests.speedtestsingle]
+  enabled = true
+
+  [tests.speedtestmulti]
+  enabled = true
+
+  [tests.ndt5custom]
+  enabled = false
+
+  [tests.ndt7custom]
+  enabled = false
+
+  # OONI Probe checks whether your provider blocks access to sites and services. Run
+  # OONI Probe to collect evidence of internet censorship. Please, be aware that:
+  #
+  # • Anyone monitoring your internet activity (such as your government or ISP) may be
+  # able to see that you are running OONI Probe.
+  #
+  # • The network data you will collect will automatically be published (unless you
+  # opt-out in the settings).
+  #
+  # • You may test objectionable sites.
+  #
+  # Read the documentation to learn more: https://ooni.org/about/risks/
+  #
+  # If you agree to the above and want to enable ooniprobe, set the following
+  # to enabled = true.
+  [tests.ooniprobe]
+  enabled = false
