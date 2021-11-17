@@ -128,7 +128,7 @@ class MurakamiServer:
             if "tests" not in self._config:
                 self._config["tests"] = {}
             if entry_point.name not in self._config["tests"]:
-                self._config["tests"][entry_point.name] = {}
+                self._config["tests"][entry_point.name] = {"enabled": False}
             self._runners[entry_point.name] = entry_point.load()(
                 config=self._config["tests"][entry_point.name],
                 data_cb=self._call_exporters,

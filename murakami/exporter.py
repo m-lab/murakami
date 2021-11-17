@@ -2,9 +2,12 @@
 This module includes the wrapper for all result exporters, which defines their
 interface.
 """
+import logging
+
 from datetime import datetime
 from murakami.errors import ExporterError
 
+logger = logging.getLogger(__name__)
 
 class MurakamiExporter:
     """
@@ -35,6 +38,19 @@ class MurakamiExporter:
         self._config = config
 
     def push(self, test_name="", data=None, timestamp=None):
+        if type(data) is list:
+            test_idx = 0
+            for d in data:
+                try:
+                    self._push_single(test_name, d, timestamp, test_idx)
+                    test_idx += 1
+                except Exception as ex:
+                    logger.error("export failed: " + ex)
+        else:
+            self._push_single(test_name, data, timestamp)
+
+    def _push_single(self, test_name="", data=None, timestamp=None,
+        test_idx=None):
         """
         Push results to this exporter (must be implemented by all exporters).
 
@@ -45,9 +61,17 @@ class MurakamiExporter:
         """
         raise ExporterError(self.name, "No push() function implemented.")
 
-    def _generate_filename(self, test_name="", timestamp=None):
+    def _generate_filename(self, test_name="", timestamp=None,
+        test_idx=None):
         if timestamp is None:
             timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
+        
+        # If the result is part of a set of tests coming from a single runner,
+        # these tests will have the same timestamp. To distinguish them and not
+        # overwrite the same file N times, we append test_idx to the filename. 
+        if test_idx is not None:
+            timestamp = "%d-%s" % (test_idx, timestamp)
+
 
         if (self._location is not None and self._network_type is not None
                 and self._connection_type is not None):

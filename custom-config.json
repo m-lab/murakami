@@ -1,0 +1,16 @@
+{
+    "serverGroups": [
+        {
+            "selection": "all",
+            "servers": [
+                "localhost"
+            ]
+        },
+        {
+            "selection": "random",
+            "servers": [
+                "localhost"
+            ]
+        }
+    ]
+}

@@ -36,14 +36,21 @@ pytest-cov = "^2.8"
 "dash" = "murakami.runners.dash:DashClient"
 "ndt5" = "murakami.runners.ndt5:Ndt5Client"
 "ndt7" = "murakami.runners.ndt7:Ndt7Client"
+"ndt5custom" = "murakami.runners.ndt5custom:Ndt5ClientCustom"
+"ndt7custom" = "murakami.runners.ndt7custom:Ndt7ClientCustom"
 "speedtestmulti" = "murakami.runners.speedtest:SpeedtestClient"
 "speedtestsingle" = "murakami.runners.speedtestsingle:SpeedtestSingleClient"
+"ooniprobe" = "murakami.runners.ooniprobe:OONIProbeClient"
 
 [tool.poetry.plugins."murakami.exporters"]
 "local" = "murakami.exporters.local:LocalExporter"
 "scp" = "murakami.exporters.scp:SCPExporter"
 "gcs" = "murakami.exporters.gcs:GCSExporter"
 "http" = "murakami.exporters.http:HTTPExporter"
+
+[tool.poetry.plugins."murakami.selection"]
+"all" = "murakami.selection.all:AllSelection"
+"random" = "murakami.selection.rand:RandomSelection"
 
 [tool.tox]
 legacy_tox_ini = """

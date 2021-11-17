@@ -1,5 +1,8 @@
+# This Dockerfile is used to build the image for a BalenaOS device. The
+# %%BALENA_MACHINE_NAME%% variable is replaced with the name of the device.
+
 # Build ndt7, ndt5 and dash Go clients.
-FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-golang:1.13.10-buster-build AS build
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-golang:1.15-bullseye-build AS build
 RUN apt-get update
 RUN apt-get install -y git
 ENV GO111MODULE=on
@@ -8,10 +11,14 @@ RUN go get github.com/m-lab/ndt7-client-go/cmd/ndt7-client
 RUN go get github.com/m-lab/ndt5-client-go/cmd/ndt5-client
 
 # Murakami image
-FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-python:3.7-buster
-# Install dependencies and speedtest-cli
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-python:3.7-bullseye
+# Install dependencies, speedtest-cli, and ooniprobe
+# For ooniprobe, see https://ooni.org/install/cli/ubuntu-debian for instructions
+RUN apt-key adv --verbose --keyserver hkp://keyserver.ubuntu.com --recv-keys 'B5A08F01796E7F521861B449372D1FF271F2DD50'
+RUN echo "deb http://deb.ooni.org/ unstable main" | tee /etc/apt/sources.list.d/ooniprobe.list
 RUN apt-get update
-RUN apt-get install -y git gcc libc-dev libffi-dev libssl-dev make rustc cargo
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -yq git gcc libc-dev libffi-dev libssl-dev make rustc cargo ooniprobe-cli
 RUN /usr/local/bin/python3.7 -m pip install --upgrade pip
 RUN pip install -e git://github.com/sivel/speedtest-cli.git@v2.1.3#egg=speedtest-cli
 RUN pip install 'poetry==1.1.7'

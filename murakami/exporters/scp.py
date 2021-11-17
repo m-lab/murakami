@@ -39,7 +39,8 @@ class SCPExporter(MurakamiExporter):
         self.password = config.get("password", None)
         self.private_key = config.get("key", None)
 
-    def push(self, test_name="", data=None, timestamp=None):
+    def _push_single(self, test_name="", data=None, timestamp=None,
+        test_idx=None):
         """Copy the files over SCP using the provided configuration."""
         if self.target is None:
             logger.error("scp.target must be specified")
@@ -68,7 +69,7 @@ class SCPExporter(MurakamiExporter):
             )
 
             with SCPClient(ssh.get_transport()) as scp:
-                filename = self._generate_filename(test_name, timestamp)
+                filename = self._generate_filename(test_name, timestamp, test_idx)
                 dst_path = os.path.join(dst_path, filename)
                 logger.info("Copying data to %s", dst_path)
                 buf = io.StringIO(data)
