@@ -1,11 +1,16 @@
 # Building Murakami Container Images
 
-This document provides a guide on how to build your own Murakami container images, instead of running those provided by M-Lab. Developers and project contributors may wish to do this to build support for new system architectures, or to test development of new features locally.
+This document provides a guide on how to build your own Murakami container
+images, instead of running those provided by M-Lab. Developers and project
+contributors may wish to do this to build support for new system architectures,
+or to test development of new features locally.
 
 ## Configuring Your System to Build Images for Different System Architectures
 
-Development systems may vary in system architecture, thus we recommend using the qemu-user package to allow you to build for other system types. The following outlines how to 
-add support for building armv7hf and armv8/aarch64 images. We assume that you already have Docker running on your development system.
+Development systems may vary in system architecture, thus we recommend using the
+qemu-user package to allow you to build for other system types. The following
+outlines how to add support for building armv7hf and armv8/aarch64 images. We
+assume that you already have Docker running on your development system.
 
 Run each of the the following lines one at a time in your terminal:
 ```
@@ -36,8 +41,6 @@ linux/arm/v7, linux/arm64, linux/amd64, linux/riscv64, linux/ppc64le, linux/s390
 
 Use this command to show which arm platforms are supported:
 ```docker buildx inspect arm --bootstrap```
-
-**TODO:** confirm if this config will persist over dev system reboots & update instructions if needed.
 
 ## Clone Murakami and Build Images
 

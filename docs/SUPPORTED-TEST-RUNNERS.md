@@ -29,8 +29,32 @@ Murakami includes M-Lab's [NDT 7 Go
 client](https://github.com/m-lab/ndt7-client-go). The [NDT 7
 protocol](https://github.com/m-lab/ndt-server/blob/master/spec/ndt7-protocol.md)
 measures a connection's performance using TCP BBR in networks supporting it. NDT
-7 operates solely on port 443 and provides a better end-to-end measurement than
-past NDT versions.
+7 operates solely on either port 80 or 443 and provides a better end-to-end
+measurement than past NDT versions.
+
+### NDT 5 / 7 Custom Test Runners
+
+The `ndt5custom` and `ndt7custom` test runners are provided as an alternative to
+the standard runners to enable additional features of interest to many
+researchers. By default, NDT clients like the standard `ndt5` and `ndt7`
+runners, contact the [M-Lab Locate Service](https://www.measurementlab.net/develop/locate-v2/)
+to identify several geographically closest and available M-Lab servers to which
+the test can be conducted. Geographically closest or nearest in this case is
+based on a 
+
+The `ndt5custom` and `ndt7custom` runners provide additional capabilities:
+
+* run tests to self-hosted ndt-servers
+* use the M-Lab Locate Service to [select servers](https://github.com/m-lab/locate/blob/master/USAGE.md#how-gcp-identifies-client-location) by I[SO 3166-1 alpha 2 country
+  code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) or [ISO 3166-2 region
+  code](https://en.wikipedia.org/wiki/ISO_3166-2)
+* define a list of servers for Murakami to use for each test run
+  * one test to a _randomly_ selected server in the list
+  * one test to _all_ servers in the list
+* multiple lists of servers are supported
+
+You can review examples of the available options in:
+`configs/ndt-custom-config.json.example`.
 
 ## DASH
 
@@ -51,6 +75,44 @@ measuring latency), our benchmark testing has found that it does provide similar
 performance measurements to the official OOKLA command line and web-based tests.
 speedtest-cli is also [openly
 licensed](https://github.com/sivel/speedtest-cli/blob/master/LICENSE).
+
+## OONI Probe
+
+[OONI Probe](https://ooni.org/install/cli) provides a [suite of
+measurements](https://ooni.org/nettest/) that can potentially serve as evidence
+of Internet censorship since it shows how, when, where, and by whom it is
+implemented. The Open [Observatory of Network Interference](https://ooni.org)
+(OONI) is a non-profit free software project that aims to empower decentralized
+efforts in documenting Internet censorship around the world.
+
+Within Murakami, OONI Probe runs using the [unattended
+option](https://ooni.org/support/ooni-probe-cli#ooniprobe-run-unattended), which
+includes all tests except the DASH and NDT performance tests. For Murakami,
+DASH and NDT are provided as separate runners. OONI Probe unattended
+communicates with the OONI backend service to automate the targets of each test
+depending on the current conditions of each probe.
+
+### Potential Risks in Running OONI Probe
+
+OONI Probe checks whether your provider blocks access to sites and services.
+Running OONI Probe helps researchers collect evidence of internet censorship.
+
+However, if your Murakami device will be run from locations where internet
+censorship occurs or where repression and freedom of expression online is at
+risk, this may also be a risk to you or those at the location where the device
+is running tests.
+
+Please, be aware that:
+* Anyone monitoring your internet activity (such as your government or ISP) may
+  be able to see that you are running OONI Probe.
+* The network data you will collect will automatically be published (unless you
+  opt-out in the settings).
+* You may test objectionable sites.
+
+Read the documentation to learn more: https://ooni.org/about/risks/
+
+By enabling OONI Probe in Murakami, it is assumed you have read and understand
+these risks and consent to help collect data on possible internet censorship.
 
 ## Output Specifications for Murkami Test Runners
 
@@ -203,5 +265,83 @@ licensed](https://github.com/sivel/speedtest-cli/blob/master/LICENSE).
   "IspUploadAvg": "0",
   "LoggedIn": "0",
   "Country": "IT"
+}
+```
+
+### OONI Probe Murakami JSON output specification
+
+```
+{
+  "TestName": "ooniprobe-middlebox",
+  "TestStartTime": "2021-11-11T17:33:24.105157",
+  "TestEndTime": "2021-11-11T17:44:16.477665",
+  "MurakamiLocation": null,
+  "MurakamiConnectionType": null,
+  "MurakamiNetworkType": null,
+  "MurakamiDeviceID": "",
+  "TestResults": [
+    {
+      "fields": {
+        "asn": 43989,
+        "failure_msg": "",
+        "id": 1,
+        "is_anomaly": false,
+        "is_done": true,
+        "is_failed": false,
+        "is_first": true,
+        "is_last": false,
+        "is_upload_failed": false,
+        "is_uploaded": true,
+        "measurement_file_path": "/home/roberto/.ooniprobe/msmts/middlebox-2021-11-11T173329.262160187Z/msmt-http_invalid_request_line-0.json",
+        "network_country_code": "IT",
+        "network_name": "Ehinet Srl",
+        "report_file_path": "",
+        "runtime": 5.386668622,
+        "start_time": "2021-11-11T17:33:29.431065843Z",
+        "test_group_name": "middlebox",
+        "test_keys": "{}",
+        "test_name": "http_invalid_request_line",
+        "type": "measurement_item",
+        "upload_failure_msg": "",
+        "url": "",
+        "url_category_code": "",
+        "url_country_code": ""
+      },
+      "level": "info",
+      "timestamp": "2021-11-11T18:44:16.510108991+01:00",
+      "message": "measurement"
+    },
+    {
+      "fields": {
+        "asn": 43989,
+        "failure_msg": "",
+        "id": 2,
+        "is_anomaly": false,
+        "is_done": true,
+        "is_failed": false,
+        "is_first": false,
+        "is_last": true,
+        "is_upload_failed": false,
+        "is_uploaded": true,
+        "measurement_file_path": "/home/roberto/.ooniprobe/msmts/middlebox-2021-11-11T173329.262160187Z/msmt-http_header_field_manipulation-0.json",
+        "network_country_code": "IT",
+        "network_name": "Ehinet Srl",
+        "report_file_path": "",
+        "runtime": 0.561414746,
+        "start_time": "2021-11-11T17:33:35.006617306Z",
+        "test_group_name": "middlebox",
+        "test_keys": "{}",
+        "test_name": "http_header_field_manipulation",
+        "type": "measurement_item",
+        "upload_failure_msg": "",
+        "url": "",
+        "url_category_code": "",
+        "url_country_code": ""
+      },
+      "level": "info",
+      "timestamp": "2021-11-11T18:44:16.510207101+01:00",
+      "message": "measurement"
+    }
+  ]
 }
 ```

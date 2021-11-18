@@ -1,9 +1,11 @@
 {
+    "regions": [ "CA-ON", "CA-BC", "CA-AB" ],
+    "countries": [ "GB", "KE", "MG" ],
     "serverGroups": [
         {
             "selection": "all",
             "servers": [
-                "localhost"
+                "10.10.20.15:8080"
             ]
         },
         {

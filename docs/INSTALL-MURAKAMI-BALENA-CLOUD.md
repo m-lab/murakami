@@ -1,10 +1,16 @@
 # Installation and Use - Murakami Containers on One or More Balena Cloud Manged Devices
 
-M-Lab supports management of a fleet of Murakami devices using the [Balena Cloud](https://balena.io).
+M-Lab supports management of a fleet of Murakami devices using [Balena
+Cloud](https://balena.io). Murakami containers for use with Balena Cloud are
+built using the `Dockerfile.template` file in the main directory of this repository.
 
-## Supported System Architectures for Balena Cloud managed Murakami Devices
+## Supported System Architectures for Balena Cloud Managed Murakami Devices
+
+Murakami has been tested using devices of the following architectures on Balena
+Cloud.
 
 * armv7hf
+* aarch64
 
 ## Quick Setup for Balena Cloud Managed Murakami Deployment
 
@@ -25,14 +31,14 @@ build the container image on Balena's cloud build servers, and deploy it to your
 project devices. This guide will assume you have setup a project on Balena
 Cloud.
 
-We recommend configuring Murakami on Balena Managed devices using variables
+We recommend configuring Murakami on Balena managed devices using variables
 defined in your Balena Cloud project, rather than in a local text or `.toml`
 configuration file containing your variables.
 
-In our testing, we have some settings that should apply to all devices in the
-Balena Cloud project, and others that should apply to each individual device. 
+In our testing, we have some settings that apply to all devices in the
+Balena Cloud fleet, and others that apply to each individual device.
 
-We set the following values for project-wide Environment Variables:
+We set the following fleet-wide variables:
 
 ```
 NAME                             VALUE
@@ -40,28 +46,28 @@ MURAKAMI_EXPORTERS_GCS_TYPE      gcs
 MURAKAMI_EXPORTERS_LOCAL_ENABLED 1
 MURAKAMI_EXPORTERS_LOCAL_PATH    /data/
 MURAKAMI_EXPORTERS_LOCAL_TYPE    local
-MURAKAMI_EXPORTERS_GCS_ACCOUNT   murakami-test-gcs@mlab-sandbox.iam.gserviceaccount.com
+MURAKAMI_EXPORTERS_GCS_ACCOUNT   your-gcp-service-account@your-gcp-project.iam.gserviceaccount.com
 MURAKAMI_EXPORTERS_GCS_ENABLED   1
-MURAKAMI_EXPORTERS_GCS_KEY       /murakami/configs/murakami-gcs-serviceaccount.json
-MURAKAMI_EXPORTERS_GCS_TARGET    gs://murakami-gcs-test/
-MURAKAMI_EXPORTERS_SCP_ENABLED   1
-MURAKAMI_EXPORTERS_SCP_KEY       /murakami/configs/id_rsa_murakami
-MURAKAMI_EXPORTERS_SCP_PORT      22
-MURAKAMI_EXPORTERS_SCP_TARGET    remote.host.org:murakami-export-test/
+MURAKAMI_EXPORTERS_GCS_KEY       /murakami/configs/your-service-account-keyfile.json
+MURAKAMI_EXPORTERS_GCS_TARGET    gs://your-gcs-bucket/
 MURAKAMI_EXPORTERS_SCP_TYPE      scp
-MURAKAMI_EXPORTERS_SCP_USERNAME  username
+MURAKAMI_EXPORTERS_SCP_ENABLED   1
+MURAKAMI_EXPORTERS_SCP_KEY       /murakami/configs/ssh-private-key-filename
+MURAKAMI_EXPORTERS_SCP_PORT      22
+MURAKAMI_EXPORTERS_SCP_TARGET    our-scp-server-hostname-or-IP-address:murakami-exported-data/
+MURAKAMI_EXPORTERS_SCP_USERNAME  your-scp-username
 ```
 
 And these values, specific to an individual Murakami device:
 
 ```
-MURAKAMI_SETTINGS_PORT            80
-MURAKAMI_SETTINGS_LOGLEVEL        DEBUG
-MURAKAMI_SETTINGS_IMMEDIATE       1
 MURAKAMI_SETTINGS_WEBTHINGS       0
-MURAKAMI_SETTINGS_CONNECTION_TYPE wifi_balena
+MURAKAMI_SETTINGS_PORT            80
+MURAKAMI_SETTINGS_LOGLEVEL        INFO
+MURAKAMI_SETTINGS_IMMEDIATE       1
 MURAKAMI_SETTINGS_LOCATION        mydevicelocation
 MURAKAMI_SETTINGS_NETWORK_TYPE    home
+MURAKAMI_SETTINGS_CONNECTION_TYPE wired
 ```
 
 In this example, we can define the same exporters for all Balena managed devices
@@ -77,19 +83,7 @@ using SCP and/or GCS exporters, as with the [Standalone Murakami](https://github
 using SCP and GCS exporters, the relevant key files need to be accessible in the
 container. 
 
-Following from the example environment variables above, create a `configs` directory in the folder where you've cloned the Murakami repo. Your directory contents should look something like this:
-
-```
-$ ls
-configs              docs           murakami.toml.example  scripts
-CONTRIBUTING.md      LICENSE        poetry.lock            tests
-Dockerfile           murakami       pyproject.toml         utilities
-Dockerfile.template  murakami.toml  README.md
-
-$ ls configs/
-murakami-gcs-serviceaccount.json  id_rsa_murakami
-
-```
+Add your GCS service account keyfile and/or your SCP private key to the folder: `configs/`
 
 Then kick off a container build for your Balena Cloud project:
 `balena push your-balena-fleet-name -c`
