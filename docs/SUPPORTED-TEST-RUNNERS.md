@@ -52,7 +52,7 @@ researchers. By default, NDT clients like the standard `ndt5` and `ndt7`
 runners, contact the [M-Lab Locate Service](https://www.measurementlab.net/develop/locate-v2/)
 to identify several geographically closest and available M-Lab servers to which
 the test can be conducted. Geographically closest or nearest in this case is
-based on a 
+based on the geolocation of the client IP address.
 
 The `ndt5custom` and `ndt7custom` runners provide additional capabilities:
 
@@ -65,8 +65,70 @@ The `ndt5custom` and `ndt7custom` runners provide additional capabilities:
   * one test to _all_ servers in the list
 * multiple lists of servers are supported
 
-You can review examples of the available options in:
-`configs/ndt-custom-config.json.example`.
+The configuration file `configs/ndt-custom-config.json.example` is provided as a
+starting point. Below are the contents of the example file, followed by
+additional details for using the available options.
+
+```
+{
+    "regions": [ "CA-ON", "CA-BC", "CA-AB" ],
+    "countries": [ "GB", "KE", "MG" ],
+    "serverGroups": [
+        {
+            "selection": "all",
+            "servers": [
+                "10.10.20.15:8080"
+            ]
+        },
+        {
+            "selection": "random",
+            "servers": [
+                "localhost"
+            ]
+        }
+    ]
+}
+```
+
+### Selecting Multiple M-Lab Servers by Region Code
+
+`"regions": [ "CA-ON", "CA-BC", "CA-AB" ],` 
+Selects three M-Lab servers in Ontario, Brittish Columbia, and Alerta, Canada.
+Any valid ISO 3166-2 region code is valid.
+
+### Selecting Multiple M-Lab Servers by Country Code
+
+`"countries": [ "GB", "KE", "MG" ],`
+Selects three M-Lab servers in Great Brittain, Kenya, and Madagascar. Any valid
+ISO 3166-1 country code is valid.
+
+### Defining Custom Server Groups and Selection Strategies
+
+The `ServerGroups` section demonstrates how to define custom lists of M-Lab or
+self-provisioned ndt-servers for your Murakami device to use for NDT tests. Each
+group of servers can use either the `random` or `all` selection strategy.
+`random` selects one server for each test run, and `all` will instruct Murakami
+to run one test to all servers in the list during each test run. Servers are
+defined as either IP addresses or fully qualified domain names of
+M-Lab or self-provisioned servers. In the example above, the IP address of a
+self-provisioned ndt-server running in a local area network is defined, but a
+public IP address is also valid.
+
+### Output Files for Custom NDT Runners
+
+The output files of both NDT custom runners is the same as the non-custom
+runners, except an index number is defined in each test result when multiple
+servers are defined in `ndt-custom-config.json`. For example, when using the
+example as is for the ndt7custom runner, seven ndt7 tests are conducted for each
+Murakami test run, indexed with 0-6:
+
+* ndt7custom-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-**0**-2021-11-19T12:16:19.356279.jsonl
+* ndt7custom-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-**1**-2021-11-19T12:16:19.356279.jsonl
+* ndt7custom-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-**2**-2021-11-19T12:16:19.356279.jsonl
+* ndt7custom-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-**3**-2021-11-19T12:16:19.356279.jsonl
+* ndt7custom-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-**4**-2021-11-19T12:16:19.356279.jsonl
+* ndt7custom-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-**5**-2021-11-19T12:16:19.356279.jsonl
+* ndt7custom-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-**6**-2021-11-19T12:16:19.356279.jsonl
 
 ## DASH
 
