@@ -1,5 +1,17 @@
 # Murakami Supported Test Runners
 
+## Sample Output for All Murkami Test Runners
+
+* [dash-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/dash-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ndt5-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ndt5-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ndt7-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ndt7-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ooniprobe-circumvention-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ooniprobe-circumvention-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ooniprobe-im-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ooniprobe-im-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ooniprobe-middlebox-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ooniprobe-middlebox-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ooniprobe-websites-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ooniprobe-websites-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [speedtest-cli-multi-stream-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/speedtest-cli-multi-stream-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [speedtest-cli-single-stream-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/speedtest-cli-single-stream-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+
 ## NDT
 
 The [Network Diagnostic Tool (NDT)](https://www.measurementlab.net/tests/ndt/)
@@ -97,10 +109,18 @@ depending on the current conditions of each probe.
 OONI Probe checks whether your provider blocks access to sites and services.
 Running OONI Probe helps researchers collect evidence of internet censorship.
 
-However, if your Murakami device will be run from locations where internet
-censorship occurs or where repression and freedom of expression online is at
-risk, this may also be a risk to you or those at the location where the device
-is running tests.
+Within Murakami, OONI Probe runs with the [unattended
+option](https://ooni.org/support/ooni-probe-cli#ooniprobe-run-unattended), which
+includes [four tests](https://ooni.org/support/ooni-probe-cli#ooniprobe-run):
+
+* circumvention
+* im
+* middlebox
+* websites
+
+If your Murakami device will be run from locations where internet censorship
+occurs or where repression and freedom of expression online is at risk, this may
+also be a risk to you or those at the location where the device is running tests.
 
 Please, be aware that:
 * Anyone monitoring your internet activity (such as your government or ISP) may
@@ -113,235 +133,3 @@ Read the documentation to learn more: https://ooni.org/about/risks/
 
 By enabling OONI Probe in Murakami, it is assumed you have read and understand
 these risks and consent to help collect data on possible internet censorship.
-
-## Output Specifications for Murkami Test Runners
-
-### ndt5 Murakami JSON output specification
-```
-{
-	"ServerName": "ndt-iupui-mlab1-iad03.measurement-lab.org",
-	"ServerIP": "38.90.140.139"
-	"ClientIP": "104.145.221.196",
-	"MurakamiLocation": "<MURAKAMI 'LOCATION' ENV VAR>",
-	"MurakamiNetworkType": "<MURAKAMI 'NETWORK_TYPE' ENV VAR>",
-	"MurakamiConnectionType": "<MURAKAMI 'CONNECTION_TYPE' ENV VAR>",
-	"TestUUID": "NULL",
-        "TestProtocol": "ndt5",
-        "TestError": "recvResultsAndLogout failed: cannot get message: read tcp 192.168.178.28:58788-\u003e77.67.115.11:3001: i/o timeout",
-	"DownloadTestStartTime": "2020-02-18 20:32:52.639720903 +0000 UTC m=+5825.539350534",
-	"DownloadTestEndTime": "2020-02-18 20:33:02.640686711 +0000 UTC m=+5835.540316330",
-	"DownloadValue": "NULL", 
-	"DownloadUnit": "Mbit/s", 
-        "DownloadError": "download failed: cannot get TestPrepare message: read tcp 192.168.178.28:58788-\u003e77.67.115.11:3001: i/o timeout",
-	"UploadValue": "NULL", 
-	"UploadUnit": "Mbit/s", 
-        "UploadError": "upload failed: cannot get TestMsg message: read tcp 192.168.178.28:58788-\u003e77.67.115.11:3001: i/o timeout",
-	"DownloadRetransValue": "NULL", 
-	"DownloadRetransUnit": "pct", 
-	"MinRTTValue": "NULL",
-	"MinRTTUnit": "ms"
-}
-```
-
-### ndt7 Murakami JSON output specification
-
-**Successful test:**
-```
-{
-  "SchemaVersion": 1,
-  "TestName": "ndt7",
-  "TestStartTime": "2020-02-25T17:02:40.918022",
-  "TestEndTime": "2020-02-25T17:03:01.754734",
-  "MurakamiLocation": "Corciano",
-  "MurakamiConnectionType": "wifi",
-  "MurakamiNetworkType": "home",
-  "ServerName": "ndt-iupui-mlab3-mil04.measurement-lab.org",
-  "ServerIP": "213.242.77.165",
-  "ClientIP": "93.188.101.116",
-  "DownloadUUID": "ndt-cz99j_1580820576_000000000003708B",
-  "DownloadValue": 405.32368416128276,
-  "DownloadUnit": "Mbit/s",
-  "DownloadError": null,
-  "UploadValue": 26.85925099645699,
-  "UploadUnit": "Mbit/s",
-  "UploadError": null,
-  "DownloadRetransValue": 2.3442441873334583,
-  "DownloadRetransUnit": "%",
-  "MinRTTValue": 29.108,
-  "MinRTTUnit": "ms"
-}
-```
-
-**Failed Test:**
-```
-{
-  "SchemaVersion": 1,
-  "TestName": "ndt7",
-  "TestStartTime": "2020-02-21T14:45:05.960649",
-  "TestEndTime": "2020-02-21T14:45:05.965838",
-  "MurakamiLocation": "Corciano",
-  "MurakamiConnectionType": "wifi",
-  "MurakamiNetworkType": "home",
-  "DownloadError": "Get https://locate.measurementlab.net/ndt7: dial tcp: lookup locate.measurementlab.net: Temporary failure in name resolution",
-  "UploadError": "Get https://locate.measurementlab.net/ndt7: dial tcp: lookup locate.measurementlab.net: Temporary failure in name resolution",
-  "ServerName": null,
-  "ServerIP": null,
-  "ClientIP": null,
-  "DownloadUUID": null,
-  "DownloadValue": null,
-  "DownloadUnit": null,
-  "UploadValue": null,
-  "UploadUnit": null,
-  "DownloadRetransValue": null,
-  "DownloadRetransUnit": null,
-  "MinRTTValue": null,
-  "MinRTTUnit": null
-}
-```
-
-### DASH Murakami JSON output specification
-```
-{
-    "ServerIP": "194.116.85.211",
-    "ClientIP": "79.40.147.190",
-    "MurakamiLocation": "<MURAKAMI 'LOCATION' ENV VAR>",
-    "MurakamiNetworkType": "<MURAKAMI 'NETWORK_TYPE' ENV VAR>",
-    "MurakamiConnectionType": "<MURAKAMI 'CONNECTION_TYPE' ENV VAR>",    
-    "TestUUID": "4364c5da-a07b-4188-9cbd-ad79e5a7c2f8",   
-    "TestProtocol": "dash",
-    "TestError": "NULL",
-    "TestRuntime": 33.1672148704529,
-    "TestRuntimeUnits": "seconds",
-    "TestStartTime": "2017-07-24 09:44:53",
-    "ProbeASN": "AS1234",
-    "ProbeCC": "IT",
-    "ConnectLatency": 0.0268912315368652,
-    "ConnectLatencyUnits": "seconds" 
-    "MedianBitrate": 5786.0,
-    "MedianBitrateUnits": "Kbit/s",
-    "MinPlayoutDelay": 0.214933633804321
-    "MinPlayoutDelayUnits": "seconds"
-}
-```
-
-### speedtest-cli Murakami JSON output specification
-```
-{
-  "TestName": "speedtest-cli-multi-stream",
-  "TestStartTime": "2020-02-26T17:31:09.294212",
-  "TestEndTime": "2020-02-26T17:31:32.438628",
-  "MurakamiLocation": "<MURAKAMI 'LOCATION' ENV VAR>",
-  "MurakamiNetworkType": "<MURAKAMI 'NETWORK_TYPE' ENV VAR>",
-  "MurakamiConnectionType": "<MURAKAMI 'CONNECTION_TYPE' ENV VAR>",   
-  "Download": 205429128.65829697,
-  "DownloadUnits": "Bit/s",
-  "Upload": 62332520.98624364,
-  "UploadUnits": "Bit/s",
-  "Ping": 20.556,
-  "PingUnits": "ms",
-  "BytesSent": 78004224,
-  "BytesReceived": 258037852,
-  "Share": null,
-  "Timestamp": "2020-02-26T17:31:09.912341Z",
-  "ServerURL": "http://speedtest.netandwork.net:8080/speedtest/upload.php",
-  "ServerLat": "44.7709",
-  "ServerLon": "10.7819",
-  "ServerName": "Correggio",
-  "ServerCountry": "Italy",
-  "ServerCountryCode": "IT",
-  "ServerSponsor": "NETandWORK s.r.l.",
-  "ServerID": "20372",
-  "ServerHost": "speedtest.netandwork.net:8080",
-  "ServerDistance": 53.7642143944149,
-  "ServerLatency": 20.556,
-  "ServerLatencyUnits": "ms",
-  "ClientIP": "93.188.101.116",
-  "ClientLat": "44.4938",
-  "ClientLon": "11.3387",
-  "Isp": "Ehinet Srl",
-  "IspRating": "3.7",
-  "Rating": "0",
-  "IspDownloadAvg": "0",
-  "IspUploadAvg": "0",
-  "LoggedIn": "0",
-  "Country": "IT"
-}
-```
-
-### OONI Probe Murakami JSON output specification
-
-```
-{
-  "TestName": "ooniprobe-middlebox",
-  "TestStartTime": "2021-11-11T17:33:24.105157",
-  "TestEndTime": "2021-11-11T17:44:16.477665",
-  "MurakamiLocation": null,
-  "MurakamiConnectionType": null,
-  "MurakamiNetworkType": null,
-  "MurakamiDeviceID": "",
-  "TestResults": [
-    {
-      "fields": {
-        "asn": 43989,
-        "failure_msg": "",
-        "id": 1,
-        "is_anomaly": false,
-        "is_done": true,
-        "is_failed": false,
-        "is_first": true,
-        "is_last": false,
-        "is_upload_failed": false,
-        "is_uploaded": true,
-        "measurement_file_path": "/home/roberto/.ooniprobe/msmts/middlebox-2021-11-11T173329.262160187Z/msmt-http_invalid_request_line-0.json",
-        "network_country_code": "IT",
-        "network_name": "Ehinet Srl",
-        "report_file_path": "",
-        "runtime": 5.386668622,
-        "start_time": "2021-11-11T17:33:29.431065843Z",
-        "test_group_name": "middlebox",
-        "test_keys": "{}",
-        "test_name": "http_invalid_request_line",
-        "type": "measurement_item",
-        "upload_failure_msg": "",
-        "url": "",
-        "url_category_code": "",
-        "url_country_code": ""
-      },
-      "level": "info",
-      "timestamp": "2021-11-11T18:44:16.510108991+01:00",
-      "message": "measurement"
-    },
-    {
-      "fields": {
-        "asn": 43989,
-        "failure_msg": "",
-        "id": 2,
-        "is_anomaly": false,
-        "is_done": true,
-        "is_failed": false,
-        "is_first": false,
-        "is_last": true,
-        "is_upload_failed": false,
-        "is_uploaded": true,
-        "measurement_file_path": "/home/roberto/.ooniprobe/msmts/middlebox-2021-11-11T173329.262160187Z/msmt-http_header_field_manipulation-0.json",
-        "network_country_code": "IT",
-        "network_name": "Ehinet Srl",
-        "report_file_path": "",
-        "runtime": 0.561414746,
-        "start_time": "2021-11-11T17:33:35.006617306Z",
-        "test_group_name": "middlebox",
-        "test_keys": "{}",
-        "test_name": "http_header_field_manipulation",
-        "type": "measurement_item",
-        "upload_failure_msg": "",
-        "url": "",
-        "url_category_code": "",
-        "url_country_code": ""
-      },
-      "level": "info",
-      "timestamp": "2021-11-11T18:44:16.510207101+01:00",
-      "message": "measurement"
-    }
-  ]
-}
-```
