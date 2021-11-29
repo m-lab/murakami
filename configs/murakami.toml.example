@@ -1,0 +1,141 @@
+[settings]
+# 'webthings' and 'port' enables and sets the web port used by the Murakami
+# Mozilla WebThing code, if you are using Murakami with a Mozilla WebThings 
+# Gateway.
+# 
+webthings = false
+# port = 80
+
+# 'loglevel' sets the level for log messages. Default is INFO, other possible
+# values include: WARNING, ERROR, CRITICAL, and DEBUG.
+#
+loglevel = "INFO"
+
+# 'tests-per-day' sets the number of times per 24 hour period that enabled tests
+# will be run. Recommended value is between 4-6 times per day. Murakami will 
+# divide a 24 hour period by this number, and select a randomized time within 
+# each period to run enabled tests. For example, if `6` times per day is set 
+# tests will run at a randomized time approximately every four hours 
+# (24 / 6 = 4). **Note: M-Lab will rate limit clients running tests to the same
+# server from the same IP address after ~40 tests in a 24 hour period.**
+#
+tests-per-day = 4
+
+# 'immediate' configures a Murakami container to run the first set of tests in
+# a 24 hour period when the container starts.
+#
+immediate = 1
+
+# 'location', 'network-type', and 'connection-type' are three variables 
+# provided to set metadata about where and how each Murakami device is 
+# connected. These values are included in test results, and in result file 
+# names.
+#
+location = "Baltimore"
+network-type = "home"
+connection-type = "wired"
+
+# Exporters define where test data should be saved or exported. For each 
+# exporter all variables listed must be defined. Multiple exporters of any type
+# are supported by repeating an exporter configuration section with a second 
+# index value. A commented out example is provided for GCS below.
+#
+[exporters]
+
+  # The 'local' exporter lets you define any system path available to the 
+  # Murakami container to save test results to the local device.
+  #
+  [exporters.local]
+  type = "local"
+  enabled = true
+  path = "/data/"
+
+  # The 'scp' exporter defines a remote server where data should be copied.
+  # The server must be configured to allow secure copy via SSH using a private
+  # key file. The private key file must be included within the Docker container.
+  #
+  [exporters.scp]
+  type = "scp"
+  enabled = false
+  target = "your-scp-server-hostname-or-IP-address:murakami-exported-data/"
+  port = 22
+  username = "your-scp-username"
+  private_key = "/murakami/configs/ssh-private-key-filename"
+
+  # The 'gcs' exporter defines a storage bucket in a Google Cloud Storage  
+  # project (GCP) where test data should be saved. A service account keyfile 
+  # from GCP that has access to write to the storage bucket is required and must
+  # be included within the Docker container.
+  #
+  [exporters.gcs]
+  type = "gcs"
+  enabled = false
+  target = "gs://your-gcs-bucket/"
+  service_account = "service-account-name@your-project.iam.gserviceaccount.com"
+  key = "/murakami/configs/your-service-account-keyfile.json"
+
+  # Below is an example of exporting to a second GCS bucket.
+  #[exporters.gcs2]
+  #type = "gcs"
+  #enabled = false
+  #target = "gs://your-second-gcs-bucket/"
+  #service_account = "service-account-name@your-project.iam.gserviceaccount.com"
+  #key = "/murakami/configs/your-service-account-keyfile.json"
+
+  # The 'http' exporter is provided as a means of posting test results to an 
+  # instance of [Murakami-Viz](https://github.com/m-lab/murakami-viz/) or other 
+  # similar services.
+  # 
+  [exporters.http]
+  type = "http"
+  enabled = false
+  url = "http://some-test-url/api/v1/runs"
+
+# Enable/disable supported tests
+[tests]
+
+  [tests.dash]
+  enabled = false
+
+  [tests.ndt7]
+  enabled = true
+
+  [tests.ndt5]
+  enabled = true
+
+  [tests.speedtestsingle]
+  enabled = false
+
+  [tests.speedtestmulti]
+  enabled = true
+
+  # The ndt5custom and ndt7custom test runners provide a way to conduct tests to
+  # multiple NDT servers in each Murakami test run, including those hosted by 
+  # M-Lab and self-hosted ndt-server instances. A configuration file is required
+  # to use these custom runners, which defines the servers to use. See the
+  # examples in `config/custom-config-example.json` for more details.
+  # 
+  [tests.ndt5custom]
+  enabled = false
+  config = "/murakami/configs/ndt-custom-config.json"
+
+  [tests.ndt7custom]
+  enabled = false
+  config = "/murakami/configs/ndt-custom-config.json"
+
+  # OONI Probe checks whether your provider blocks access to sites and services.
+  # Run OONI Probe to collect evidence of internet censorship. Please, be aware
+  # that:
+  # • Anyone monitoring your internet activity (such as your government or ISP)
+  #   may be able to see that you are running OONI Probe.
+  # • The network data you will collect will automatically be published (unless 
+  #   you opt-out in the settings).
+  # • You may test objectionable sites.
+  #
+  # Read the documentation to learn more: https://ooni.org/about/risks/
+  #
+  # If you agree to the above and want to enable ooniprobe, set the following
+  # to enabled = true.
+  #
+  [tests.ooniprobe]
+  enabled = false
