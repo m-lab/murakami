@@ -1,5 +1,12 @@
 # Murakami Supported Test Runners
 
+## What is a "Runner"?
+
+Murakami provides a collection of _runners_, which are script wrappers around
+external measurement tools. Each of these tools runs some sort of internet
+measurement. To add new measurement tools to Murakami, please see [Adding New
+Test Runners](ADDING-NEW-TEST-RUNNERS.md)
+
 ## Sample Output for All Murkami Test Runners
 
 * [dash-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/dash-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
