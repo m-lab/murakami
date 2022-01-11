@@ -40,7 +40,10 @@ create an issue so that it can be discussed and integrated into our roadmap.
   project that aims to empower decentralized efforts in documenting Internet
   censorship around the world. Collect data that can potentially serve as evidence of Internet censorship since it shows how, when, where, and by whom it is implemented.
 
-For more information about each supported test see: [Supported Tests Runners](docs/SUPPORTED-TEST-RUNNERS.md).
+For more information about each supported test see: [Supported Tests
+Runners](docs/SUPPORTED-TEST-RUNNERS.md).
+
+To add new internet measurement tools to Murakami, see: [Adding New Measurement Tools to Murakami](docs/ADDING-NEW-TEST-RUNNERS.md)
 
 ## Supported Operating Systems
 
