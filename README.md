@@ -50,7 +50,7 @@ To add new internet measurement tools to Murakami, see: [Adding New Measurement 
 Murakami supports Linux operating systems like Ubuntu, Debian, etc. Windows is
 not supported. Mac OS may work, but is yet untested.
 
-## Configurating Murakami
+## Configuring Murakami
 
 A Murakami container can be configured flexibly depending on the deployment
 scenario. If you simply run a Murakami container using M-Lab's `latest` [image
@@ -88,15 +88,23 @@ confirm supported systems and requirements.
 
 ## Dockerhub Images and Tags
 
-Measurement Lab publishes a `latest` pre-built Murakami Docker container image
-on Dockerhub. Please visit [our repo on
-Dockerhub](https://cloud.docker.com/repository/docker/measurementlab/murakami/general)
-for more details.
+Measurement Lab publishes a pre-built Murakami Docker container image
+on Dockerhub tagged `latest`. Please visit [our repo on
+Dockerhub](hhttps://hub.docker.com/r/measurementlab/murakami) for more details.
 
 ## Building Murakami Images
 
 If you are interested in building your own Murakami Docker images, please see
 our [BUILD instructions](docs/BUILD.md).
+
+## Updating Your Murakami Images/Installations
+
+Murakami is periodically updated with new measurements and features, as well as
+updates to existing measurement services. M-Lab recommends keeping your Murakami installations or
+container images up to date with changes in the main branch of this repository,
+or with the `latest` image on Dockerhub. See the appropriate section on
+_Updating Murakami_ in the supported _Deployment Scenarios_ documents
+linked above for more information.
 
 ## Included Utility Scripts for Google Cloud and Balena Cloud Tasks
 
