@@ -78,7 +78,7 @@ LOCATION, CONNECTION_TYPE, and NETWORK_TYPE.
 
 ## Push/Build Balena Cloud Project Release
 
-Pushing a release to your Balena Cloud project is straightforward. If you're
+Pushing a release to your Balena Cloud fleet is straightforward. If you're
 using SCP and/or GCS exporters, as with the [Standalone Murakami](https://github.com/m-lab/murakami/blob/master/docs/INSTALL-MURAKAMI-STANDALONE.md) device, when
 using SCP and GCS exporters, the relevant key files need to be accessible in the
 container. 
@@ -89,3 +89,12 @@ Then kick off a container build for your Balena Cloud project:
 `balena push your-balena-fleet-name -c`
 
 The `-c` flag tells Balena to not use previously cached container layers.
+
+## Updating Murakami
+
+For Balena Cloud fleet deployments, update your Murakami installations by:
+* Pulling recent changes from `m-lab/murakami` master branch into your local
+  copy, fork, or merge upstream changes into your fork/branch.
+* Ensure your configuration files, key files, and/or service account files are
+  present in your local system
+* Push a new release to your Balena Cloud fleet

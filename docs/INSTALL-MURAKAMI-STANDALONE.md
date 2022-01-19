@@ -74,7 +74,7 @@ a terminal open in the folder `/root/`.
    M-Lab's Dockerhub, mounting the folder `data` inside the container:
 
 ```
-docker run --restart --network=host -e "MURAKAMI_EXPORTERS_LOCAL_TYPE=local" -e "MURAKAMI_EXPORTERS_LOCAL_ENABLED=true" -e "MURAKAMI_EXPORTERS_LOCAL_PATH=/data/" --volume /root/data:/data/ measurementlab/murakami:armv7-latest  --immediate
+docker run --restart --network=host -e "MURAKAMI_EXPORTERS_LOCAL_TYPE=local" -e "MURAKAMI_EXPORTERS_LOCAL_ENABLED=true" -e "MURAKAMI_EXPORTERS_LOCAL_PATH=/data/" --volume /root/data:/data/ measurementlab/murakami:latest  --immediate
 ```
 
 The example above will restart the Murakami container when the host OS's Docker
@@ -91,7 +91,7 @@ container in the background and leave it running, then come back to access your
 data or view the Docker logs later. To do this use the `-d` flag:
 
 ```
-docker run -d --restart --network=host -e "MURAKAMI_EXPORTERS_LOCAL_TYPE=local" -e "MURAKAMI_EXPORTERS_LOCAL_ENABLED=true" -e "MURAKAMI_EXPORTERS_LOCAL_PATH=/data/" --volume /root/data:/data/ measurementlab/murakami:armv7-latest  --immediate
+docker run -d --restart --network=host -e "MURAKAMI_EXPORTERS_LOCAL_TYPE=local" -e "MURAKAMI_EXPORTERS_LOCAL_ENABLED=true" -e "MURAKAMI_EXPORTERS_LOCAL_PATH=/data/" --volume /root/data:/data/ measurementlab/murakami:latest  --immediate
 ```
 
 This will print the ID of your container and return to your command prompt. It
@@ -112,7 +112,7 @@ MURAKAMI_EXPORTERS_LOCAL_TYPE=local
 MURAKAMI_EXPORTERS_LOCAL_ENABLED=true
 MURAKAMI_EXPORTERS_LOCAL_PATH=/data/
 ```
-Then run: `docker run --env-file env-vars --network=host --volume /root/data:/data/ measurementlab/murakami:armv7-latest --immediate`
+Then run: `docker run --env-file env-vars --network=host --volume /root/data:/data/ measurementlab/murakami:latest --immediate`
 
 You may also define your configuration in a `.toml` formatted file. Make a copy of
 `configs/murakami.toml.example` and customize it to your needs, and save this
@@ -172,3 +172,12 @@ If you are using the `ndt5custom` or `ndt7custom` test runners, you will also
 need to create a configuration file containing your list of servers, add that
 configuration file to `configs/` and set the path to that file for the custom
 runners config variable. You can review and customize the file `configs/ndt-custom-config.json.example` as a starting point.
+
+## Updating Murakami
+
+For standalone Murakami deployments, update your Murakami installations by:
+* Log into each device, stop the `murakami` Docker container
+* Pull the `latest` Murakami image from Dockerhub
+* Ensure your configuration files, key files, and/or service account files are
+  present in your local system
+* Start the updated `murakami` Docker container
