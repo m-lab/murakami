@@ -19,7 +19,7 @@ RUN apt-get update
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -yq git gcc libc-dev libffi-dev libssl-dev make rustc cargo ooniprobe-cli
 RUN /usr/local/bin/python3.7 -m pip install --upgrade pip
-RUN pip install -e git://github.com/sivel/speedtest-cli.git@v2.1.3#egg=speedtest-cli
+RUN pip install git+https://github.com/sivel/speedtest-cli.git@v2.1.3#egg=speedtest-cli
 RUN pip install 'poetry==1.1.7'
 
 WORKDIR /murakami
