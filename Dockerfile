@@ -17,9 +17,10 @@ RUN apt-key adv --verbose --keyserver hkp://keyserver.ubuntu.com --recv-keys 'B5
 RUN echo "deb http://deb.ooni.org/ unstable main" | tee /etc/apt/sources.list.d/ooniprobe.list
 RUN apt-get update
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get install -yq git gcc libc-dev libffi-dev libssl-dev make rustc cargo ooniprobe-cli
+RUN apt-get install -yq git gcc libc-dev libffi-dev libssl-dev make rustc cargo ooniprobe-cli curl
 RUN /usr/local/bin/python3.7 -m pip install --upgrade pip
-RUN pip install git+https://github.com/sivel/speedtest-cli.git@v2.1.3#egg=speedtest-cli
+RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash
+RUN apt-get install speedtest
 RUN pip install 'poetry==1.1.7'
 
 WORKDIR /murakami
