@@ -29,6 +29,8 @@ WORKDIR /murakami
 COPY . /murakami/
 COPY --from=build /go/bin/* /murakami/bin/
 
+COPY ./configs/speedtest-cli.json /root/.config/ookla/
+
 # Set up poetry to not create a virtualenv, since the docker container is
 # isolated already, and install the required dependencies.
 RUN poetry config virtualenvs.create false \
