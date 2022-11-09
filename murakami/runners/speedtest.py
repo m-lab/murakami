@@ -17,8 +17,8 @@ class SpeedtestClient(MurakamiRunner):
         location=None, network_type=None, connection_type=None,
         device_id=None):
         super().__init__(
-            title="Speedtest-cli-multi-stream",
-            description="The Speedtest.net multi-stream test (https://github.com/sivel/speedtest-cli).",
+            title="Ookla Speedtest",
+            description="The Ookla/Speedtest.net CLI client  (https://www.speedtest.net/apps/cli).",
             config=config,
             data_cb=data_cb,
             location=location,
@@ -46,108 +46,115 @@ class SpeedtestClient(MurakamiRunner):
             summary = {}
             summary = json.loads(output.stdout)
 
-            murakami_output['DownloadValue'] = summary.get('download')
-            murakami_output['DownloadUnit'] = 'Bit/s'
-            murakami_output['UploadValue'] = summary.get('upload')
-            murakami_output['UploadUnit'] = 'Bit/s'
-            murakami_output['Ping'] = summary.get('ping')
-            murakami_output['PingUnit'] = 'ms'
-            murakami_output['BytesSent'] = summary.get('bytes_sent')
-            murakami_output['BytesReceived'] = summary.get('bytes_received')
-            murakami_output['Share'] = summary.get('share')
+            murakami_output['Type'] = summary.get('type')
             murakami_output['Timestamp'] = summary.get('timestamp')
-
-            server = summary.get('server')
-            client = summary.get('client')
-
-            if server is not None:
-                murakami_output['ServerURL'] = server.get('url')
-                murakami_output['ServerLat'] = server.get('lat')
-                murakami_output['ServerLon'] = server.get('lon')
-                murakami_output['ServerName'] = server.get('name')
-                murakami_output['ServerCountry'] = server.get('country')
-                murakami_output['ServerCountryCode'] = server.get('cc')
-                murakami_output['ServerSponsor'] = server.get('sponsor')
-                murakami_output['ServerID'] = server.get('id')
-                murakami_output['ServerHost'] = server.get('host')
-                murakami_output['ServerDistance'] = server.get('d')
-                murakami_output['ServerLatency'] = server.get('latency')
-                murakami_output['ServerLatencyUnit'] = 'ms'
-
-            if client is not None:
-                murakami_output['ClientIP'] = client.get('ip')
-                murakami_output['ClientLat'] = client.get('lat')
-                murakami_output['ClientLon'] = client.get('lon')
-                murakami_output['Isp'] = client.get('isp')
-                murakami_output['IspRating'] = client.get('isprating')
-                murakami_output['Rating'] = client.get('rating')
-                murakami_output['IspDownloadAvg'] = client.get('ispdlavg')
-                murakami_output['IspUploadAvg'] = client.get('ispulavg')
-                murakami_output['LoggedIn'] = client.get('loggedin')
-                murakami_output['Country'] = client.get('country')
+            murakami_output['PingJitter'] = summary.get['ping']['jitter']
+            murakami_output['PingLatency'] = summary.get['ping']['latency']
+            murakami_output['PingLow'] = summary.get['ping']['low']
+            murakami_output['PingHigh'] = summary.get['ping']['high']
+            murakami_output['DownloadBandwidth'] = summary.get['download']['bandwidth']
+            murakami_output['DownloadUnit'] = 'Bit/s'
+            murakami_output['DownloadBytes'] = summary.get['download']['bytes']
+            murakami_output['DownloadElapsed'] = summary.get['download']['elapsed']
+            murakami_output['DownloadLatencyIqm'] = summary.get['download']['latency']['iqm']
+            murakami_output['DownloadLatencyLow'] = summary.get['download']['latency']['low']
+            murakami_output['DownloadLatencyHigh'] = summary.get['download']['latency']['high']
+            murakami_output['DownloadLatencyJitter'] = summary.get['download']['latency']['jitter']
+            murakami_output['UploadBandwidth'] = summary.get['upload']['bandwidth']
+            murakami_output['UploadUnit'] = 'Bit/s'
+            murakami_output['UploadBytes'] = summary.get['upload']['bytes']
+            murakami_output['UploadElapsed'] = summary.get['upload']['elapsed']
+            murakami_output['UploadLatencyIqm'] = summary.get['upload']['latency']['iqm']
+            murakami_output['UploadLatencyLow'] = summary.get['upload']['latency']['low']
+            murakami_output['UploadLatencyHigh'] = summary.get['upload']['latency']['high']
+            murakami_output['UploadLatencyJitter'] = summary.get['upload']['latency']['jitter']
+            murakami_output['PacketLoss'] = summary.get('packetLoss')
+            murakami_output['Isp'] = summary.get('isp')
+            murakami_output['InterfaceInternalIp'] = summary.get['interface']['internalIp']
+            murakami_output['InterfaceName'] = summary.get['interface']['name']
+            murakami_output['InterfaceMacAddr'] = summary.get['interface']['macAddr']
+            murakami_output['InterfaceIsVpn'] = summary.get['interface']['isVpn']
+            murakami_output['InterfaceExternalIp'] = summary.get['interface']['externalIp']
+            murakami_output['ServerId'] = summary.get['server']['id']
+            murakami_output['ServerHost'] = summary.get['server']['host']
+            murakami_output['ServerPort'] = summary.get['server']['port']
+            murakami_output['ServerName'] = summary.get['server']['name']
+            murakami_output['ServerLocation'] = summary.get['server']['location']
+            murakami_output['ServerCountry'] = summary.get['server']['country']
+            murakami_output['ServerIp'] = summary.get['server']['ip']
+            murakami_output['ResultId'] = summary.get['result']['id']
+            murakami_output['ResultUrl'] = summary.get['result']['url']
+            murakami_output['ResultPersisted'] = summary.get['result']['persisted']
 
             return murakami_output
         else:
             # Set TestError and every other field to None.
             murakami_output['TestError'] = output.stderr
 
-            murakami_output['DownloadValue'] = None
-            murakami_output['DownloadUnit'] = None
-            murakami_output['UploadValue'] = None
-            murakami_output['UploadUnit'] = None
-            murakami_output['BytesSent'] = None
-            murakami_output['BytesReceived'] = None
-            murakami_output['Share'] = None
+            murakami_output['Type'] = None
             murakami_output['Timestamp'] = None
-            murakami_output['ServerURL'] = None
-            murakami_output['ServerLat'] = None
-            murakami_output['ServerLon'] = None
-            murakami_output['ServerName'] = None
-            murakami_output['ServerCountry'] = None
-            murakami_output['ServerCountryCode'] = None
-            murakami_output['ServerSponsor'] = None
-            murakami_output['ServerID'] = None
-            murakami_output['ServerHost'] = None
-            murakami_output['ServerDistance'] = None
-            murakami_output['ServerLatency'] = None
-            murakami_output['ServerLatencyUnit'] = None
-            murakami_output['ClientIP'] = None
-            murakami_output['ClientLat'] = None
-            murakami_output['ClientLon'] = None
+            murakami_output['PingJitter'] = None
+            murakami_output['PingLatency'] = None
+            murakami_output['PingLow'] = None
+            murakami_output['PingHigh'] = None
+            murakami_output['DownloadBandwidth'] = None
+            murakami_output['DownloadUnit'] = None
+            murakami_output['DownloadBytes'] = None
+            murakami_output['DownloadElapsed'] = None
+            murakami_output['DownloadLatencyIqm'] = None
+            murakami_output['DownloadLatencyLow'] = None
+            murakami_output['DownloadLatencyHigh'] = None
+            murakami_output['DownloadLatencyJitter'] = None
+            murakami_output['UploadBandwidth'] = None
+            murakami_output['UploadUnit'] = None
+            murakami_output['UploadBytes'] = None
+            murakami_output['UploadElapsed'] = None
+            murakami_output['UploadLatencyIqm'] = None
+            murakami_output['UploadLatencyLow'] = None
+            murakami_output['UploadLatencyHigh'] = None
+            murakami_output['UploadLatencyJitter'] = None
+            murakami_output['PacketLoss'] = None
             murakami_output['Isp'] = None
-            murakami_output['IspRating'] = None
-            murakami_output['Rating'] = None
-            murakami_output['IspDownloadAvg'] = None
-            murakami_output['IspUploadAvg'] = None
-            murakami_output['LoggedIn'] = None
-            murakami_output['Country'] = None
+            murakami_output['InterfaceInternalIp'] = None
+            murakami_output['InterfaceName'] = None
+            murakami_output['InterfaceMacAddr'] = None
+            murakami_output['InterfaceIsVpn'] = None
+            murakami_output['InterfaceExternalIp'] = None
+            murakami_output['ServerId'] = None
+            murakami_output['ServerHost'] = None
+            murakami_output['ServerPort'] = None
+            murakami_output['ServerName'] = None
+            murakami_output['ServerLocation'] = None
+            murakami_output['ServerCountry'] = None
+            murakami_output['ServerIp'] = None
+            murakami_output['ResultId'] = None
+            murakami_output['ResultUrl'] = None
+            murakami_output['ResultPersisted'] = None
 
         return murakami_output
         
     def _start_test(self):
-        logger.info("Starting Speedtest multi-stream test...")
-        if shutil.which("speedtest-cli") is not None:
+        logger.info("Starting Ookla Speedtest...")
+        if shutil.which("speedtest") is not None:
 
             starttime = datetime.datetime.utcnow()
-            output = subprocess.run(["speedtest-cli", "--json"],
-                                    text=True,
-                                    capture_output=True)
+            output = subprocess.run(["speedtest", "--format=json"])
             endtime = datetime.datetime.utcnow()
 
-            murakami_output = {
-                'TestName': "speedtest-cli-multi-stream",
-                'TestStartTime': starttime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
-                'TestEndTime': endtime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
-                'MurakamiLocation': self._location,
-                'MurakamiConnectionType': self._connection_type,
-                'MurakamiNetworkType': self._network_type,
-                'MurakamiDeviceID': self._device_id,
-            }
+            murakami_output = {}
+            murakami_output['TestName'] = "ookla-speedtest"
+            murakami_output['TestStartTime'] = starttime.strftime('%Y-%m-%dT%H:%M:%S.%f')
+            murakami_output['TestEndTime'] = endtime.strftime('%Y-%m-%dT%H:%M:%S.%f')
+            murakami_output['MurakamiLocation'] = self._location
+            murakami_output['MurakamiConnectionType'] = self._connection_type
+            murakami_output['MurakamiNetworkType'] = self._network_type
+            murakami_output['MurakamiDeviceID'] = self._device_id
 
             murakami_output.update(self._parse_summary(output))
+
             return json.dumps(murakami_output)
 
         else:
             raise RunnerError(
                 "speedtest",
-                "Executable does not exist, please install speedtest-cli.")
+                "Executable does not exist, please install speedtest.")
