@@ -18,7 +18,7 @@ class SpeedtestClient(MurakamiRunner):
         location=None, network_type=None, connection_type=None,
         device_id=None):
         super().__init__(
-            title="Ookla Speedtest",
+            title="Ookla-Speedtest",
             description="The Ookla/Speedtest.net CLI client  (https://www.speedtest.net/apps/cli).",
             config=config,
             data_cb=data_cb,
@@ -27,67 +27,7 @@ class SpeedtestClient(MurakamiRunner):
             connection_type=connection_type,
             device_id=device_id
         )
-
-    @staticmethod
-    def _parse_summary(output):
-        """Parses the speedtest-cli summary.
-
-        Args:
-            output: stdout of the process
-
-        Returns:
-            A dict containing a summary of the test.
-
-        Raises:
-            JSONDecodeError: if the output cannot be parsed as JSON.
-        """
-        murakami_output = {}
-
-        summary = {}
-        summary = json.loads(output)
-
-        murakami_output['Type'] = summary.get('type')
-        murakami_output['Timestamp'] = summary.get('timestamp')
-        murakami_output['PingJitter'] = summary.get['ping']['jitter']
-        murakami_output['PingLatency'] = summary.get['ping']['latency']
-        murakami_output['PingLow'] = summary.get['ping']['low']
-        murakami_output['PingHigh'] = summary.get['ping']['high']
-        murakami_output['DownloadBandwidth'] = summary.get['download']['bandwidth']
-        murakami_output['DownloadUnit'] = 'Bit/s'
-        murakami_output['DownloadBytes'] = summary.get['download']['bytes']
-        murakami_output['DownloadElapsed'] = summary.get['download']['elapsed']
-        murakami_output['DownloadLatencyIqm'] = summary.get['download']['latency']['iqm']
-        murakami_output['DownloadLatencyLow'] = summary.get['download']['latency']['low']
-        murakami_output['DownloadLatencyHigh'] = summary.get['download']['latency']['high']
-        murakami_output['DownloadLatencyJitter'] = summary.get['download']['latency']['jitter']
-        murakami_output['UploadBandwidth'] = summary.get['upload']['bandwidth']
-        murakami_output['UploadUnit'] = 'Bit/s'
-        murakami_output['UploadBytes'] = summary.get['upload']['bytes']
-        murakami_output['UploadElapsed'] = summary.get['upload']['elapsed']
-        murakami_output['UploadLatencyIqm'] = summary.get['upload']['latency']['iqm']
-        murakami_output['UploadLatencyLow'] = summary.get['upload']['latency']['low']
-        murakami_output['UploadLatencyHigh'] = summary.get['upload']['latency']['high']
-        murakami_output['UploadLatencyJitter'] = summary.get['upload']['latency']['jitter']
-        murakami_output['PacketLoss'] = summary.get('packetLoss')
-        murakami_output['Isp'] = summary.get('isp')
-        murakami_output['InterfaceInternalIp'] = summary.get['interface']['internalIp']
-        murakami_output['InterfaceName'] = summary.get['interface']['name']
-        murakami_output['InterfaceMacAddr'] = summary.get['interface']['macAddr']
-        murakami_output['InterfaceIsVpn'] = summary.get['interface']['isVpn']
-        murakami_output['InterfaceExternalIp'] = summary.get['interface']['externalIp']
-        murakami_output['ServerId'] = summary.get['server']['id']
-        murakami_output['ServerHost'] = summary.get['server']['host']
-        murakami_output['ServerPort'] = summary.get['server']['port']
-        murakami_output['ServerName'] = summary.get['server']['name']
-        murakami_output['ServerLocation'] = summary.get['server']['location']
-        murakami_output['ServerCountry'] = summary.get['server']['country']
-        murakami_output['ServerIp'] = summary.get['server']['ip']
-        murakami_output['ResultId'] = summary.get['result']['id']
-        murakami_output['ResultUrl'] = summary.get['result']['url']
-        murakami_output['ResultPersisted'] = summary.get['result']['persisted']
-
-        return murakami_output
-        
+     
     def _start_test(self):
         logger.info("Starting Ookla Speedtest...")
         if shutil.which("speedtest") is not None:
@@ -159,8 +99,6 @@ class SpeedtestClient(MurakamiRunner):
             murakami_output['ResultId'] = result.get('id')
             murakami_output['ResultUrl'] = result.get('url')
             murakami_output['ResultPersisted'] = result.get('persisted')
-
-#            murakami_output.update(self._parse_summary(output_json))
 
             return json.dumps(murakami_output)
 
