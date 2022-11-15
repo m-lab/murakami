@@ -103,10 +103,7 @@ connection-type = "wired"
   [tests.ndt5]
   enabled = true
 
-  [tests.speedtestsingle]
-  enabled = false
-
-  [tests.speedtestmulti]
+  [tests.speedtest]
   enabled = true
 
   # The ndt5custom and ndt7custom test runners provide a way to conduct tests to
@@ -115,6 +112,7 @@ connection-type = "wired"
   # to use these custom runners, which defines the servers to use. See the
   # examples in `config/custom-config-example.json` for more details.
   # 
+
   [tests.ndt5custom]
   enabled = false
   config = "/murakami/configs/ndt-custom-config.json"
@@ -137,5 +135,6 @@ connection-type = "wired"
   # If you agree to the above and want to enable ooniprobe, set the following
   # to enabled = true.
   #
+  
   [tests.ooniprobe]
   enabled = false

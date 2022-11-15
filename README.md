@@ -33,7 +33,8 @@ create an issue so that it can be discussed and integrated into our roadmap.
     congestion control enabled in the client network. ndt7 uses standard ports 80/443.
 * [Neubot DASH](https://github.com/neubot/dash) - Dynamic Adaptive Streaming
   over HTTP, hosted by M-Lab. [DASH](https://www.measurementlab.net/tests/neubot/) is designed to measure the quality of tested networks by emulating a video streaming player.
-* [speedtest-cli](https://github.com/sivel/speedtest-cli) - A community-developed command line test for testing internet bandwidth using speedtest.net (OOKLA).
+* [Ookla's speedtest-cli](https://www.speedtest.net/apps/cli) - Ookla's official
+  command line test for testing internet bandwidth using the speedtest.net platform.
   * Both multi-stream and single-stream tests are supported
 * [OONI Probe](https://ooni.org/install/cli) - The Open
   [Observatory of Network Interference](https://ooni.org) (OONI) is a non-profit free software
