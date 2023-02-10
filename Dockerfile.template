@@ -12,15 +12,16 @@ RUN go get github.com/m-lab/ndt5-client-go/cmd/ndt5-client
 
 # Murakami image
 FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-python:3.7-bullseye
-# Install dependencies, speedtest-cli, and ooniprobe
+# Install dependencies, speedtest, and ooniprobe
 # For ooniprobe, see https://ooni.org/install/cli/ubuntu-debian for instructions
 RUN apt-key adv --verbose --keyserver hkp://keyserver.ubuntu.com --recv-keys 'B5A08F01796E7F521861B449372D1FF271F2DD50'
 RUN echo "deb http://deb.ooni.org/ unstable main" | tee /etc/apt/sources.list.d/ooniprobe.list
 RUN apt-get update
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get install -yq git gcc libc-dev libffi-dev libssl-dev make rustc cargo ooniprobe-cli
+RUN apt-get install -yq git gcc libc-dev libffi-dev libssl-dev make rustc cargo ooniprobe-cli curl
 RUN /usr/local/bin/python3.7 -m pip install --upgrade pip
-RUN pip install git+https://github.com/sivel/speedtest-cli.git@v2.1.3#egg=speedtest-cli
+RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash
+RUN apt-get install speedtest
 RUN pip install 'poetry==1.1.7'
 
 WORKDIR /murakami
@@ -28,6 +29,8 @@ WORKDIR /murakami
 # Copy Murakami and previously built test clients into the container.
 COPY . /murakami/
 COPY --from=build /go/bin/* /murakami/bin/
+
+COPY ./configs/speedtest-cli.json /root/.config/ookla/
 
 # Set up poetry to not create a virtualenv, since the docker container is
 # isolated already, and install the required dependencies.

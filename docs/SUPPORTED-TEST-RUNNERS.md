@@ -16,8 +16,7 @@ Test Runners](ADDING-NEW-TEST-RUNNERS.md)
 * [ooniprobe-im-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ooniprobe-im-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
 * [ooniprobe-middlebox-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ooniprobe-middlebox-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
 * [ooniprobe-websites-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ooniprobe-websites-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
-* [speedtest-cli-multi-stream-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/speedtest-cli-multi-stream-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
-* [speedtest-cli-single-stream-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/speedtest-cli-single-stream-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ookla-speedtest-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ookla-speedtest-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime)
 
 ## NDT
 
@@ -145,17 +144,10 @@ is called DASH because it uses the DASH ([Dynamic Adaptive Streaming over
 HTTP](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP))
 streaming technique.
 
-## speedtest-cli
+## Ookla Speedtest
 
-[speedtest-cli](https://github.com/sivel/speedtest-cli) is a community developed
-command line program for testing the performance of a connection using the
-speedtest.net platform. While this tool [does not claim parity with the official
-test clients provided by
-OOKLA](https://github.com/sivel/speedtest-cli#inconsistency) (for example in
-measuring latency), our benchmark testing has found that it does provide similar
-performance measurements to the official OOKLA command line and web-based tests.
-speedtest-cli is also [openly
-licensed](https://github.com/sivel/speedtest-cli/blob/master/LICENSE).
+[ookla-speedtest](https://www.speedtest.net/apps/cli) is the official command
+line client test published by Ookla.
 
 ## OONI Probe
 

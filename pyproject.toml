@@ -38,8 +38,7 @@ pytest-cov = "^2.8"
 "ndt7" = "murakami.runners.ndt7:Ndt7Client"
 "ndt5custom" = "murakami.runners.ndt5custom:Ndt5ClientCustom"
 "ndt7custom" = "murakami.runners.ndt7custom:Ndt7ClientCustom"
-"speedtestmulti" = "murakami.runners.speedtest:SpeedtestClient"
-"speedtestsingle" = "murakami.runners.speedtestsingle:SpeedtestSingleClient"
+"speedtest" = "murakami.runners.speedtest:SpeedtestClient"
 "ooniprobe" = "murakami.runners.ooniprobe:OONIProbeClient"
 
 [tool.poetry.plugins."murakami.exporters"]
