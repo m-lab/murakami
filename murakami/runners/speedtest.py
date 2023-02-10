@@ -67,7 +67,7 @@ class SpeedtestClient(MurakamiRunner):
             murakami_output['PingLow'] = ping.get('low')
             murakami_output['PingHigh'] = ping.get('high')
             murakami_output['DownloadBandwidth'] = download.get('bandwidth')
-            murakami_output['DownloadUnit'] = 'Bit/s'
+            murakami_output['DownloadUnit'] = 'Bytes/s'
             murakami_output['DownloadBytes'] = download.get('bytes')
             murakami_output['DownloadElapsed'] = download.get('elapsed')
             murakami_output['DownloadLatencyIqm'] = download_latency.get('iqm')
@@ -75,7 +75,7 @@ class SpeedtestClient(MurakamiRunner):
             murakami_output['DownloadLatencyHigh'] = download_latency.get('high')
             murakami_output['DownloadLatencyJitter'] = download_latency.get('jitter')
             murakami_output['UploadBandwidth'] = upload.get('bandwidth')
-            murakami_output['UploadUnit'] = 'Bit/s'
+            murakami_output['UploadUnit'] = 'Bytes/s'
             murakami_output['UploadBytes'] = upload.get('bytes')
             murakami_output['UploadElapsed'] = upload.get('elapsed')
             murakami_output['UploadLatencyIqm'] = upload_latency.get('iqm')
