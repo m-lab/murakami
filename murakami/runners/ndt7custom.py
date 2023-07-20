@@ -71,27 +71,31 @@ class Ndt7ClientCustom(MurakamiRunner):
             # output format.
             download = summary.get('Download')
             upload = summary.get('Upload')
-            retrans = summary.get('DownloadRetrans')
-            minrtt = summary.get('MinRTT')
 
             murakami_output['ServerName'] = summary.get('ServerFQDN')
             murakami_output['ServerIP'] = summary.get('ServerIP')
             murakami_output['ClientIP'] = summary.get('ClientIP')
-            murakami_output['DownloadUUID'] = summary.get('DownloadUUID')
+            murakami_output['DownloadUUID'] = download.get('UUID')
             if download is not None:
-                murakami_output['DownloadValue'] = download.get('Value')
-                murakami_output['DownloadUnit'] = download.get('Unit')
-                murakami_output['DownloadError'] = None
+                throughput = download.get("Throughput")
+                if throughput is not None:
+                    murakami_output['DownloadValue'] = throughput.get('Value')
+                    murakami_output['DownloadUnit'] = throughput.get('Unit')
+                    murakami_output['DownloadError'] = None
+                retransmission = download.get("Retransmission")
+                if retransmission is not None:
+                    murakami_output['DownloadRetransValue'] = retransmission.get('Value')
+                    murakami_output['DownloadRetransUnit'] = retransmission.get('Unit')
+                latency = download.get("Latency")
+                if latency is not None:
+                    murakami_output['MinRTTValue'] = latency.get('Value')
+                    murakami_output['MinRTTUnit'] = latency.get('Unit')
             if upload is not None:
-                murakami_output['UploadValue'] = upload.get('Value')
-                murakami_output['UploadUnit'] = upload.get('Unit')
-                murakami_output['UploadError'] = None
-            if retrans is not None:
-                murakami_output['DownloadRetransValue'] = retrans.get('Value')
-                murakami_output['DownloadRetransUnit'] = retrans.get('Unit')
-            if minrtt is not None:
-                murakami_output['MinRTTValue'] = minrtt.get('Value')
-                murakami_output['MinRTTUnit'] = minrtt.get('Unit')
+                throughput = download.get("Throughput")
+                if throughput is not None:
+                    murakami_output['UploadValue'] = throughput.get('Value')
+                    murakami_output['UploadUnit'] = throughput.get('Unit')
+                    murakami_output['UploadError'] = None
         else:
             logger.warn("ndt7 test completed with errors.")
 
