@@ -2,23 +2,22 @@
 # %%BALENA_MACHINE_NAME%% variable is replaced with the name of the device.
 
 # Build ndt7, ndt5 and dash Go clients.
-FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-golang:1.15-bullseye-build AS build
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-golang:1.20-bookworm-build AS build
 RUN apt-get update
 RUN apt-get install -y git
-ENV GO111MODULE=on
-RUN go get github.com/neubot/dash/cmd/dash-client@master
-RUN go get github.com/m-lab/ndt7-client-go/cmd/ndt7-client
-RUN go get github.com/m-lab/ndt5-client-go/cmd/ndt5-client
+RUN go install github.com/neubot/dash/cmd/dash-client@master
+RUN go install github.com/m-lab/ndt7-client-go/cmd/ndt7-client@latest
+RUN go install github.com/m-lab/ndt5-client-go/cmd/ndt5-client@latest
 
 # Murakami image
-FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-python:3.7-bullseye
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-python:3.7-bookworm
 # Install dependencies, speedtest, and ooniprobe
 # For ooniprobe, see https://ooni.org/install/cli/ubuntu-debian for instructions
 RUN apt-key adv --verbose --keyserver hkp://keyserver.ubuntu.com --recv-keys 'B5A08F01796E7F521861B449372D1FF271F2DD50'
 RUN echo "deb http://deb.ooni.org/ unstable main" | tee /etc/apt/sources.list.d/ooniprobe.list
 RUN apt-get update
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get install -yq git gcc libc-dev libffi-dev libssl-dev make rustc cargo ooniprobe-cli curl
+RUN apt-get install -yq git gcc libc-dev libffi-dev libssl-dev make rustc cargo ooniprobe-cli curl pkg-config
 RUN /usr/local/bin/python3.7 -m pip install --upgrade pip
 RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash
 RUN apt-get install speedtest

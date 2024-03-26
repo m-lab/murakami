@@ -1,16 +1,15 @@
 # This Dockerfile is used for standalone installs.
 
 # Build ndt7, ndt5 and dash Go clients.
-FROM golang:1.17-bullseye AS build
+FROM golang:1.20-bookworm AS build
 RUN apt-get update
 RUN apt-get install -y git
-ENV GO111MODULE=on
-RUN go get github.com/neubot/dash/cmd/dash-client@master
-RUN go get github.com/m-lab/ndt7-client-go/cmd/ndt7-client
-RUN go get github.com/m-lab/ndt5-client-go/cmd/ndt5-client
+RUN go install github.com/neubot/dash/cmd/dash-client@master
+RUN go install github.com/m-lab/ndt7-client-go/cmd/ndt7-client
+RUN go install github.com/m-lab/ndt5-client-go/cmd/ndt5-client
 
 # Murakami image
-FROM python:3.7-bullseye
+FROM python:3.7-bookworm
 # Install dependencies, speedtest and ooniprobe.
 # For ooniprobe, see https://ooni.org/install/cli/ubuntu-debian for instructions
 RUN apt-key adv --verbose --keyserver hkp://keyserver.ubuntu.com --recv-keys 'B5A08F01796E7F521861B449372D1FF271F2DD50'
