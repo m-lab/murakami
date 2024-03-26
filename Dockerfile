@@ -4,9 +4,9 @@
 FROM golang:1.20-bookworm AS build
 RUN apt-get update
 RUN apt-get install -y git
-RUN go install github.com/neubot/dash/cmd/dash-client@master
-RUN go install github.com/m-lab/ndt7-client-go/cmd/ndt7-client
-RUN go install github.com/m-lab/ndt5-client-go/cmd/ndt5-client
+RUN go install github.com/neubot/dash/cmd/dash-client@latest
+RUN go install github.com/m-lab/ndt7-client-go/cmd/ndt7-client@latest
+RUN go install github.com/m-lab/ndt5-client-go/cmd/ndt5-client@latest
 
 # Murakami image
 FROM python:3.7-bookworm
