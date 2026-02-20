@@ -97,7 +97,7 @@ class Ndt7Client(MurakamiRunner):
                         murakami_output['MinRTTValue'] = latency.get('Value')
                         murakami_output['MinRTTUnit'] = latency.get('Unit')
                 if upload is not None:
-                    throughput = download.get("Throughput")
+                    throughput = upload.get("Throughput")
                     if throughput is not None:
                         murakami_output['UploadValue'] = throughput.get('Value')
                         murakami_output['UploadUnit'] = throughput.get('Unit')
