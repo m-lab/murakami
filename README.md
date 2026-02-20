@@ -91,7 +91,7 @@ confirm supported systems and requirements.
 
 Measurement Lab publishes a pre-built Murakami Docker container image
 on Dockerhub tagged `latest`. Please visit [our repo on
-Dockerhub](hhttps://hub.docker.com/r/measurementlab/murakami) for more details.
+Dockerhub](https://hub.docker.com/r/measurementlab/murakami) for more details.
 
 ## Building Murakami Images
 
@@ -132,15 +132,15 @@ For more details, see [Murakami on Google Cloud Demo](docs/GCLOUD-DEMO.md).
 An optional data visualization service,
 [Murakami-Viz](https://github.com/m-lab/murakami-viz/), can be used to receive
 test results from Murakami measurement devices if desired. Please see
-[USING-MURAKAMI-VIZ](docs/USING_MURAKAMI_VIZ.md) for more information.
+[USING-MURAKAMI-VIZ](docs/USING-MURAKAMI-VIZ.md) for more information.
 
 ### Included Convenience Scripts
 
 Two convenience utilities are provided with Murakami:
 
-* [murakami_convert](docs/CONVERT-DATA.py) `scripts/convert.py`
+* [murakami_convert](docs/CONVERT-DATA.md) `scripts/convert.py`
   * A script to convert `jsonl` test results to CSV.
-* [murakami_upload](docs/UPLOAD-UTILITY.py) `scripts/upload.py`
+* [murakami_upload](docs/UPLOAD-UTILITY.md) `scripts/upload.py`
   * A script to upload previously collected test results to a newly deployed
     instance of Murakami-Viz.
 

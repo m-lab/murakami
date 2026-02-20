@@ -14,7 +14,7 @@ Follow the [instructions on Mozilla's site](https://iot.mozilla.org/gateway/) to
 
 Installing Murakami is the same in this situation as the [standalone
 installation](INSTALL-MURAKAMI-STANDALONE.md). To enable WebThings support, set
-the environmen variable: `MURAKAMI_SETTINGS_WEBTHINGS` to `1` or `True`. Once
+the environment variable: `MURAKAMI_SETTINGS_WEBTHINGS` to `1` or `True`. Once
 your device is running a Murakami container, your WebThings Gateway should be
 able to detect and configure it.
 
