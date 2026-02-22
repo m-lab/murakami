@@ -1,4 +1,7 @@
+from utilities.keys import load_key
+import tempfile
 import os
+import base64
 import io
 import subprocess
 import logging
@@ -30,9 +33,14 @@ class GCSExporter(MurakamiExporter):
         )
         logging.debug(config)
         self.target = config.get("target", None)
-        self.key = config.get("key", None)
-        # Initialize a GCS Client object from the provided key.
-        # This client will be reused for all the subsequent GCS uploads.
+        env_var = "MURAKAMI_EXPORTERS_GCS_KEY"
+        self.key = load_key(env_var=env_var, file_path=config.get("key", None))
+        # storage.Client expects a file path, so if load_key returns bytes, write to temp file
+        if isinstance(self.key, bytes):
+    	    tmp = tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".json")
+    	    tmp.write(self.key.decode("utf-8"))
+    	    tmp.flush()
+    	    self.key = tmp.name
         self.client = storage.Client.from_service_account_json(self.key)
 
     def upload(self, data, bucket_name, object_name):

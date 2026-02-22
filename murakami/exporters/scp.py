@@ -1,7 +1,7 @@
 import io
 import logging
 import os
-
+from utilities.keys import load_key
 import jsonlines
 from paramiko import SSHClient
 from paramiko.client import AutoAddPolicy
@@ -37,7 +37,8 @@ class SCPExporter(MurakamiExporter):
         self.port = config.get("port", defaults.SSH_PORT)
         self.username = config.get("username", None)
         self.password = config.get("password", None)
-        self.private_key = config.get("key", None)
+        env_var = "MURAKAMI_EXPORTERS_SCP_KEY"
+        self.private_key = load_key(env_var=env_var, file_path=config.get("key", None))
 
     def _push_single(self, test_name="", data=None, timestamp=None,
         test_idx=None):
