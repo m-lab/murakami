@@ -1,8 +1,6 @@
 import logging
 import os
 
-import jsonlines
-
 import murakami.defaults as defaults
 from murakami.exporter import MurakamiExporter
 
@@ -34,10 +32,10 @@ class LocalExporter(MurakamiExporter):
         try:
             dst_path = os.path.join(
                 self._path, self._generate_filename(test_name, timestamp, test_idx))
-            output = open(dst_path, "w")
             logger.info("Copying data to %s", dst_path)
-            output.write(data)
+            with open(dst_path, "w") as output:
+                output.write(data)
+            return True
         except Exception as err:
             logger.error("Exporting to local file failed: %s", err)
-        else:
-            output.close()
+            return False
