@@ -35,7 +35,5 @@ class LocalExporter(MurakamiExporter):
             logger.info("Copying data to %s", dst_path)
             with open(dst_path, "w") as output:
                 output.write(data)
-            return True
         except Exception as err:
             logger.error("Exporting to local file failed: %s", err)
-            return False
