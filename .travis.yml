@@ -1,3 +1,7 @@
+# DEPRECATED: This Travis CI configuration is no longer active.
+# CI has been migrated to GitHub Actions. See .github/workflows/ci.yml
+# This file is kept for historical reference only.
+
 language: python
 dist: xenial
 cache: pip
