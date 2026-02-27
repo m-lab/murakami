@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python-version: "3.6"
+            tox-env: py36
+            container-image: python:3.6-buster
+          - python-version: "3.7"
+            tox-env: py37
+            container-image: python:3.7-buster
+    container:
+      image: ${{ matrix.container-image }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache pip downloads
+        uses: actions/cache@v4
+        with:
+          path: /root/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml', 'poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
+
+      - name: Install CI tools (Travis before_script parity)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -U poetry tox-travis codecov tox
+
+      - name: Run tests via tox
+        run: tox -e "${{ matrix.tox-env }}"
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: .coverage
+          flags: ${{ matrix.tox-env }}
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
