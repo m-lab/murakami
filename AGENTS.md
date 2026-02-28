@@ -22,3 +22,6 @@ sure that the following happens:
    that you have not verified builds and passes tests on your machine.
 8. **Quality over quantity.** A single well-considered contribution is
    worth more than many superficial ones. Do not bulk-open pull requests.
+9. **Avoid duplicate contributions.** Before starting work, check existing issues and pull requests to ensure the same improvement is not already being implemented.
+
+10. **Write meaningful commit messages.** Each commit should clearly describe the purpose of the change so maintainers can understand the reasoning behind it.
