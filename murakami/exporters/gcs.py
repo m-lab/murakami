@@ -2,7 +2,6 @@ import base64
 import io
 import json
 import logging
-import os
 import subprocess
 
 import jsonlines
@@ -34,13 +33,21 @@ class GCSExporter(MurakamiExporter):
         logging.debug(config)
         self.target = config.get("target", None)
         self.key = config.get("key", None)
+        self.key_content = config.get("key_content", None)
         # Initialize a GCS Client object from the provided key.
         # This client will be reused for all the subsequent GCS uploads.
-        key_content = os.environ.get("MURAKAMI_GCS_KEY_CONTENT", None)
-        if key_content is not None:
-            logger.debug("GCS: loading credentials from MURAKAMI_GCS_KEY_CONTENT")
-            key_dict = json.loads(base64.b64decode(key_content).decode("utf-8"))
-            self.client = storage.Client.from_service_account_info(key_dict)
+        if self.key_content is not None:
+            logger.debug("GCS: loading credentials from key_content config")
+            try:
+                key_dict = json.loads(
+                    base64.b64decode(self.key_content).decode("utf-8")
+                )
+                self.client = storage.Client.from_service_account_info(key_dict)
+            except Exception as e:
+                logger.error(
+                    "GCS: failed to load credentials from key_content: %s", e
+                )
+                self.client = None
         else:
             self.client = storage.Client.from_service_account_json(self.key)
 

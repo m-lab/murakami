@@ -40,7 +40,7 @@ class SCPExporter(MurakamiExporter):
         self.username = config.get("username", None)
         self.password = config.get("password", None)
         self.private_key = config.get("key", None)
-        self._key_content = os.environ.get("MURAKAMI_SCP_KEY_CONTENT", None)
+        self.key_content = config.get("key_content", None)
 
     def _push_single(self, test_name="", data=None, timestamp=None,
         test_idx=None):
@@ -49,7 +49,7 @@ class SCPExporter(MurakamiExporter):
             logger.error("scp.target must be specified")
             return
 
-        if self.username is None and self.private_key is None and self._key_content is None:
+        if self.username is None and self.private_key is None and self.key_content is None:
             logging.error("scp.username or scp.private_key must be provided.")
 
         try:
@@ -64,12 +64,13 @@ class SCPExporter(MurakamiExporter):
         tmp_key_file = None
         try:
             key_filename = self.private_key
-            if self._key_content is not None:
-                logger.debug("SCP: loading key from MURAKAMI_SCP_KEY_CONTENT")
+            if self.key_content is not None:
+                logger.debug("SCP: loading key from key_content config")
                 tmp_key_file = tempfile.NamedTemporaryFile(delete=False)
-                tmp_key_file.write(base64.b64decode(self._key_content))
+                tmp_key_file.write(base64.b64decode(self.key_content))
                 tmp_key_file.flush()
                 tmp_key_file.close()
+                os.chmod(tmp_key_file.name, 0o600)
                 key_filename = tmp_key_file.name
             ssh.connect(
                 dst_host,
