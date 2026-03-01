@@ -1,7 +1,10 @@
-import os
+import base64
 import io
-import subprocess
+import json
 import logging
+import os
+import subprocess
+
 import jsonlines
 
 from google.cloud import storage
@@ -33,7 +36,13 @@ class GCSExporter(MurakamiExporter):
         self.key = config.get("key", None)
         # Initialize a GCS Client object from the provided key.
         # This client will be reused for all the subsequent GCS uploads.
-        self.client = storage.Client.from_service_account_json(self.key)
+        key_content = os.environ.get("MURAKAMI_GCS_KEY_CONTENT", None)
+        if key_content is not None:
+            logger.debug("GCS: loading credentials from MURAKAMI_GCS_KEY_CONTENT")
+            key_dict = json.loads(base64.b64decode(key_content).decode("utf-8"))
+            self.client = storage.Client.from_service_account_info(key_dict)
+        else:
+            self.client = storage.Client.from_service_account_json(self.key)
 
     def upload(self, data, bucket_name, object_name):
         if self.client is None:

@@ -1,6 +1,8 @@
+import base64
 import io
 import logging
 import os
+import tempfile
 
 import jsonlines
 from paramiko import SSHClient
@@ -38,6 +40,7 @@ class SCPExporter(MurakamiExporter):
         self.username = config.get("username", None)
         self.password = config.get("password", None)
         self.private_key = config.get("key", None)
+        self._key_content = os.environ.get("MURAKAMI_SCP_KEY_CONTENT", None)
 
     def _push_single(self, test_name="", data=None, timestamp=None,
         test_idx=None):
@@ -46,7 +49,7 @@ class SCPExporter(MurakamiExporter):
             logger.error("scp.target must be specified")
             return
 
-        if self.username is None and self.private_key is None:
+        if self.username is None and self.private_key is None and self._key_content is None:
             logging.error("scp.username or scp.private_key must be provided.")
 
         try:
@@ -58,14 +61,23 @@ class SCPExporter(MurakamiExporter):
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy)
 
+        tmp_key_file = None
         try:
+            key_filename = self.private_key
+            if self._key_content is not None:
+                logger.debug("SCP: loading key from MURAKAMI_SCP_KEY_CONTENT")
+                tmp_key_file = tempfile.NamedTemporaryFile(delete=False)
+                tmp_key_file.write(base64.b64decode(self._key_content))
+                tmp_key_file.flush()
+                tmp_key_file.close()
+                key_filename = tmp_key_file.name
             ssh.connect(
                 dst_host,
                 int(self.port),
                 username=self.username,
                 password=self.password,
                 timeout=defaults.SSH_TIMEOUT,
-                key_filename=self.private_key,
+                key_filename=key_filename,
             )
 
             with SCPClient(ssh.get_transport()) as scp:
@@ -79,3 +91,5 @@ class SCPExporter(MurakamiExporter):
             logger.error("SCP exporter failed: %s", err)
         finally:
             ssh.close()
+            if tmp_key_file is not None:
+                os.unlink(tmp_key_file.name)
