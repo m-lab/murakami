@@ -14,17 +14,15 @@ logger = logging.getLogger(__name__)
 class DashClient(MurakamiRunner):
     """Run Dash tests."""
     def __init__(self, config=None, data_cb=None,
-        location=None, network_type=None, connection_type=None,
-        device_id=None):
+        device_id=None, device_metadata1=None, device_metadata2=None):
         super().__init__(
             title="DASH",
             description="The Neubot DASH network test.",
             config=config,
             data_cb=data_cb,
-            location=location,
-            network_type=network_type,
-            connection_type=connection_type,
             device_id=device_id,
+            device_metadata1=device_metadata1,
+            device_metadata2=device_metadata2,
         )
 
     @staticmethod

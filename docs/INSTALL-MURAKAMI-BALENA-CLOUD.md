@@ -61,20 +61,20 @@ MURAKAMI_EXPORTERS_SCP_USERNAME  your-scp-username
 And these values, specific to an individual Murakami device:
 
 ```
-MURAKAMI_SETTINGS_WEBTHINGS       0
-MURAKAMI_SETTINGS_PORT            80
-MURAKAMI_SETTINGS_LOGLEVEL        INFO
-MURAKAMI_SETTINGS_IMMEDIATE       1
-MURAKAMI_SETTINGS_LOCATION        mydevicelocation
-MURAKAMI_SETTINGS_NETWORK_TYPE    home
-MURAKAMI_SETTINGS_CONNECTION_TYPE wired
+MURAKAMI_SETTINGS_WEBTHINGS          0
+MURAKAMI_SETTINGS_PORT               80
+MURAKAMI_SETTINGS_LOGLEVEL           INFO
+MURAKAMI_SETTINGS_IMMEDIATE          1
+MURAKAMI_SETTINGS_DEVICE_ID          mydeviceid
+MURAKAMI_SETTINGS_DEVICE_METADATA1   home
+MURAKAMI_SETTINGS_DEVICE_METADATA2   wired
 ```
 
 In this example, we can define the same exporters for all Balena managed devices
 using fleet level variables, so that all data goes to one or more centralized
 locations. And using the second set of variables applied to the individual
-device lets us customize the variables used in naming output files:
-LOCATION, CONNECTION_TYPE, and NETWORK_TYPE.
+device level lets us customize the variables used in naming output files:
+DEVICE_ID, DEVICE_METADATA1, and DEVICE_METADATA2.
 
 ## Push/Build Balena Cloud Project Release
 

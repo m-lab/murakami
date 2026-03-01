@@ -9,14 +9,14 @@ Test Runners](ADDING-NEW-TEST-RUNNERS.md)
 
 ## Sample Output for All Murkami Test Runners
 
-* [dash-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/dash-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
-* [ndt5-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ndt5-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
-* [ndt7-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ndt7-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
-* [ooniprobe-circumvention-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ooniprobe-circumvention-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
-* [ooniprobe-im-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ooniprobe-im-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
-* [ooniprobe-middlebox-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ooniprobe-middlebox-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
-* [ooniprobe-websites-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ooniprobe-websites-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
-* [ookla-speedtest-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl](example-test-output/ookla-speedtest-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime)
+* [dash-_DEVICE_ID-_DEVICE_METADATA1-_DEVICE_METADATA2-test_datetime.jsonl](example-test-output/dash-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ndt5-_DEVICE_ID-_DEVICE_METADATA1-_DEVICE_METADATA2-test_datetime.jsonl](example-test-output/ndt5-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ndt7-_DEVICE_ID-_DEVICE_METADATA1-_DEVICE_METADATA2-test_datetime.jsonl](example-test-output/ndt7-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ooniprobe-circumvention-_DEVICE_ID-_DEVICE_METADATA1-_DEVICE_METADATA2-test_datetime.jsonl](example-test-output/ooniprobe-circumvention-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ooniprobe-im-_DEVICE_ID-_DEVICE_METADATA1-_DEVICE_METADATA2-test_datetime.jsonl](example-test-output/ooniprobe-im-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ooniprobe-middlebox-_DEVICE_ID-_DEVICE_METADATA1-_DEVICE_METADATA2-test_datetime.jsonl](example-test-output/ooniprobe-middlebox-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ooniprobe-websites-_DEVICE_ID-_DEVICE_METADATA1-_DEVICE_METADATA2-test_datetime.jsonl](example-test-output/ooniprobe-websites-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime.jsonl)
+* [ookla-speedtest-_DEVICE_ID-_DEVICE_METADATA1-_DEVICE_METADATA2-test_datetime.jsonl](example-test-output/ookla-speedtest-_LOCATION-_NETWORK_TYPE-_CONNECTION_TYPE-test_datetime)
 
 ## NDT
 

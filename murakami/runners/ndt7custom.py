@@ -15,17 +15,15 @@ logger = logging.getLogger(__name__)
 class Ndt7ClientCustom(MurakamiRunner):
     """Run ndt7 test."""
     def __init__(self, config=None, data_cb=None,
-        location=None, network_type=None, connection_type=None,
-        device_id=None):
+        device_id=None, device_metadata1=None, device_metadata2=None):
         super().__init__(
             title="ndt7custom",
             description="The Network Diagnostic Tool v7 test.",
             config=config,
             data_cb=data_cb,
-            location=location,
-            network_type=network_type,
-            connection_type=connection_type,
-            device_id=device_id
+            device_id=device_id,
+            device_metadata1=device_metadata1,
+            device_metadata2=device_metadata2,
         )
 
         self._server_selection = {}
@@ -49,10 +47,9 @@ class Ndt7ClientCustom(MurakamiRunner):
             'TestName': "ndt7",
             'TestStartTime': starttime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
             'TestEndTime': endtime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
-            'MurakamiLocation': self._location,
-            'MurakamiConnectionType': self._connection_type,
-            'MurakamiNetworkType': self._network_type,
             'MurakamiDeviceID': self._device_id,
+            'MurakamiDeviceMetadata1': self._device_metadata1,
+            'MurakamiDeviceMetadata2': self._device_metadata2,
         }
 
         if output.returncode == 0:

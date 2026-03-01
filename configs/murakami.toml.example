@@ -26,14 +26,13 @@ tests-per-day = 4
 #
 immediate = 1
 
-# 'location', 'network-type', and 'connection-type' are three variables 
-# provided to set metadata about where and how each Murakami device is 
-# connected. These values are included in test results, and in result file 
-# names.
+# 'device-id', 'device-metadata1', and 'device-metadata2' are three
+# user-defined fields included in test results and result file names.
+# Use them to identify the device and record any relevant metadata.
 #
-location = "Baltimore"
-network-type = "home"
-connection-type = "wired"
+device-id = "mydeviceid"
+device-metadata1 = "home"
+device-metadata2 = "wired"
 
 # Exporters define where test data should be saved or exported. For each 
 # exporter all variables listed must be defined. Multiple exporters of any type

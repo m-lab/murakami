@@ -21,10 +21,10 @@ echo "balena is installed at: ${balenaInstalled}"
 # Also check that the user is logged in
 if ! balena fleets; then exit 1; fi
 
-usage="$0 <balena fleet name> <MURAKAMI_NETWORK_TYPE> <MURAKAMI_CONNECTION_TYPE>"
+usage="$0 <balena fleet name> <MURAKAMI_DEVICE_METADATA1> <MURAKAMI_DEVICE_METADATA2>"
 balenaFleet=${1:?Please provide the Balena fleet name: ${usage}}
-net=${2:?Please provide the ISP Name for this device without spaces (e.g. IspName, Isp-Name, Isp_Name): ${usage}}
-conn=${3:?Please provide the ISP Plan for this device without spaces (e.g. PlanName, 10_4, 25_3): ${usage}}
+net=${2:?Please provide the first metadata field for this device (e.g. home, office): ${usage}}
+conn=${3:?Please provide the second metadata field for this device (e.g. wired, wifi): ${usage}}
 
 ## register new device
 uuid=$(balena device register $balenaFleet | awk '{ print $4 }')
@@ -36,9 +36,9 @@ deviceName="${uuid}"
 balena device rename ${uuid} ${deviceName}
 
 # set device environment variables used by Murakami
-balena env add MURAKAMI_SETTINGS_LOCATION ${deviceName} --device ${uuid}
-balena env add MURAKAMI_SETTINGS_NETWORK_TYPE ${net} --device ${uuid}
-balena env add MURAKAMI_SETTINGS_CONNECTION_TYPE ${conn} --device ${uuid}
+balena env add MURAKAMI_SETTINGS_DEVICE_ID ${deviceName} --device ${uuid}
+balena env add MURAKAMI_SETTINGS_DEVICE_METADATA1 ${net} --device ${uuid}
+balena env add MURAKAMI_SETTINGS_DEVICE_METADATA2 ${conn} --device ${uuid}
 
 # let us know the operation was completed
 echo "added $deviceName to $balenaFleet"

@@ -173,22 +173,16 @@ def main():
         help="Enable webthings support.",
     )
     parser.add(
-        "--location",
+        "--device-metadata1",
         default=None,
-        dest="location",
-        help="Physical place Murakami node is located (default: '').",
+        dest="device_metadata1",
+        help="First user-defined metadata field for this Murakami device (default: '').",
     )
     parser.add(
-        "--network-type",
+        "--device-metadata2",
         default=None,
-        dest="network_type",
-        help="Site associated with this Murakami node (default: '').",
-    )
-    parser.add(
-        "--connection-type",
-        default=None,
-        dest="connection_type",
-        help="Connection associated with this node (default: '').",
+        dest="device_metadata2",
+        help="Second user-defined metadata field for this Murakami device (default: '').",
     )
     parser.add(
         "--device-id",
@@ -225,9 +219,8 @@ def main():
         tests_per_day=settings.tests_per_day,
         immediate=settings.immediate,
         webthings=settings.webthings,
-        location=settings.location,
-        network_type=settings.network_type,
-        connection_type=settings.connection_type,
+        device_metadata1=settings.device_metadata1,
+        device_metadata2=settings.device_metadata2,
         device_id=settings.device_id,
         config=config,
     )

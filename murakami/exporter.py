@@ -16,25 +16,24 @@ class MurakamiExporter:
 
     ####Arguments
     * `name`: The name of this exporter
-    * `location`: string describing physical location of this device
-    * `network_type`: string describing the network this device is connected to
-    * `connection_type`: string describing type of connection this device is
-    using
+    * `device_id`: unique identifier for this Murakami device
+    * `device_metadata1`: first user-defined metadata field
+    * `device_metadata2`: second user-defined metadata field
     * `config`: A configuration dictionary passed to this instance from
     MurakamiServer
     """
     def __init__(
             self,
             name="",
-            location=None,
-            network_type=None,
-            connection_type=None,
+            device_id=None,
+            device_metadata1=None,
+            device_metadata2=None,
             config=None,
     ):
         self.name = name
-        self._location = location
-        self._network_type = network_type
-        self._connection_type = connection_type
+        self._device_id = device_id
+        self._device_metadata1 = device_metadata1
+        self._device_metadata2 = device_metadata2
         self._config = config
 
     def push(self, test_name="", data=None, timestamp=None):
@@ -74,13 +73,13 @@ class MurakamiExporter:
             timestamp = "%d-%s" % (test_idx, timestamp)
 
 
-        if (self._location is not None and self._network_type is not None
-                and self._connection_type is not None):
+        if (self._device_id is not None and self._device_metadata1 is not None
+                and self._device_metadata2 is not None):
             return "%s-%s-%s-%s-%s.jsonl" % (
                 test_name.lower(),
-                self._location,
-                self._network_type,
-                self._connection_type,
+                self._device_id,
+                self._device_metadata1,
+                self._device_metadata2,
                 timestamp,
             )
         return "%s-%s.jsonl" % (test_name, timestamp)

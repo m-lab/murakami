@@ -15,17 +15,15 @@ logger = logging.getLogger(__name__)
 class SpeedtestClient(MurakamiRunner):
     """Run Speedtest.net tests."""
     def __init__(self, config=None, data_cb=None,
-        location=None, network_type=None, connection_type=None,
-        device_id=None):
+        device_id=None, device_metadata1=None, device_metadata2=None):
         super().__init__(
             title="Ookla-Speedtest",
             description="The Ookla/Speedtest.net CLI client  (https://www.speedtest.net/apps/cli).",
             config=config,
             data_cb=data_cb,
-            location=location,
-            network_type=network_type,
-            connection_type=connection_type,
-            device_id=device_id
+            device_id=device_id,
+            device_metadata1=device_metadata1,
+            device_metadata2=device_metadata2,
         )
      
     def _start_test(self):
@@ -41,10 +39,9 @@ class SpeedtestClient(MurakamiRunner):
             murakami_output['TestName'] = "ookla-speedtest"
             murakami_output['TestStartTime'] = starttime.strftime('%Y-%m-%dT%H:%M:%S.%f')
             murakami_output['TestEndTime'] = endtime.strftime('%Y-%m-%dT%H:%M:%S.%f')
-            murakami_output['MurakamiLocation'] = self._location
-            murakami_output['MurakamiConnectionType'] = self._connection_type
-            murakami_output['MurakamiNetworkType'] = self._network_type
             murakami_output['MurakamiDeviceID'] = self._device_id
+            murakami_output['MurakamiDeviceMetadata1'] = self._device_metadata1
+            murakami_output['MurakamiDeviceMetadata2'] = self._device_metadata2
 
             output_json = output.decode('utf8')
     

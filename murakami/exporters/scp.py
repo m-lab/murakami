@@ -19,17 +19,17 @@ class SCPExporter(MurakamiExporter):
     def __init__(
             self,
             name="",
-            location=None,
-            network_type=None,
-            connection_type=None,
+            device_id=None,
+            device_metadata1=None,
+            device_metadata2=None,
             config=None,
     ):
         # Check if a configuration for the SCP exporter has been provided.
         super().__init__(
             name=name,
-            location=location,
-            network_type=network_type,
-            connection_type=connection_type,
+            device_id=device_id,
+            device_metadata1=device_metadata1,
+            device_metadata2=device_metadata2,
             config=config,
         )
         logging.debug(config)

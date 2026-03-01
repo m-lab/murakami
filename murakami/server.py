@@ -60,10 +60,8 @@ class MurakamiServer:
     * `base_path`: path to add to URL where we're listening in case we're
     behind a proxy
     * `tests_per_day`: number of tests to run in a day
-    * `location`: string describing physical location of this device
-    * `network_type`: string describing the network this device is connected to
-    * `connection_type`: string describing type of connection this device is
-    using
+    * `device_metadata1`: first user-defined metadata field
+    * `device_metadata2`: second user-defined metadata field
     """
     def __init__(
             self,
@@ -75,10 +73,9 @@ class MurakamiServer:
             tests_per_day=defaults.TESTS_PER_DAY,
             immediate=False,
             webthings=False,
-            location=None,
-            network_type=None,
-            connection_type=None,
             device_id=None,
+            device_metadata1=None,
+            device_metadata2=None,
             config=None,
     ):
         self._runners = {}
@@ -95,10 +92,9 @@ class MurakamiServer:
         self._tests_per_day = tests_per_day
         self._immediate = immediate
         self._webthings = webthings
-        self._location = location
-        self._network_type = network_type
-        self._connection_type = connection_type
         self._device_id = device_id
+        self._device_metadata1 = device_metadata1
+        self._device_metadata2 = device_metadata2
         self._config = config
 
     def _call_runners(self):
@@ -132,10 +128,9 @@ class MurakamiServer:
             self._runners[entry_point.name] = entry_point.load()(
                 config=self._config["tests"][entry_point.name],
                 data_cb=self._call_exporters,
-                location=self._location,
-                network_type=self._network_type,
-                connection_type=self._connection_type,
                 device_id=self._device_id,
+                device_metadata1=self._device_metadata1,
+                device_metadata2=self._device_metadata2,
             )
 
         # Start webthings server if enabled
@@ -174,9 +169,9 @@ class MurakamiServer:
                             self._exporters[name] = exporters[
                                 entry["type"]].load()(
                                     name=name,
-                                    location=self._location,
-                                    network_type=self._network_type,
-                                    connection_type=self._connection_type,
+                                    device_id=self._device_id,
+                                    device_metadata1=self._device_metadata1,
+                                    device_metadata2=self._device_metadata2,
                                     config=entry,
                                 )
                         else:
