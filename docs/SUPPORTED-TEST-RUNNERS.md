@@ -99,7 +99,7 @@ additional details for using the available options.
 ### Selecting Multiple M-Lab Servers by Region Code
 
 `"regions": [ "CA-ON", "CA-BC", "CA-AB" ],` 
-Selects three M-Lab servers in Ontario, Brittish Columbia, and Alerta, Canada.
+Selects three M-Lab servers in Ontario, British Columbia, and Alerta, Canada.
 Any valid ISO 3166-2 region code is valid.
 
 ### Selecting Multiple M-Lab Servers by Country Code

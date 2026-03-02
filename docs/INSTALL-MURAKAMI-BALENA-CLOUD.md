@@ -1,4 +1,4 @@
-# Installation and Use - Murakami Containers on One or More Balena Cloud Manged Devices
+# Installation and Use - Murakami Containers on One or More Balena Cloud Managed Devices
 
 M-Lab supports management of a fleet of Murakami devices using [Balena
 Cloud](https://balena.io). Murakami containers for use with Balena Cloud are
@@ -14,7 +14,7 @@ Cloud.
 
 ## Quick Setup for Balena Cloud Managed Murakami Deployment
 
-1. Clone the Murakami repo from Gitub
+1. Clone the Murakami repo from Github
 2. Setup your project on Balena.io
 3. [Install](https://github.com/balena-io/balena-cli/blob/master/INSTALL.md) the `balena-cli` tool
 4. Install BalenaOS for each project device

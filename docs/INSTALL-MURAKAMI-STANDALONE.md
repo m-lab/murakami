@@ -131,7 +131,7 @@ two remote storage exporters: Secure Copy Protocol (SCP) and Google Cloud
 Storage (GCS). Multiple exporters of both types can be used.
 
 Using the SCP and GCS exporters requires additional setup on the remote SCP
-server for SCP, and in your Google Cloud Storage project fof GCS:
+server for SCP, and in your Google Cloud Storage project for GCS:
 
 * **SCP exporter**: requires the username which has access to login to the
   remote server via SSH, and that user's private SSH key. We created a unique
