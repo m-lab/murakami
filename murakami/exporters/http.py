@@ -1,6 +1,5 @@
-import logging
-import os
 import json
+import logging
 
 import requests
 
@@ -30,8 +29,7 @@ class HTTPExporter(MurakamiExporter):
         logging.debug(config)
         self._url = config.get("url")
 
-    def _push_single(self, test_name="", data=None, timestamp=None,
-        test_idx=None):
+    def _push_single(self, test_name="", data=None, timestamp=None, test_idx=None):
         # Make a JSON payload with the expected format
         data = json.loads(data)
         data = {k: v for k, v in data.items() if v is not None}
@@ -39,13 +37,11 @@ class HTTPExporter(MurakamiExporter):
 
         # POST the payload.
         resp = requests.post(self._url, json=json_data)
-        logging.debug("Exporting data: {}".format(json.dumps(json_data)))
+        logging.debug(f"Exporting data: {json.dumps(json_data)}")
         if not resp.ok:
-            logger.error("Exporting to HTTP endpoint failed: {}".format(resp.json()))
+            logger.error(f"Exporting to HTTP endpoint failed: {resp.json()}")
             return False
         logger.info(
-            "Test data successfully sent to {}. Response: {}".format(
-                self._url, resp.json()
-            )
+            f"Test data successfully sent to {self._url}. Response: {resp.json()}"
         )
         return True

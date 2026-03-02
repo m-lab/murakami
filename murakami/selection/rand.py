@@ -1,5 +1,6 @@
 import random
 
+
 class RandomSelection:
     def __init__(self):
         pass

@@ -2,7 +2,6 @@ import io
 import logging
 import os
 
-import jsonlines
 from paramiko import SSHClient
 from paramiko.client import AutoAddPolicy
 from scp import SCPClient
@@ -16,13 +15,14 @@ logger = logging.getLogger(__name__)
 class SCPExporter(MurakamiExporter):
     """This exporter allows to copy Murakami's data path to a remote host and
     folder via SCP."""
+
     def __init__(
-            self,
-            name="",
-            location=None,
-            network_type=None,
-            connection_type=None,
-            config=None,
+        self,
+        name="",
+        location=None,
+        network_type=None,
+        connection_type=None,
+        config=None,
     ):
         # Check if a configuration for the SCP exporter has been provided.
         super().__init__(
@@ -39,8 +39,7 @@ class SCPExporter(MurakamiExporter):
         self.password = config.get("password", None)
         self.private_key = config.get("key", None)
 
-    def _push_single(self, test_name="", data=None, timestamp=None,
-        test_idx=None):
+    def _push_single(self, test_name="", data=None, timestamp=None, test_idx=None):
         """Copy the files over SCP using the provided configuration."""
         if self.target is None:
             logger.error("scp.target must be specified")

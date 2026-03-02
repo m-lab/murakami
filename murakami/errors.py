@@ -12,6 +12,7 @@ class ExporterError(Error):
         name -- The name of the runner
         message -- The error message
     """
+
     def __init__(self, name, message):
         super().__init__()
         self.name = name
@@ -25,10 +26,11 @@ class RunnerError(Error):
         name -- The name of the runner
         message -- The error message
     """
+
     def __init__(self, name, message):
         super().__init__()
         self.name = name
         self.message = message
-    
+
     def __str__(self):
         return self.message
