@@ -4,15 +4,15 @@ Results are saved as individual files in JSON new line format (.jsonl), and
 this is a utility script designed to convert them to other formats.
 """
 
+import csv
 import difflib
 import glob
+import json
 import logging
 import os
 
 import configargparse
-import csv
 import jsonlines
-import json
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +32,7 @@ class ConvertException(Exception):
             return self.message
         else:
             return "ConvertException"
+
 
 def flatten_json(b, delim):
     """
@@ -97,12 +98,11 @@ def import_dash_legacy(path):
             record["test_name"] = data["test_name"]
             record["test_runtime"] = data["test_runtime"]
             record["test_start_time"] = data["test_start_time"]
-            record["connect_latency"] = data["test_keys"]["simple"][
-                "connect_latency"]
-            record["median_bitrate"] = data["test_keys"]["simple"][
-                "median_bitrate"]
+            record["connect_latency"] = data["test_keys"]["simple"]["connect_latency"]
+            record["median_bitrate"] = data["test_keys"]["simple"]["median_bitrate"]
             record["min_playout_delay"] = data["test_keys"]["simple"][
-                "min_playout_delay"]
+                "min_playout_delay"
+            ]
             record["probe_asn"] = data["probe_asn"]
             record["probe_cc"] = data["probe_cc"]
             return record
@@ -124,57 +124,58 @@ def import_ndt_legacy(path):
             record["max_rtt"] = data["test_keys"]["advanced"]["max_rtt"]
             record["min_rtt"] = data["test_keys"]["advanced"]["min_rtt"]
             record["congestion_limited"] = data["test_keys"]["advanced"][
-                "congestion_limited"]
-            record["packet_loss"] = data["test_keys"]["advanced"][
-                "packet_loss"]
-            record["sender_limited"] = data["test_keys"]["advanced"][
-                "sender_limited"]
+                "congestion_limited"
+            ]
+            record["packet_loss"] = data["test_keys"]["advanced"]["packet_loss"]
+            record["sender_limited"] = data["test_keys"]["advanced"]["sender_limited"]
             record["receiver_limited"] = data["test_keys"]["advanced"][
-                "receiver_limited"]
+                "receiver_limited"
+            ]
             record["probe_asn"] = data["probe_asn"]
             record["probe_cc"] = data["probe_cc"]
             return record
 
+
 def import_ndt5(path):
-    print("Converting {}...".format(path))
+    print(f"Converting {path}...")
     with open(path) as f:
         data = json.load(f)
 
         # Check this is an NDT5 test summary.
-        if data.get('TestName') != "ndt5":
-            raise ConvertException("{}: Invalid ndt5 output file."
-                .format(path))
+        if data.get("TestName") != "ndt5":
+            raise ConvertException(f"{path}: Invalid ndt5 output file.")
 
         # Check this test completed without errors.
-        if data.get('TestError') is not None:
+        if data.get("TestError") is not None:
             raise ConvertException(
-                "{}: test did not complete successfully, skipping."
-                    .format(path))
+                f"{path}: test did not complete successfully, skipping."
+            )
         return data
 
+
 def import_ndt7(path):
-    print("Converting {}...".format(path))
+    print(f"Converting {path}...")
     with open(path) as f:
         data = json.load(f)
 
         # Check this is an ndt7 test summary.
         if data.get("TestName") != "ndt7":
-            raise ConvertException("{}: Invalid ndt7 output file."
-                .format(path))
+            raise ConvertException(f"{path}: Invalid ndt7 output file.")
 
         # Check this test completed without errors.
-        if data.get('TestError') is not None:
+        if data.get("TestError") is not None:
             raise ConvertException(
-                "{}: test did not complete successfully, skipping."
-                    .format(path))
+                f"{path}: test did not complete successfully, skipping."
+            )
         return data
+
 
 tests = {
     "speedtest": import_speedtest,
     "dash_legacy": import_dash_legacy,
     "ndt_legacy": import_ndt_legacy,
     "ndt5": import_ndt5,
-    "ndt7": import_ndt7
+    "ndt7": import_ndt7,
 }
 
 
@@ -183,16 +184,18 @@ def export_csv(path, data):
     Export function for CSV-format output files.
     """
     with open(path, "w", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=data[0].keys(), quotechar='"',
-            quoting=csv.QUOTE_NONNUMERIC)
+        writer = csv.DictWriter(
+            file, fieldnames=data[0].keys(), quotechar='"', quoting=csv.QUOTE_NONNUMERIC
+        )
         writer.writeheader()
         return writer.writerows(data)
+
 
 exporters = {"csv": export_csv}
 
 
 def main():
-    """ The main function for the converter script."""
+    """The main function for the converter script."""
     parser = configargparse.ArgParser(
         auto_env_var_prefix="murakami_convert_",
         description="A Murakami test output file format parser.",
@@ -233,8 +236,7 @@ def main():
         "-p",
         "--pattern",
         dest="pattern",
-        help=
-        "An input filename pattern containing one or more of %%l (location type), %%n (network type), %%c (connection type), and %%d (datestamp).",
+        help="An input filename pattern containing one or more of %%l (location type), %%n (network type), %%c (connection type), and %%d (datestamp).",
     )
     parser.add(
         "-r",
@@ -247,8 +249,7 @@ def main():
     parser.add(
         "input",
         nargs="+",
-        help=
-        "The input filename, directory, or pattern containing test results.",
+        help="The input filename, directory, or pattern containing test results.",
     )
     settings = parser.parse_args()
 

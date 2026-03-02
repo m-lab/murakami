@@ -1,6 +1,7 @@
 """
 This module contains the Thing wrapper, used for accessing tests via WebThings.
 """
+
 from webthing import Property, Thing, Value
 
 
@@ -12,6 +13,7 @@ class MurakamiThing(Thing):
     ####Arguments
     * `runners`: a List of MurakamiRunner instances passed from MurakamiServer
     """
+
     def __init__(self, runners):
         super().__init__(
             id_="https://github.com/throneless-tech/murakami",
@@ -33,4 +35,5 @@ class MurakamiThing(Thing):
                         "type": "boolean",
                         "description": runner.description,
                     },
-                ))
+                )
+            )

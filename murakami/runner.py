@@ -2,13 +2,12 @@
 This module includes the wrapper for all test runners, which defines their
 interface.
 """
-from datetime import datetime
+
 import logging
+from datetime import datetime
 
-from webthing import Thing
-
-from murakami.errors import RunnerError
 import murakami.utils as utils
+from murakami.errors import RunnerError
 
 _logger = logging.getLogger(__name__)
 
@@ -25,9 +24,18 @@ class MurakamiRunner:
     MurakamiServer
     * `data_cb`: The callback function that receives the test results
     """
-    def __init__(self, title, description="", config=None, data_cb=None,
-        location=None, network_type=None, connection_type=None,
-        device_id=None):
+
+    def __init__(
+        self,
+        title,
+        description="",
+        config=None,
+        data_cb=None,
+        location=None,
+        network_type=None,
+        connection_type=None,
+        device_id=None,
+    ):
         self.title = title
         self.description = description
         self._config = config
@@ -46,15 +54,12 @@ class MurakamiRunner:
             timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
             data = self._start_test()
             if self._data_cb is not None:
-                self._data_cb(test_name=self.title,
-                              data=data,
-                              timestamp=timestamp)
+                self._data_cb(test_name=self.title, data=data, timestamp=timestamp)
             return data
         logging.info("Test runner %s disabled, skipping.", self.title)
 
     def _stop_test(self):
-        _logger.debug("No special handling needed for stopping runner %s",
-                      self.title)
+        _logger.debug("No special handling needed for stopping runner %s", self.title)
 
     def stop_test(self):
         """Stops this test, wraps the actual stop function (optional)."""

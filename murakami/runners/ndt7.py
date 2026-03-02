@@ -1,9 +1,8 @@
+import datetime
+import json
 import logging
 import shutil
 import subprocess
-import uuid
-import json
-import datetime
 
 from murakami.errors import RunnerError
 from murakami.runner import MurakamiRunner
@@ -13,9 +12,16 @@ logger = logging.getLogger(__name__)
 
 class Ndt7Client(MurakamiRunner):
     """Run ndt7 test."""
-    def __init__(self, config=None, data_cb=None,
-        location=None, network_type=None, connection_type=None,
-        device_id=None):
+
+    def __init__(
+        self,
+        config=None,
+        data_cb=None,
+        location=None,
+        network_type=None,
+        connection_type=None,
+        device_id=None,
+    ):
         super().__init__(
             title="ndt7",
             description="The Network Diagnostic Tool v7 test.",
@@ -24,24 +30,19 @@ class Ndt7Client(MurakamiRunner):
             location=location,
             network_type=network_type,
             connection_type=connection_type,
-            device_id=device_id
+            device_id=device_id,
         )
 
     def _start_test(self):
         logger.info("Starting ndt7 test...")
         if shutil.which("ndt7-client") is not None:
-            cmdargs = [
-                "ndt7-client",
-                "-format=json",
-                "-quiet",
-                "-scheme=ws"
-            ]
+            cmdargs = ["ndt7-client", "-format=json", "-quiet", "-scheme=ws"]
 
             if "host" in self._config:
-                cmdargs.append("-server=" + self._config['host'])
-                insecure = self._config.get('insecure', True)
+                cmdargs.append("-server=" + self._config["host"])
+                insecure = self._config.get("insecure", True)
                 if insecure:
-                    cmdargs.append('-no-verify')
+                    cmdargs.append("-no-verify")
 
             starttime = datetime.datetime.utcnow()
             output = subprocess.run(
@@ -52,13 +53,13 @@ class Ndt7Client(MurakamiRunner):
             endtime = datetime.datetime.utcnow()
 
             murakami_output = {
-                'TestName': "ndt7",
-                'TestStartTime': starttime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
-                'TestEndTime': endtime.strftime('%Y-%m-%dT%H:%M:%S.%f'),
-                'MurakamiLocation': self._location,
-                'MurakamiConnectionType': self._connection_type,
-                'MurakamiNetworkType': self._network_type,
-                'MurakamiDeviceID': self._device_id,
+                "TestName": "ndt7",
+                "TestStartTime": starttime.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "TestEndTime": endtime.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "MurakamiLocation": self._location,
+                "MurakamiConnectionType": self._connection_type,
+                "MurakamiNetworkType": self._network_type,
+                "MurakamiDeviceID": self._device_id,
             }
 
             if output.returncode == 0:
@@ -68,40 +69,44 @@ class Ndt7Client(MurakamiRunner):
                     summary = json.loads(output.stdout)
                 except json.JSONDecodeError:
                     raise RunnerError(
-                        'ndt7-client',
-                        'ndt7-client did not return a valid JSON summary.'
+                        "ndt7-client",
+                        "ndt7-client did not return a valid JSON summary.",
                     )
                 logger.info("ndt7 test completed successfully.")
 
                 # Parse ndt7-client-go's summary JSON and generate Murakami's
                 # output format.
-                download = summary.get('Download')
-                upload = summary.get('Upload')
+                download = summary.get("Download")
+                upload = summary.get("Upload")
 
-                murakami_output['ServerName'] = summary.get('ServerFQDN')
-                murakami_output['ServerIP'] = summary.get('ServerIP')
-                murakami_output['ClientIP'] = summary.get('ClientIP')
-                murakami_output['DownloadUUID'] = download.get('UUID')
+                murakami_output["ServerName"] = summary.get("ServerFQDN")
+                murakami_output["ServerIP"] = summary.get("ServerIP")
+                murakami_output["ClientIP"] = summary.get("ClientIP")
+                murakami_output["DownloadUUID"] = download.get("UUID")
                 if download is not None:
                     throughput = download.get("Throughput")
                     if throughput is not None:
-                        murakami_output['DownloadValue'] = throughput.get('Value')
-                        murakami_output['DownloadUnit'] = throughput.get('Unit')
-                        murakami_output['DownloadError'] = None
+                        murakami_output["DownloadValue"] = throughput.get("Value")
+                        murakami_output["DownloadUnit"] = throughput.get("Unit")
+                        murakami_output["DownloadError"] = None
                     retransmission = download.get("Retransmission")
                     if retransmission is not None:
-                        murakami_output['DownloadRetransValue'] = retransmission.get('Value')
-                        murakami_output['DownloadRetransUnit'] = retransmission.get('Unit')
+                        murakami_output["DownloadRetransValue"] = retransmission.get(
+                            "Value"
+                        )
+                        murakami_output["DownloadRetransUnit"] = retransmission.get(
+                            "Unit"
+                        )
                     latency = download.get("Latency")
                     if latency is not None:
-                        murakami_output['MinRTTValue'] = latency.get('Value')
-                        murakami_output['MinRTTUnit'] = latency.get('Unit')
+                        murakami_output["MinRTTValue"] = latency.get("Value")
+                        murakami_output["MinRTTUnit"] = latency.get("Unit")
                 if upload is not None:
                     throughput = upload.get("Throughput")
                     if throughput is not None:
-                        murakami_output['UploadValue'] = throughput.get('Value')
-                        murakami_output['UploadUnit'] = throughput.get('Unit')
-                        murakami_output['UploadError'] = None
+                        murakami_output["UploadValue"] = throughput.get("Value")
+                        murakami_output["UploadUnit"] = throughput.get("Unit")
+                        murakami_output["UploadError"] = None
             else:
                 logger.warn("ndt7 test completed with errors.")
 
@@ -111,31 +116,29 @@ class Ndt7Client(MurakamiRunner):
                 for j in errors:
                     try:
                         message = json.loads(j)
-                        if message['Value']['Test'] == 'upload':
-                            murakami_output['UploadError'] = (
-                                message['Value']['Failure']
-                            )
-                        elif message['Value']['Test'] == 'download':
-                            murakami_output['DownloadError']= (
-                                message['Value']['Failure']
-                            )
+                        if message["Value"]["Test"] == "upload":
+                            murakami_output["UploadError"] = message["Value"]["Failure"]
+                        elif message["Value"]["Test"] == "download":
+                            murakami_output["DownloadError"] = message["Value"][
+                                "Failure"
+                            ]
                     except Exception as exc:
                         logger.error("Cannot parse error message: %s", exc)
 
                 # All the other fields are set to None (which will become null
                 # in the JSON.)
-                murakami_output['ServerName'] = None
-                murakami_output['ServerIP'] = None
-                murakami_output['ClientIP'] = None
-                murakami_output['DownloadUUID'] = None
-                murakami_output['DownloadValue'] = None
-                murakami_output['DownloadUnit'] = None
-                murakami_output['UploadValue'] = None
-                murakami_output['UploadUnit'] = None
-                murakami_output['DownloadRetransValue'] = None
-                murakami_output['DownloadRetransUnit'] = None
-                murakami_output['RTTValue'] = None
-                murakami_output['RTTUnit'] = None
+                murakami_output["ServerName"] = None
+                murakami_output["ServerIP"] = None
+                murakami_output["ClientIP"] = None
+                murakami_output["DownloadUUID"] = None
+                murakami_output["DownloadValue"] = None
+                murakami_output["DownloadUnit"] = None
+                murakami_output["UploadValue"] = None
+                murakami_output["UploadUnit"] = None
+                murakami_output["DownloadRetransValue"] = None
+                murakami_output["DownloadRetransUnit"] = None
+                murakami_output["RTTValue"] = None
+                murakami_output["RTTUnit"] = None
             return json.dumps(murakami_output)
         else:
             raise RunnerError(

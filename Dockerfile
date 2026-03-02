@@ -1,42 +1,80 @@
-# This Dockerfile is used for standalone installs.
+# ============================================================
+# Stage 1: Builder — install dependencies in an isolated layer
+# ============================================================
+FROM python:3.14-slim-bookworm AS builder
 
-# Build ndt7, ndt5 and dash Go clients.
-FROM golang:1.17-bullseye AS build
-RUN apt-get update
-RUN apt-get install -y git
+# Install uv for ultra-fast dependency resolution
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+WORKDIR /app
+
+# Copy only dependency manifests first (layer cache optimization)
+COPY pyproject.toml uv.lock ./
+
+# Install dependencies into the system Python (no venv needed in container)
+RUN uv sync --frozen --no-dev --no-install-project
+
+# Copy application code
+COPY . .
+
+# Install the project itself
+RUN uv sync --frozen --no-dev
+
+# ============================================================
+# Stage 2: Go Builder — build test clients
+# ============================================================
+FROM golang:1.23-bookworm AS go-builder
+
+RUN apt-get update && apt-get install -y git
+
 ENV GO111MODULE=on
-RUN go get github.com/neubot/dash/cmd/dash-client@master
-RUN go get github.com/m-lab/ndt7-client-go/cmd/ndt7-client
-RUN go get github.com/m-lab/ndt5-client-go/cmd/ndt5-client
 
-# Murakami image
-FROM python:3.7-bullseye
-# Install dependencies, speedtest and ooniprobe.
-# For ooniprobe, see https://ooni.org/install/cli/ubuntu-debian for instructions
-RUN apt-key adv --verbose --keyserver hkp://keyserver.ubuntu.com --recv-keys 'B5A08F01796E7F521861B449372D1FF271F2DD50'
-RUN echo "deb http://deb.ooni.org/ unstable main" | tee /etc/apt/sources.list.d/ooniprobe.list
-RUN apt-get update
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get install -yq git gcc libc-dev libffi-dev libssl-dev make rustc cargo ooniprobe-cli curl
-RUN /usr/local/bin/python3.7 -m pip install --upgrade pip
-RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash
-RUN apt-get install speedtest
-RUN pip install 'poetry==1.1.7'
+RUN go install github.com/neubot/dash/cmd/dash-client@master && \
+    go install github.com/m-lab/ndt7-client-go/cmd/ndt7-client && \
+    go install github.com/m-lab/ndt5-client-go/cmd/ndt5-client
 
-WORKDIR /murakami
+# ============================================================
+# Stage 3: Runtime — minimal image with only what's needed
+# ============================================================
+FROM python:3.14-slim-bookworm AS runtime
 
-# Copy Murakami and previously built test clients into the container.
-COPY . /murakami/
-COPY --from=build /go/bin/* /murakami/bin/
+# Install system dependencies
+RUN apt-key adv --verbose --keyserver hkp://keyserver.ubuntu.com --recv-keys 'B5A08F01796E7F521861B449372D1FF271F2DD50' && \
+    echo "deb http://deb.ooni.org/ unstable main" | tee /etc/apt/sources.list.d/ooniprobe.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        git gcc libc-dev libffi-dev libssl-dev make rustc cargo curl \
+        ooniprobe-cli && \
+    curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash && \
+    apt-get install -y speedtest && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY ./configs/speedtest-cli.json /root/.config/ookla/
+# Security: run as non-root
+RUN groupadd --gid 1000 appuser && \
+    useradd --uid 1000 --gid appuser --shell /bin/bash --create-home appuser
 
-# Set up poetry to not create a virtualenv, since the docker container is
-# isolated already, and install the required dependencies.
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-dev --no-interaction
+WORKDIR /app
 
-# Add binaries' path to PATH.
-ENV PATH="/murakami/bin:${PATH}"
+# Copy the virtual environment from builder
+COPY --from=builder /app/.venv /app/.venv
 
-ENTRYPOINT [ "python", "-m", "murakami" ]
+# Copy Go binaries
+COPY --from=go-builder /go/bin /app/bin
+
+# Copy application code
+COPY --from=builder /app .
+
+# Copy speedtest config
+COPY ./configs/speedtest-cli.json /home/appuser/.config/ookla/
+
+# Put the venv on PATH
+ENV PATH="/app/.venv/bin:/app/bin:${PATH}"
+
+# Add binaries' path to PATH
+ENV PYTHONPATH="/app"
+
+# Drop privileges
+USER appuser
+
+ENTRYPOINT ["python", "-m", "murakami"]

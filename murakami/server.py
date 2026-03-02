@@ -6,17 +6,17 @@ WebThingServer loading code.
 import datetime
 import logging
 import random
-import pkg_resources
+from importlib.metadata import entry_points
 
 from apscheduler.schedulers.tornado import TornadoScheduler
 from apscheduler.triggers.base import BaseTrigger
-from tornado.ioloop import IOLoop
 from tornado import gen
-from webthing import WebThingServer, SingleThing
+from tornado.ioloop import IOLoop
+from webthing import SingleThing, WebThingServer
 
 import murakami.defaults as defaults
-from murakami.thing import MurakamiThing
 import murakami.utils as utils
+from murakami.thing import MurakamiThing
 
 _logger = logging.getLogger(__name__)
 
@@ -28,15 +28,15 @@ class RandomTrigger(BaseTrigger):
     An implementation of apscheduler's BaseTrigger to schedule tests in an
     exponential distribution.
     """
+
     def __init__(self, *args, **kwargs):
-        self._tests_per_day = kwargs.pop("tests_per_day",
-                                         defaults.TESTS_PER_DAY)
+        self._tests_per_day = kwargs.pop("tests_per_day", defaults.TESTS_PER_DAY)
         self._immediate = kwargs.pop("immediate", False)
 
     def get_next_fire_time(self, previous_fire_time, now):
         sleeptime = random.expovariate(
-            1.0 /
-            (datetime.timedelta(days=1).total_seconds() / self._tests_per_day))
+            1.0 / (datetime.timedelta(days=1).total_seconds() / self._tests_per_day)
+        )
         if not previous_fire_time:
             _logger.debug("Not previously fired before")
             if self._immediate:
@@ -65,21 +65,22 @@ class MurakamiServer:
     * `connection_type`: string describing type of connection this device is
     using
     """
+
     def __init__(
-            self,
-            port=defaults.HTTP_PORT,
-            hostname=None,
-            ssl_options=None,
-            additional_routes=None,
-            base_path="",
-            tests_per_day=defaults.TESTS_PER_DAY,
-            immediate=False,
-            webthings=False,
-            location=None,
-            network_type=None,
-            connection_type=None,
-            device_id=None,
-            config=None,
+        self,
+        port=defaults.HTTP_PORT,
+        hostname=None,
+        ssl_options=None,
+        additional_routes=None,
+        base_path="",
+        tests_per_day=defaults.TESTS_PER_DAY,
+        immediate=False,
+        webthings=False,
+        location=None,
+        network_type=None,
+        connection_type=None,
+        device_id=None,
+        config=None,
     ):
         self._runners = {}
         self._exporters = {}
@@ -115,15 +116,16 @@ class MurakamiServer:
             try:
                 e.push(test_name, data, timestamp)
             except Exception as exc:
-                _logger.error("Failed to run exporter %s: %s", e.name,
-                              str(exc))
+                _logger.error("Failed to run exporter %s: %s", e.name, str(exc))
 
     def _load_runners(self):
-        trigger = RandomTrigger(tests_per_day=self._tests_per_day,
-                                immediate=self._immediate)
+        trigger = RandomTrigger(
+            tests_per_day=self._tests_per_day, immediate=self._immediate
+        )
 
         # Load test runners
-        for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
+        eps = entry_points(group="murakami.runners")
+        for entry_point in eps:
             logging.debug("Loading test runner %s", entry_point.name)
             if "tests" not in self._config:
                 self._config["tests"] = {}
@@ -152,17 +154,16 @@ class MurakamiServer:
         # Start test scheduler if enabled
         if self._tests_per_day > 0:
             self._scheduler = TornadoScheduler()
-            self._scheduler.add_job(self._call_runners,
-                                    id="runners",
-                                    name="Test Runners",
-                                    trigger=trigger)
+            self._scheduler.add_job(
+                self._call_runners, id="runners", name="Test Runners", trigger=trigger
+            )
 
     def _load_exporters(self):
         self._exporters = {}
         # Check if exporters are enabled and load them.
         if "exporters" in self._config:
-            exporters = pkg_resources.get_entry_map("murakami",
-                                                    group="murakami.exporters")
+            exporter_eps = entry_points(group="murakami.exporters")
+            exporters = {ep.name: ep for ep in exporter_eps}
             for name, entry in self._config["exporters"].items():
                 logging.debug("Loading exporter %s", name)
                 enabled = True
@@ -171,14 +172,13 @@ class MurakamiServer:
                 if enabled:
                     if "type" in entry:
                         if entry["type"] in exporters:
-                            self._exporters[name] = exporters[
-                                entry["type"]].load()(
-                                    name=name,
-                                    location=self._location,
-                                    network_type=self._network_type,
-                                    connection_type=self._connection_type,
-                                    config=entry,
-                                )
+                            self._exporters[name] = exporters[entry["type"]].load()(
+                                name=name,
+                                location=self._location,
+                                network_type=self._network_type,
+                                connection_type=self._connection_type,
+                                config=entry,
+                            )
                         else:
                             logging.error(
                                 "No available exporter type %s, skipping.",
@@ -186,7 +186,8 @@ class MurakamiServer:
                             )
                     else:
                         logging.error(
-                            "No type defined for exporter %s, skipping.", name)
+                            "No type defined for exporter %s, skipping.", name
+                        )
                 else:
                     logging.debug("Exporter %s disabled, skipping.", name)
 
