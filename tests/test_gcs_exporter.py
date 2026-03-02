@@ -1,8 +1,8 @@
 import base64
 import json
-import os
 from unittest.mock import MagicMock, patch
 
+from murakami.exporters.gcs import GCSExporter
 
 FAKE_KEY_DICT = {
     "type": "service_account",
@@ -21,37 +21,30 @@ FAKE_KEY_CONTENT = base64.b64encode(
 
 
 @patch("murakami.exporters.gcs.storage.Client")
-def test_gcs_env_var_uses_from_service_account_info(mock_client_cls):
+def test_gcs_key_content_uses_from_service_account_info(mock_client_cls):
+    """When key_content is in the config, credentials are loaded from inline
+    base64-encoded JSON rather than a file on disk."""
     mock_client_cls.from_service_account_info.return_value = MagicMock()
 
-    env = {"MURAKAMI_GCS_KEY_CONTENT": FAKE_KEY_CONTENT}
-    with patch.dict(os.environ, env, clear=False):
-        from murakami.exporters.gcs import GCSExporter
-        exporter = GCSExporter(
-            name="test",
-            config={"target": "gs://bucket/path"},
-        )
-
-    mock_client_cls.from_service_account_info.assert_called_once_with(
-        FAKE_KEY_DICT
+    GCSExporter(
+        name="test",
+        config={"target": "gs://bucket/path", "key_content": FAKE_KEY_CONTENT},
     )
+
+    mock_client_cls.from_service_account_info.assert_called_once_with(FAKE_KEY_DICT)
     mock_client_cls.from_service_account_json.assert_not_called()
 
 
 @patch("murakami.exporters.gcs.storage.Client")
-def test_gcs_file_path_used_when_no_env_var(mock_client_cls):
+def test_gcs_key_file_used_when_no_key_content(mock_client_cls):
+    """When key_content is absent, the exporter falls back to reading
+    credentials from the file path given by the key config option."""
     mock_client_cls.from_service_account_json.return_value = MagicMock()
 
-    env_without_var = {k: v for k, v in os.environ.items()
-                       if k != "MURAKAMI_GCS_KEY_CONTENT"}
-    with patch.dict(os.environ, env_without_var, clear=True):
-        from murakami.exporters.gcs import GCSExporter
-        exporter = GCSExporter(
-            name="test",
-            config={"target": "gs://bucket/path", "key": "/path/to/key.json"},
-        )
-
-    mock_client_cls.from_service_account_json.assert_called_once_with(
-        "/path/to/key.json"
+    GCSExporter(
+        name="test",
+        config={"target": "gs://bucket/path", "key": "/path/to/key.json"},
     )
+
+    mock_client_cls.from_service_account_json.assert_called_once_with("/path/to/key.json")
     mock_client_cls.from_service_account_info.assert_not_called()
