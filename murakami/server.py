@@ -6,7 +6,7 @@ WebThingServer loading code.
 import datetime
 import logging
 import random
-import pkg_resources
+from importlib.metadata import entry_points, packages_distributions
 
 from apscheduler.schedulers.tornado import TornadoScheduler
 from apscheduler.triggers.base import BaseTrigger
@@ -102,12 +102,21 @@ class MurakamiServer:
         self._config = config
 
     def _call_runners(self):
-        for r in self._runners.values():
+        runners = list(self._runners.values())
+        random.shuffle(runners)
+        sequence = [r.title for r in runners]
+        _logger.info("Running tests in sequence: %s", sequence)
+        for r in runners:
             _logger.info("Running test: %s", r.title)
             try:
                 r.start_test()
             except Exception as exc:
                 _logger.error("Failed to run test %s: %s", r.title, str(exc))
+            delay = int(self._config.get("runner_delay", defaults.RUNNER_DELAY))
+            if delay > 0:
+                import time
+                _logger.info("Waiting %s seconds before next test.", delay)
+                time.sleep(delay)
 
     def _call_exporters(self, test_name="", data="", timestamp=None):
         for e in self._exporters.values():
@@ -123,7 +132,7 @@ class MurakamiServer:
                                 immediate=self._immediate)
 
         # Load test runners
-        for entry_point in pkg_resources.iter_entry_points("murakami.runners"):
+        for entry_point in entry_points(group="murakami.runners"):
             logging.debug("Loading test runner %s", entry_point.name)
             if "tests" not in self._config:
                 self._config["tests"] = {}
@@ -161,8 +170,7 @@ class MurakamiServer:
         self._exporters = {}
         # Check if exporters are enabled and load them.
         if "exporters" in self._config:
-            exporters = pkg_resources.get_entry_map("murakami",
-                                                    group="murakami.exporters")
+            exporters = {ep.name: ep for ep in entry_points(group="murakami.exporters")}
             for name, entry in self._config["exporters"].items():
                 logging.debug("Loading exporter %s", name)
                 enabled = True
