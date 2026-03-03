@@ -45,7 +45,7 @@ class MurakamiExporter:
                     self._push_single(test_name, d, timestamp, test_idx)
                     test_idx += 1
                 except Exception as ex:
-                    logger.error("export failed: " + ex)
+                    logger.error("export failed: %s", ex)
                     return False
         else:
             return self._push_single(test_name, data, timestamp)
