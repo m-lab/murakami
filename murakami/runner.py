@@ -5,8 +5,6 @@ interface.
 from datetime import datetime
 import logging
 
-from webthing import Thing
-
 from murakami.errors import RunnerError
 import murakami.utils as utils
 

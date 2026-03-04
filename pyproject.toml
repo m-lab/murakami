@@ -12,9 +12,12 @@ murakami = 'murakami.__main__:main'
 murakami-convert = 'scripts.convert:main'
 murakami-upload = 'scripts.upload:main'
 
+[tool.poetry.extras]
+webthings = ["webthing"]
+
 [tool.poetry.dependencies]
 python = "^3.6"
-webthing = "^0.12.0"
+webthing = {version = "^0.12.0", optional = true}
 configargparse = "^0.14.0"
 tomlkit = "^0.5.5"
 apscheduler = "^3.6"

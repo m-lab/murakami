@@ -12,10 +12,8 @@ from apscheduler.schedulers.tornado import TornadoScheduler
 from apscheduler.triggers.base import BaseTrigger
 from tornado.ioloop import IOLoop
 from tornado import gen
-from webthing import WebThingServer, SingleThing
 
 import murakami.defaults as defaults
-from murakami.thing import MurakamiThing
 import murakami.utils as utils
 
 _logger = logging.getLogger(__name__)
@@ -140,6 +138,9 @@ class MurakamiServer:
 
         # Start webthings server if enabled
         if self._webthings:
+            from webthing import WebThingServer, SingleThing
+            from murakami.thing import MurakamiThing
+
             self._server = WebThingServer(
                 SingleThing(MurakamiThing(self._runners.values())),
                 port=self._port,
